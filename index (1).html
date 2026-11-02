@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculadora C.A.T.S</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0f1a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="C.A.T.S">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{--bg:#0a0f1a;--panel:#131b2c;--line:#23304a;--text:#eaf0fb;--mute:#8896b3;--blue:#3d8bff;--red:#ff4d5e;--gold:#ffc83d;--ok:#2fd27a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+.hidden{display:none!important}
+body.member .only-leader{display:none!important}
+input,select,button{font-size:1rem;color:var(--text)}
+input,select{background:#0a1120;border:1px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;min-width:0}
+input:focus,select:focus{border-color:var(--blue)}
+button{border:0;border-radius:10px;padding:12px;font-weight:700;cursor:pointer;background:var(--blue)}
+button:disabled{cursor:default}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* créditos */
+.credits{text-align:center;color:var(--mute);font-size:.8rem;font-weight:600;letter-spacing:.06em;padding:18px 0 6px}
+.credits b{color:var(--blue)}
+
+/* login */
+#boot{flex:1;display:flex;align-items:center;justify-content:center;color:var(--mute)}
+#login{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:28px;max-width:420px;margin:auto;width:100%}
+#login h1{font-size:2.4rem;letter-spacing:-.03em;line-height:1}
+#login p{color:var(--mute)}
+#login-err{color:var(--red);min-height:1.2em}
+#login-in{text-transform:uppercase}
+
+/* app */
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);gap:8px}
+header b{font-size:1.1rem}
+header .who{color:var(--mute);font-size:.9rem;display:flex;align-items:center;gap:8px}
+.badge{font-size:.65rem;font-weight:800;letter-spacing:.08em;padding:3px 7px;border-radius:99px;background:#1d2a45;color:var(--mute)}
+.badge.lead{background:var(--gold);color:#2b2100}
+header button{background:none;color:var(--mute);padding:6px 10px;border:1px solid var(--line)}
+main{flex:1;overflow-y:auto;padding:16px;max-width:560px;width:100%;margin:0 auto}
+nav{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);background:var(--panel);padding-bottom:env(safe-area-inset-bottom)}
+body.leader nav{grid-template-columns:repeat(4,1fr)}
+nav button{background:none;border-radius:0;padding:14px 4px;color:var(--mute);font-size:.92rem}
+nav button.on{color:var(--text);box-shadow:inset 0 3px 0 var(--gold)}
+
+/* calculadora */
+.team{border-radius:14px;padding:14px;margin-bottom:12px;display:grid;gap:10px}
+.team.b{background:#0e2342;border-left:5px solid var(--blue)}
+.team.r{background:#3a1220;border-left:5px solid var(--red)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.row label{font-weight:600}
+.row input{width:55%;text-align:right;font-size:1.3rem;font-weight:700}
+input[readonly].lk{background:transparent;border-color:transparent;pointer-events:none}
+.panel{background:var(--panel);border-radius:14px;padding:14px;margin-bottom:12px;display:grid;gap:10px}
+.btn-n.off{background:#4a2026}.btn-n.on{background:#1d5b3a}
+
+/* relógio (horas e minutos) */
+.clock-box{display:grid;gap:8px;justify-items:center}
+.clock-box>label{font-weight:600;justify-self:start}
+.clock{display:flex;align-items:center;justify-content:center;gap:6px;background:#050a14;border:1px solid var(--line);border-radius:16px;padding:10px 16px;box-shadow:inset 0 0 22px rgba(61,139,255,.12)}
+.clock .unit{display:grid;justify-items:center;gap:2px}
+.clock .step{background:none;color:var(--mute);padding:4px 14px;font-size:.95rem;line-height:1;border-radius:8px}
+.clock .step:active{color:var(--gold);background:var(--panel)}
+.clock input{width:2.1ch;box-sizing:content-box;text-align:center;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;font-size:3rem;font-weight:700;line-height:1.1;color:var(--gold);background:transparent;border:0;border-bottom:2px solid transparent;border-radius:0;padding:0 2px;text-shadow:0 0 14px rgba(255,200,61,.35)}
+.clock input:focus{border-bottom-color:var(--gold)}
+.clock small{color:var(--mute);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase}
+.clock .colon{font-family:ui-monospace,monospace;font-size:3rem;font-weight:700;color:var(--gold);line-height:1;margin-bottom:18px;animation:blink 1.6s steps(1) infinite}
+@keyframes blink{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.clock .colon{animation:none}}
+
+/* contagem regressiva ao vivo (todos veem) */
+.count-box{display:grid;gap:4px;justify-items:center;background:#050a14;border:1px solid var(--line);border-radius:16px;padding:12px 16px;box-shadow:inset 0 0 22px rgba(61,139,255,.12)}
+.count-box small{color:var(--mute);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase}
+#cd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;font-size:2.4rem;font-weight:700;color:var(--gold);text-shadow:0 0 14px rgba(255,200,61,.35)}
+#cd-end{color:var(--mute);font-size:.85rem;min-height:1.1em}
+#result{background:var(--panel);border-radius:14px;padding:16px;border:1px solid var(--line)}
+#result .who{font-size:1.6rem;font-weight:800;letter-spacing:-.02em}
+#result .who.b{color:var(--blue)}#result .who.r{color:var(--red)}
+#result .sub{color:var(--mute);margin-top:6px;line-height:1.4}
+
+/* ataques */
+.bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px}
+.bar .count{color:var(--mute)}
+.bar button{background:var(--panel);border:1px solid var(--line);color:var(--mute);padding:8px 12px}
+.atk{display:grid;grid-template-columns:24px 1fr 56px 42px 42px;gap:6px;align-items:center;margin-bottom:8px;padding-left:6px;border-left:3px solid transparent}
+body.member .atk{grid-template-columns:24px 1fr 30px 42px 42px}
+.atk.mine{border-left-color:var(--gold)}
+.atk i{color:var(--mute);font-style:normal;font-size:.85rem;text-align:right}
+.atk select{padding:10px 4px}
+.atk select:disabled{opacity:1;background:transparent;border-color:transparent;appearance:none;-webkit-appearance:none;text-align:center;padding:10px 0;color:var(--mute)}
+.atk input[readonly]{background:transparent;border-color:transparent}
+.atk .tg{height:42px;padding:0;background:var(--panel);border:1px solid var(--line);color:var(--mute)}
+.atk .tg:disabled{opacity:.45}
+.atk.done .dn{background:var(--ok);border-color:var(--ok);color:#04230f;opacity:1}
+.atk.unav .un{background:var(--red);border-color:var(--red);color:#2b0509;opacity:1}
+.atk.done input.nm{opacity:.55;text-decoration:line-through}
+.atk.unav input.nm{opacity:.55}
+.help{color:var(--mute);font-size:.8rem;margin-top:10px;line-height:1.4}
+
+/* membros (líder) */
+.card{background:var(--panel);border-radius:14px;padding:14px;margin-bottom:12px;display:grid;gap:10px}
+.card h3{font-size:1rem}
+.card .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.card label.chk{display:flex;align-items:center;gap:8px;color:var(--mute)}
+.card label.chk input{width:18px;height:18px}
+#m-err{color:var(--red);min-height:1.1em;font-size:.9rem}
+#m-new{background:#0e2a1d;border:1px solid var(--ok);border-radius:14px;padding:14px;margin-bottom:12px;display:grid;gap:8px}
+#m-new code{font-size:1.6rem;font-weight:800;letter-spacing:.06em;color:var(--gold)}
+.u{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.u:first-child{border-top:0}
+.u .nm{font-weight:700;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.u code{font-family:ui-monospace,monospace;color:var(--gold);letter-spacing:.04em}
+.u .ex{color:var(--mute);font-size:.8rem}
+.u .acts{display:flex;gap:6px}
+.u .acts button{background:var(--bg);border:1px solid var(--line);padding:8px 10px;font-size:.95rem}
+
+/* chat */
+#chat-wrap{display:flex;flex-direction:column;height:100%}
+#msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:10px}
+.msg{max-width:80%;padding:9px 12px;border-radius:14px;background:var(--panel);line-height:1.35;word-break:break-word}
+.msg small{display:block;color:var(--mute);font-size:.72rem;margin-bottom:2px}
+.msg.me{align-self:flex-end;background:#16407a}
+#chat-form{display:flex;gap:8px;padding-top:8px}
+#chat-in{flex:1}
+</style>
+</head>
+<body>
+
+<!-- CARREGANDO -->
+<section id="boot">Entrando…</section>
+
+<!-- LOGIN -->
+<section id="login" class="hidden">
+  <h1>Calculadora<br>C.A.T.S</h1>
+  <p>Digite o seu código de acesso para entrar.</p>
+  <input id="login-in" placeholder="Código de acesso" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false">
+  <input id="login-pw" type="password" placeholder="Senha (só se você tiver uma)" autocomplete="off">
+  <button id="login-btn">Entrar</button>
+  <div id="login-err" role="alert"></div>
+  <div class="credits">Desenvolvido por <b>NITRO ZEUS</b></div>
+</section>
+
+<!-- APP -->
+<div id="app" class="hidden" style="display:flex;flex-direction:column;flex:1;min-height:0">
+  <header><b>Calculadora C.A.T.S</b><span class="who"><span id="me"></span><span id="role" class="badge"></span><button id="logout">Sair</button></span></header>
+  <main>
+    <!-- Calculadora -->
+    <div id="tab-calc">
+      <div class="team b">
+        <div class="row"><label for="bp">PPM azul</label><input id="bp" type="number" inputmode="decimal" min="0" value="0"></div>
+        <div class="row"><label for="bs">Pontos azul</label><input id="bs" type="number" inputmode="decimal" min="0" value="0"></div>
+      </div>
+      <div class="team r">
+        <div class="row"><label for="rp">PPM vermelho</label><input id="rp" type="number" inputmode="decimal" min="0" value="0"></div>
+        <div class="row"><label for="rs">Pontos vermelho</label><input id="rs" type="number" inputmode="decimal" min="0" value="0"></div>
+      </div>
+      <div class="panel">
+        <div class="row"><label for="tot">Total do round</label><input id="tot" type="number" inputmode="decimal" min="0" value="0"></div>
+        <div class="clock-box only-leader">
+          <label for="th">Definir tempo restante</label>
+          <div class="clock">
+            <div class="unit">
+              <button type="button" class="step" data-add="60" aria-label="Mais uma hora">▲</button>
+              <input id="th" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="00" aria-label="Horas" autocomplete="off">
+              <button type="button" class="step" data-add="-60" aria-label="Menos uma hora">▼</button>
+              <small>horas</small>
+            </div>
+            <span class="colon" aria-hidden="true">:</span>
+            <div class="unit">
+              <button type="button" class="step" data-add="1" aria-label="Mais um minuto">▲</button>
+              <input id="tn" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="00" aria-label="Minutos" autocomplete="off">
+              <button type="button" class="step" data-add="-1" aria-label="Menos um minuto">▼</button>
+              <small>minutos</small>
+            </div>
+          </div>
+        </div>
+        <div class="count-box">
+          <small>Tempo restante</small>
+          <div id="cd">--:--:--</div>
+          <div id="cd-end"></div>
+        </div>
+        <button id="btn-n" class="btn-n off">Avisar no fim: desligado</button>
+      </div>
+      <div id="result"><div class="sub">Preencha os dados.</div></div>
+      <div class="credits">Desenvolvido por <b>NITRO ZEUS</b></div>
+    </div>
+
+    <!-- Ataques -->
+    <div id="tab-atk" class="hidden">
+      <div class="bar"><span class="count" id="atk-count">0 de 0 atacaram</span><button id="atk-clear" class="only-leader">Zerar marcações</button></div>
+      <div id="atk-list"></div>
+      <p class="help" id="atk-help"></p>
+    </div>
+
+    <!-- Chat -->
+    <div id="tab-chat" class="hidden" style="height:100%">
+      <div id="chat-wrap">
+        <div id="msgs"></div>
+        <form id="chat-form"><input id="chat-in" placeholder="Mensagem" autocomplete="off" maxlength="500"><button>Enviar</button></form>
+      </div>
+    </div>
+
+    <!-- Membros (só líder) -->
+    <div id="tab-mem" class="hidden only-leader">
+      <div class="card">
+        <h3>Cadastrar acesso</h3>
+        <input id="m-name" placeholder="Nome do jogador" maxlength="24" autocomplete="off">
+        <div class="two">
+          <select id="m-role" aria-label="Tipo de acesso"><option value="member">Membro</option><option value="leader">Líder</option></select>
+          <label class="chk"><input id="m-pass-on" type="checkbox"> Exigir senha</label>
+        </div>
+        <input id="m-pass" class="hidden" placeholder="Senha (vazio = gerar uma)" maxlength="30" autocomplete="off">
+        <button id="m-add">Cadastrar</button>
+        <div id="m-err" role="alert"></div>
+      </div>
+      <div id="m-new" class="hidden"></div>
+      <div class="card">
+        <h3>Acessos cadastrados</h3>
+        <div id="m-list"></div>
+      </div>
+    </div>
+  </main>
+  <nav>
+    <button data-tab="calc" class="on">Calculadora</button>
+    <button data-tab="atk">Ataques</button>
+    <button data-tab="chat">Chat</button>
+    <button data-tab="mem" class="only-leader">Membros</button>
+  </nav>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+/* ====== firebaseConfig ====== */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCQ-0pD6CpvnTgIrwgweGnhaxud2NRAnQk",
+  authDomain: "server-cats.firebaseapp.com",
+  databaseURL: "https://server-cats-default-rtdb.firebaseio.com",
+  projectId: "server-cats",
+  storageBucket: "server-cats.firebasestorage.app",
+  messagingSenderId: "236678400910",
+  appId: "1:236678400910:web:316f4c47858193430572df"
+};
+/* Link público do app (usado no convite). Se deixar vazio, usa o endereço atual. */
+const APP_URL = '';
+/* ============================ */
+
+const N = 25;                       // vagas na lista de ataque
+const $ = id => document.getElementById(id);
+const online = typeof firebase !== 'undefined' && FIREBASE_CONFIG.apiKey && !FIREBASE_CONFIG.apiKey.startsWith('COLE');
+let db = null, auth = null;
+if (online) { firebase.initializeApp(FIREBASE_CONFIG); db = firebase.database(); auth = firebase.auth(); }
+
+let me = null;                      // {code,name,role,slot}
+let atkData = {}, usersData = {};
+const isLeader = () => !!me && me.role === 'leader';
+const clean = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+const timeout = (p, ms = 12000) => Promise.race([p, new Promise((_, r) => setTimeout(() => r(new Error('timeout')), ms))]);
+
+/* ---------- Login ---------- */
+function showLogin(msg){
+  $('boot').classList.add('hidden'); $('login').classList.remove('hidden');
+  $('login-err').textContent = msg || '';
+}
+function errText(e){
+  const c = (e && (e.code || e.message)) || '';
+  if (/timeout/i.test(c)) return 'Sem conexão com o servidor. Tente de novo.';
+  if (/permission/i.test(c)) return 'Código ou senha incorretos.';
+  if (/operation-not-allowed|admin-restricted/i.test(c)) return 'Falta ativar o login anônimo no Firebase (veja o LEIAME).';
+  if (/network/i.test(c)) return 'Sem conexão com a internet.';
+  return 'Não foi possível entrar. Tente de novo.';
+}
+async function doLogin(code, pass){
+  code = clean(code);
+  if (!online) throw new Error('network');
+  if (!code) throw { code: 'permission' };
+  if (!auth.currentUser) await timeout(auth.signInAnonymously());
+  const sess = { code }; if (pass) sess.pass = pass;
+  await timeout(db.ref('sessions/' + auth.currentUser.uid).set(sess));
+  const snap = await timeout(db.ref('users/' + code).once('value'));
+  const u = snap.val(); if (!u) throw { code: 'permission' };
+  me = { code, name: u.name, role: u.role, slot: u.slot != null ? String(u.slot) : null };
+  localStorage.setItem('cats_login', JSON.stringify({ code, pass: pass || '' }));
+  enter();
+}
+$('login-btn').onclick = async () => {
+  const btn = $('login-btn'); btn.disabled = true; $('login-err').textContent = '';
+  try { await doLogin($('login-in').value, $('login-pw').value); }
+  catch (e) { $('login-err').textContent = errText(e); }
+  btn.disabled = false;
+};
+['login-in','login-pw'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') $('login-btn').click(); }));
+$('logout').onclick = async () => {
+  try { if (auth && auth.currentUser) await timeout(db.ref('sessions/' + auth.currentUser.uid).remove(), 4000); } catch (e) {}
+  localStorage.removeItem('cats_login'); location.reload();
+};
+function forceLogout(msg){
+  localStorage.removeItem('cats_login'); sessionStorage.setItem('cats_msg', msg); location.reload();
+}
+
+function enter(){
+  $('boot').classList.add('hidden'); $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+  document.body.classList.add(isLeader() ? 'leader' : 'member');
+  $('me').textContent = me.name;
+  const rb = $('role'); rb.textContent = isLeader() ? 'LÍDER' : 'MEMBRO'; rb.classList.toggle('lead', isLeader());
+  if (!isLeader()) {
+    ['bp','bs','rp','rs','tot'].forEach(id => { $(id).readOnly = true; $(id).classList.add('lk'); });
+  }
+  $('atk-help').textContent = isLeader()
+    ? 'Toque no ✓ (atacou) ou no ✕ (indisponível) de qualquer jogador. Edite nomes e carros aqui.'
+    : 'Toque no ✓ quando atacar ou no ✕ se não puder atacar. Você só marca a sua linha (a dourada).';
+  startSync();
+}
+
+/* ---------- Abas ---------- */
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
+  ['calc','atk','chat','mem'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== b.dataset.tab));
+  if (b.dataset.tab === 'chat') { $('msgs').scrollTop = 1e9; }
+});
+
+/* ---------- Calculadora (líder edita, todos veem ao vivo) ---------- */
+let cs = null;                       // {bp,bs,rp,rs,tot,endAt,ts}
+let notifOn = false, target = null, fired = false, schedTimer = null, wTimer = null;
+const LN = () => window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications;
+const CALC_IDS = ['bp','bs','rp','rs','tot','th','tn'];
+const calcFocused = () => CALC_IDS.includes(document.activeElement && document.activeElement.id);
+
+const pad2 = n => String(n).padStart(2, '0');
+const MAXMIN = 99 * 60 + 59;
+function clockMinutes(){
+  const h = parseInt($('th').value, 10) || 0, m = parseInt($('tn').value, 10) || 0;
+  return Math.min(h * 60 + m, MAXMIN);
+}
+function setClock(total){
+  total = Math.max(0, Math.min(MAXMIN, total));
+  $('th').value = pad2(Math.floor(total / 60));
+  $('tn').value = pad2(total % 60);
+}
+const fmt = d => d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+function show(cls, who, sub){ $('result').innerHTML = `<div class="who ${cls}">${who}</div><div class="sub">${sub}</div>`; }
+
+/* Calcula a partir do "retrato" salvo pelo líder (pontos no instante ts, fim da luta em endAt) */
+function compute(s){
+  if (!s || !s.ts) return { cls: '', who: 'Aguardando', sub: isLeader() ? 'Preencha os dados.' : 'O líder ainda não preencheu os dados.' };
+  const bp = +s.bp || 0, bs = +s.bs || 0, rp = +s.rp || 0, rs = +s.rs || 0, tot = +s.tot || 0;
+  const max = Math.max(0, ((s.endAt || s.ts) - s.ts) / 1000);
+  if (tot <= 0) return { cls: '', who: 'Aguardando', sub: isLeader() ? 'Insira a pontuação total do round.' : 'O líder ainda não definiu o total do round.' };
+  if (bs >= tot && rs >= tot) return { cls: '', who: 'Empate', sub: 'As duas equipes já atingiram o total.' };
+  if (bs >= tot) return { cls: 'b', who: 'Azul', sub: 'Já venceu.' };
+  if (rs >= tot) return { cls: 'r', who: 'Vermelho', sub: 'Já venceu.' };
+  const bt = bp > 0 ? (tot - bs) / bp * 60 : Infinity, rt = rp > 0 ? (tot - rs) / rp * 60 : Infinity;
+  let cls, who, sub, sec;
+  if (bt < rt && bt <= max)      { cls = 'b'; who = 'Azul';     sec = bt; sub = 'Vence ao chegar no total em '; }
+  else if (rt < bt && rt <= max) { cls = 'r'; who = 'Vermelho'; sec = rt; sub = 'Vence ao chegar no total em '; }
+  else if (max > 0) {
+    const bf = bs + bp * max / 60, rf = rs + rp * max / 60; sec = max; sub = 'Vence por pontos quando o tempo acabar em ';
+    if (bf > rf) { cls = 'b'; who = 'Azul'; } else if (rf > bf) { cls = 'r'; who = 'Vermelho'; } else { cls = ''; who = 'Empate'; }
+  } else return { cls: '', who: 'Aguardando', sub: 'Informe PPM e tempo restante válidos.' };
+  const t = new Date(s.ts + Math.max(0, sec) * 1000);
+  return { cls, who, sub: sub + fmt(t), target: t };
+}
+function renderCalc(){
+  const r = compute(cs);
+  target = r.target || null; fired = false;
+  show(r.cls, r.who, r.sub);
+  schedule();
+}
+function fillInputs(){
+  ['bp','bs','rp','rs','tot'].forEach(k => { $(k).value = cs ? (cs[k] || 0) : 0; });
+  setClock(cs && cs.endAt ? Math.max(0, Math.ceil((cs.endAt - Date.now()) / 60000)) : 0);
+}
+function applyCalc(v){
+  if (isLeader() && calcFocused()) return;          // não atropela quem está digitando
+  cs = v || null; fillInputs(); renderCalc(); tick();
+}
+
+/* O líder edita → grava o retrato no servidor (com pequena pausa para não gravar a cada tecla) */
+function leaderEdit(clockEdit){
+  if (!isLeader()) return;
+  const now = Date.now();
+  const s = { bp: +$('bp').value || 0, bs: +$('bs').value || 0, rp: +$('rp').value || 0, rs: +$('rs').value || 0,
+              tot: +$('tot').value || 0, endAt: (cs && cs.endAt) || 0, ts: now };
+  if (clockEdit || !s.endAt) s.endAt = now + clockMinutes() * 60000;
+  cs = s; renderCalc(); tick();
+  clearTimeout(wTimer);
+  wTimer = setTimeout(() => db.ref('calc').set(cs).catch(console.error), 350);
+}
+['bp','bs','rp','rs','tot'].forEach(id => $(id).addEventListener('input', () => leaderEdit(false)));
+['th','tn'].forEach(id => {
+  const el = $(id);
+  el.addEventListener('focus', () => setTimeout(() => el.select(), 0));
+  el.addEventListener('input', () => {
+    el.value = el.value.replace(/\D/g, '').slice(0, 2);
+    if (id === 'th' && el.value.length === 2) { $('tn').focus(); }
+    leaderEdit(true);
+  });
+  el.addEventListener('blur', () => setClock(clockMinutes()));     // 90 min vira 01:30
+  el.addEventListener('keydown', e => { if (e.key === 'Enter') el.blur(); });
+});
+document.querySelectorAll('.clock .step').forEach(b => b.onclick = () => {
+  setClock(clockMinutes() + (+b.dataset.add)); leaderEdit(true);
+});
+
+/* Contagem regressiva ao vivo */
+function tick(){
+  if (cs && cs.endAt) {
+    const rem = Math.max(0, Math.round((cs.endAt - Date.now()) / 1000));
+    $('cd').textContent = pad2(Math.floor(rem / 3600)) + ':' + pad2(Math.floor(rem % 3600 / 60)) + ':' + pad2(rem % 60);
+    $('cd-end').textContent = rem > 0 ? 'Termina às ' + new Date(cs.endAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'Tempo esgotado';
+  } else { $('cd').textContent = '--:--:--'; $('cd-end').textContent = ''; }
+}
+
+function beep(){
+  try{
+    const c = new (window.AudioContext || window.webkitAudioContext)();
+    [[880,0],[880,.25],[1174.66,.5]].forEach(([f,t]) => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.frequency.value = f; g.gain.setValueAtTime(.3, c.currentTime + t);
+      g.gain.exponentialRampToValueAtTime(.001, c.currentTime + t + .3);
+      o.connect(g); g.connect(c.destination); o.start(c.currentTime + t); o.stop(c.currentTime + t + .3);
+    });
+  }catch(e){}
+  if (navigator.vibrate) navigator.vibrate([300,150,300]);
+}
+
+/* Agenda notificação nativa (funciona com o app fechado no APK) */
+function schedule(){
+  clearTimeout(schedTimer);
+  schedTimer = setTimeout(async () => {
+    const ln = LN(); if (!ln) return;
+    try{
+      await ln.cancel({ notifications: [{ id: 1 }] });
+      if (notifOn && target && target > new Date())
+        await ln.schedule({ notifications: [{ id: 1, title: 'Fim da batalha', body: 'O tempo ou a pontuação da luta foi atingido.', schedule: { at: target, allowWhileIdle: true } }] });
+    }catch(e){ console.error(e); }
+  }, 600);
+}
+$('btn-n').onclick = async () => {
+  if (!notifOn) {
+    const ln = LN();
+    try{
+      if (ln) await ln.requestPermissions();
+      else if ('Notification' in window) await Notification.requestPermission();
+    }catch(e){}
+  }
+  notifOn = !notifOn;
+  $('btn-n').className = 'btn-n ' + (notifOn ? 'on' : 'off');
+  $('btn-n').textContent = 'Avisar no fim: ' + (notifOn ? 'ligado' : 'desligado');
+  schedule();
+};
+/* Relógio de 1s: contagem + aviso com o app aberto */
+setInterval(() => {
+  tick();
+  if (notifOn && target && !fired && new Date() >= target) {
+    fired = true; beep();
+    if (!LN() && 'Notification' in window && Notification.permission === 'granted') new Notification('Fim da batalha', { body: 'O tempo ou a pontuação da luta foi atingido.' });
+  }
+}, 1000);
+
+/* ---------- Lista de ataque (25 vagas, sincronizada) ---------- */
+const rows = [];
+const canMark = i => isLeader() || (me && me.slot === String(i));
+for (let i = 0; i < N; i++) {
+  const d = document.createElement('div'); d.className = 'atk';
+  d.innerHTML = `<i>${i+1}</i><input class="nm" placeholder="Nome do jogador" maxlength="24" aria-label="Jogador ${i+1}">
+    <select aria-label="Carros">${[0,1,2,3].map(n => `<option>${n}</option>`).join('')}</select>
+    <button class="tg dn" aria-label="Atacou" aria-pressed="false">✓</button>
+    <button class="tg un" aria-label="Indisponível" aria-pressed="false">✕</button>`;
+  const [, name, cars, dn, un] = d.children;
+  name.onchange = () => { if (isLeader()) db.ref('attacks/' + i + '/name').set(name.value.trim() || null); };
+  cars.onchange = () => { if (isLeader()) db.ref('attacks/' + i + '/cars').set(+cars.value); };
+  dn.onclick = () => {
+    if (!canMark(i)) return;
+    const x = atkData[i] || {}, nv = !x.done, up = {};
+    up['attacks/' + i + '/done'] = nv;
+    if (nv && x.unavail) up['attacks/' + i + '/unavail'] = false;
+    db.ref().update(up).catch(console.error);
+  };
+  un.onclick = () => {
+    if (!canMark(i)) return;
+    const x = atkData[i] || {}, nv = !x.unavail, up = {};
+    up['attacks/' + i + '/unavail'] = nv;
+    if (nv && x.done) up['attacks/' + i + '/done'] = false;
+    db.ref().update(up).catch(console.error);
+  };
+  $('atk-list').appendChild(d); rows.push({ d, name, cars, dn, un });
+}
+function renderAtk(){
+  let named = 0, done = 0;
+  rows.forEach((r, i) => {
+    const x = atkData[i] || {}, has = !!x.name;
+    if (has) { named++; if (x.done) done++; }
+    if (document.activeElement !== r.name) r.name.value = x.name || '';
+    r.cars.value = x.cars || 0;
+    r.d.classList.toggle('done', !!x.done);
+    r.d.classList.toggle('unav', !!x.unavail);
+    r.dn.setAttribute('aria-pressed', !!x.done); r.un.setAttribute('aria-pressed', !!x.unavail);
+    const lead = isLeader(), mark = canMark(i) && (lead || has);
+    r.name.readOnly = !lead; r.cars.disabled = !lead;
+    r.dn.disabled = r.un.disabled = !mark;
+    r.d.classList.toggle('mine', !lead && me && me.slot === String(i));
+    r.d.classList.toggle('hidden', !lead && !has);          // membro só vê vagas com nome
+  });
+  $('atk-count').textContent = done + ' de ' + named + ' atacaram';
+}
+$('atk-clear').onclick = () => {
+  if (!isLeader() || !confirm('Zerar as marcações (atacou / indisponível) de todos? Os nomes continuam.')) return;
+  const up = {};
+  rows.forEach((r, i) => { const x = atkData[i]; if (x && (x.done || x.unavail)) { up['attacks/' + i + '/done'] = false; up['attacks/' + i + '/unavail'] = false; } });
+  if (Object.keys(up).length) db.ref().update(up).catch(console.error);
+};
+
+/* ---------- Chat ---------- */
+function addMsg(m){
+  const mine = !!auth.currentUser && m.uid === auth.currentUser.uid;
+  const el = document.createElement('div'); el.className = 'msg' + (mine ? ' me' : '');
+  const t = new Date(m.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const s = document.createElement('small'); s.textContent = m.user + ' · ' + t;
+  el.appendChild(s); el.appendChild(document.createTextNode(m.text));
+  const box = $('msgs'), bottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  box.appendChild(el); if (bottom || mine) box.scrollTop = 1e9;
+}
+$('chat-form').onsubmit = e => {
+  e.preventDefault();
+  const text = $('chat-in').value.trim(); if (!text || !db || !me) return;
+  db.ref('chat').push({ user: me.name, text, ts: firebase.database.ServerValue.TIMESTAMP, uid: auth.currentUser.uid }).catch(console.error);
+  $('chat-in').value = '';
+};
+
+/* ---------- Membros (só líder) ---------- */
+const genPass = () => Array.from({ length: 6 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join('');
+const appLink = () => APP_URL || (window.Capacitor ? '(cole aqui o link do app)' : location.href.split('#')[0].split('?')[0]);
+const inviteText = (code, pass) =>
+  'Calculadora C.A.T.S\nAbra: ' + appLink() + '\nSeu código: ' + code + (pass ? '\nSenha: ' + pass : '');
+async function copyText(t){
+  try { await navigator.clipboard.writeText(t); return true; }
+  catch(e){ prompt('Copie o convite:', t); return false; }
+}
+$('m-pass-on').onchange = () => $('m-pass').classList.toggle('hidden', !$('m-pass-on').checked);
+$('m-role').onchange = () => {            // líder: já sugere senha
+  const l = $('m-role').value === 'leader';
+  if (l) { $('m-pass-on').checked = true; $('m-pass-on').onchange(); }
+};
+$('m-add').onclick = async () => {
+  const err = $('m-err'); err.textContent = '';
+  const name = $('m-name').value.trim().slice(0, 24);
+  if (!name) { err.textContent = 'Digite o nome do jogador.'; return; }
+  const role = $('m-role').value, wantPass = $('m-pass-on').checked;
+  let pass = $('m-pass').value.trim().slice(0, 30);
+  if (wantPass && !pass) pass = genPass();
+  if (role === 'leader' && !wantPass && !confirm('Líder sem senha: quem descobrir o código vira líder. Cadastrar mesmo assim?')) return;
+  let base = clean(name).slice(0, 8) || 'USER', code;
+  do { code = base + String(Math.floor(1000 + Math.random() * 9000)); } while (usersData[code]);
+  const u = { name, role }, up = {};
+  if (wantPass) u.pass = pass;
+  if (role === 'member') {
+    let slot = -1;
+    for (let i = 0; i < N; i++) if (!(atkData[i] && atkData[i].name)) { slot = i; break; }
+    if (slot < 0) { err.textContent = 'A lista de ataque está cheia (' + N + ' vagas).'; return; }
+    u.slot = String(slot); up['attacks/' + slot + '/name'] = name;
+  }
+  up['users/' + code] = u;
+  try { await db.ref().update(up); }
+  catch(e){ err.textContent = 'Não foi possível cadastrar. Tente de novo.'; return; }
+  $('m-name').value = ''; $('m-pass').value = ''; $('m-pass-on').checked = false; $('m-pass-on').onchange(); $('m-role').value = 'member';
+  const box = $('m-new'); box.classList.remove('hidden');
+  box.innerHTML = `<div><b>${esc(name)}</b> cadastrado como ${role === 'leader' ? 'líder' : 'membro'}.</div>
+    <code>${code}</code>${wantPass ? `<div>Senha: <b>${esc(pass)}</b></div>` : '<div class="ex" style="color:var(--mute)">Sem senha: entra só com o código.</div>'}
+    <button id="m-copy">Copiar convite</button>`;
+  $('m-copy').onclick = async () => { if (await copyText(inviteText(code, wantPass ? pass : ''))) $('m-copy').textContent = 'Copiado ✓'; };
+};
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+function renderUsers(){
+  const list = Object.entries(usersData).sort((a, b) => (a[1].role === b[1].role ? 0 : a[1].role === 'leader' ? -1 : 1) || String(a[1].name).localeCompare(b[1].name));
+  $('m-list').innerHTML = '';
+  list.forEach(([code, u]) => {
+    const d = document.createElement('div'); d.className = 'u';
+    d.innerHTML = `<div><div class="nm">${esc(u.name)} <span class="badge ${u.role === 'leader' ? 'lead' : ''}">${u.role === 'leader' ? 'LÍDER' : 'MEMBRO'}</span>${code === me.code ? '<span class="ex">(você)</span>' : ''}</div>
+      <div class="ex"><code>${code}</code> · ${u.pass ? '🔒 senha: ' + esc(u.pass) : 'sem senha'}${u.slot != null ? ' · vaga ' + (+u.slot + 1) : ''}</div></div>
+      <div class="acts"><button data-a="inv" aria-label="Copiar convite" title="Copiar convite">📋</button><button data-a="pw" aria-label="Senha" title="Definir ou tirar senha">🔑</button>${code === me.code ? '' : '<button data-a="del" aria-label="Remover" title="Remover acesso">🗑</button>'}</div>`;
+    d.querySelector('[data-a=inv]').onclick = async e => { if (await copyText(inviteText(code, u.pass))) { e.target.textContent = '✓'; setTimeout(() => e.target.textContent = '📋', 1500); } };
+    d.querySelector('[data-a=pw]').onclick = () => {
+      const v = prompt('Nova senha para ' + u.name + ' (deixe vazio para tirar a senha):', '');
+      if (v === null) return;
+      db.ref('users/' + code + '/pass').set(v.trim().slice(0, 30) || null).catch(console.error);
+    };
+    const del = d.querySelector('[data-a=del]');
+    if (del) del.onclick = () => {
+      if (!confirm('Remover o acesso de ' + u.name + '? Ele será desconectado.')) return;
+      db.ref('users/' + code).remove().catch(console.error);
+    };
+    $('m-list').appendChild(d);
+  });
+  if (!list.length) $('m-list').textContent = 'Nenhum acesso cadastrado.';
+}
+
+/* ---------- Liga o servidor após o login ---------- */
+let synced = false;
+function startSync(){
+  if (!db || synced) return; synced = true;
+  const denied = e => { if (e && /permission/i.test(e.code || e.message || '')) forceLogout('Seu acesso foi removido. Fale com o líder.'); };
+  db.ref('calc').on('value', s => applyCalc(s.val()), denied);
+  db.ref('attacks').on('value', s => { atkData = s.val() || {}; renderAtk(); }, denied);
+  db.ref('chat').limitToLast(100).on('child_added', s => addMsg(s.val()), denied);
+  if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); }, denied);
+}
+
+/* ---------- Início: tenta entrar sozinho com o último acesso ---------- */
+(async function boot(){
+  const msg = sessionStorage.getItem('cats_msg'); sessionStorage.removeItem('cats_msg');
+  let saved = null; try { saved = JSON.parse(localStorage.getItem('cats_login')); } catch(e){}
+  if (!online) return showLogin('Servidor indisponível. Confira a conexão.');
+  if (saved && saved.code && !msg) {
+    try { await doLogin(saved.code, saved.pass); return; }
+    catch(e){ if (!/permission/i.test((e && (e.code || e.message)) || '')) { showLogin(errText(e)); return; } localStorage.removeItem('cats_login'); }
+  }
+  showLogin(msg || '');
+})();
+
+/* ---------- PWA: service worker (não registra dentro do APK) ---------- */
+if ('serviceWorker' in navigator && !window.Capacitor && /^https?:$/.test(location.protocol)) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>

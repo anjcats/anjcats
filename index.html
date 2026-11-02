@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="C.A.T.S">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" type="image/png" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
 :root{--bg:#0a0f1a;--panel:#131b2c;--line:#23304a;--text:#eaf0fb;--mute:#8896b3;--blue:#3d8bff;--red:#ff4d5e;--gold:#ffc83d;--ok:#2fd27a}
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
@@ -213,6 +213,7 @@ body.member .atk{grid-template-columns:24px 1fr 30px 42px 42px}
       <div class="card">
         <h3>Cadastrar acesso</h3>
         <input id="m-name" placeholder="Nome do jogador" maxlength="24" autocomplete="off">
+        <input id="m-login" placeholder="Login de acesso (vazio = gerar automático)" maxlength="20" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false">
         <div class="two">
           <select id="m-role" aria-label="Tipo de acesso"><option value="member">Membro</option><option value="leader">Líder</option></select>
           <label class="chk"><input id="m-pass-on" type="checkbox"> Exigir senha</label>
@@ -559,8 +560,14 @@ $('m-add').onclick = async () => {
   let pass = $('m-pass').value.trim().slice(0, 30);
   if (wantPass && !pass) pass = genPass();
   if (role === 'leader' && !wantPass && !confirm('Líder sem senha: quem descobrir o código vira líder. Cadastrar mesmo assim?')) return;
-  let base = clean(name).slice(0, 8) || 'USER', code;
-  do { code = base + String(Math.floor(1000 + Math.random() * 9000)); } while (usersData[code]);
+  let code = clean($('m-login').value);
+  if (code) {
+    if (code.length < 4) { err.textContent = 'O login precisa ter de 4 a 20 letras ou números (sem espaço ou acento).'; return; }
+    if (usersData[code]) { err.textContent = 'Esse login já está em uso. Escolha outro.'; return; }
+  } else {
+    const base = clean(name).slice(0, 8) || 'USER';
+    do { code = base + String(Math.floor(1000 + Math.random() * 9000)); } while (usersData[code]);
+  }
   const u = { name, role }, up = {};
   if (wantPass) u.pass = pass;
   if (role === 'member') {
@@ -572,7 +579,7 @@ $('m-add').onclick = async () => {
   up['users/' + code] = u;
   try { await db.ref().update(up); }
   catch(e){ err.textContent = 'Não foi possível cadastrar. Tente de novo.'; return; }
-  $('m-name').value = ''; $('m-pass').value = ''; $('m-pass-on').checked = false; $('m-pass-on').onchange(); $('m-role').value = 'member';
+  $('m-name').value = ''; $('m-login').value = ''; $('m-pass').value = ''; $('m-pass-on').checked = false; $('m-pass-on').onchange(); $('m-role').value = 'member';
   const box = $('m-new'); box.classList.remove('hidden');
   box.innerHTML = `<div><b>${esc(name)}</b> cadastrado como ${role === 'leader' ? 'líder' : 'membro'}.</div>
     <code>${code}</code>${wantPass ? `<div>Senha: <b>${esc(pass)}</b></div>` : '<div class="ex" style="color:var(--mute)">Sem senha: entra só com o código.</div>'}

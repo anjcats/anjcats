@@ -103,6 +103,12 @@ body.member .atk{grid-template-columns:24px 1fr 30px 42px 42px}
 .atk.unav .un{background:var(--red);border-color:var(--red);color:#2b0509;opacity:1}
 .atk.done input.nm{opacity:.55;text-decoration:line-through}
 .atk.unav input.nm{opacity:.55}
+.u.edit{grid-template-columns:1fr}
+.ed{display:grid;gap:8px}
+.ed label{display:grid;gap:4px;color:var(--mute);font-size:.8rem}
+.ed .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ed .ghost{background:var(--bg);border:1px solid var(--line);color:var(--mute)}
+#e-err{color:var(--red);min-height:1em;font-size:.9rem}
 .help{color:var(--mute);font-size:.8rem;margin-top:10px;line-height:1.4}
 
 /* membros (líder) */
@@ -140,8 +146,8 @@ body.member .atk{grid-template-columns:24px 1fr 30px 42px 42px}
 <!-- LOGIN -->
 <section id="login" class="hidden">
   <h1>Calculadora<br>C.A.T.S</h1>
-  <p>Digite o seu código de acesso para entrar.</p>
-  <input id="login-in" placeholder="Código de acesso" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false">
+  <p>Digite o seu login para entrar.</p>
+  <input id="login-in" placeholder="Login de acesso" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false">
   <input id="login-pw" type="password" placeholder="Senha (só se você tiver uma)" autocomplete="off">
   <button id="login-btn">Entrar</button>
   <div id="login-err" role="alert"></div>
@@ -261,7 +267,7 @@ const online = typeof firebase !== 'undefined' && FIREBASE_CONFIG.apiKey && !FIR
 let db = null, auth = null;
 if (online) { firebase.initializeApp(FIREBASE_CONFIG); db = firebase.database(); auth = firebase.auth(); }
 
-let me = null;                      // {code,name,role,slot}
+let me = null, selfMoving = false;   // me = {code,name,role}
 let atkData = {}, usersData = {};
 const isLeader = () => !!me && me.role === 'leader';
 const clean = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -275,7 +281,7 @@ function showLogin(msg){
 function errText(e){
   const c = (e && (e.code || e.message)) || '';
   if (/timeout/i.test(c)) return 'Sem conexão com o servidor. Tente de novo.';
-  if (/permission/i.test(c)) return 'Código ou senha incorretos.';
+  if (/permission/i.test(c)) return 'Login ou senha incorretos.';
   if (/operation-not-allowed|admin-restricted/i.test(c)) return 'Falta ativar o login anônimo no Firebase (veja o LEIAME).';
   if (/network/i.test(c)) return 'Sem conexão com a internet.';
   return 'Não foi possível entrar. Tente de novo.';
@@ -289,7 +295,7 @@ async function doLogin(code, pass){
   await timeout(db.ref('sessions/' + auth.currentUser.uid).set(sess));
   const snap = await timeout(db.ref('users/' + code).once('value'));
   const u = snap.val(); if (!u) throw { code: 'permission' };
-  me = { code, name: u.name, role: u.role, slot: u.slot != null ? String(u.slot) : null };
+  me = { code, name: u.name, role: u.role };
   localStorage.setItem('cats_login', JSON.stringify({ code, pass: pass || '' }));
   enter();
 }
@@ -317,7 +323,7 @@ function enter(){
     ['bp','bs','rp','rs','tot'].forEach(id => { $(id).readOnly = true; $(id).classList.add('lk'); });
   }
   $('atk-help').textContent = isLeader()
-    ? 'Toque no ✓ (atacou) ou no ✕ (indisponível) de qualquer jogador. Edite nomes e carros aqui.'
+    ? 'Digite os nomes dos jogadores aqui. Só quem tem o mesmo nome do cadastro consegue marcar ✓ (atacou) ou ✕ (indisponível). Você marca qualquer linha.'
     : 'Toque no ✓ quando atacar ou no ✕ se não puder atacar. Você só marca a sua linha (a dourada).';
   startSync();
 }
@@ -470,7 +476,8 @@ setInterval(() => {
 
 /* ---------- Lista de ataque (25 vagas, sincronizada) ---------- */
 const rows = [];
-const canMark = i => isLeader() || (me && me.slot === String(i));
+const sameName = (a, b) => !!a && !!b && String(a).toLowerCase() === String(b).toLowerCase();
+const canMark = i => isLeader() || (!!me && sameName((atkData[i] || {}).name, me.name));
 for (let i = 0; i < N; i++) {
   const d = document.createElement('div'); d.className = 'atk';
   d.innerHTML = `<i>${i+1}</i><input class="nm" placeholder="Nome do jogador" maxlength="24" aria-label="Jogador ${i+1}">
@@ -497,7 +504,7 @@ for (let i = 0; i < N; i++) {
   $('atk-list').appendChild(d); rows.push({ d, name, cars, dn, un });
 }
 function renderAtk(){
-  let named = 0, done = 0;
+  let named = 0, done = 0, mine = 0;
   rows.forEach((r, i) => {
     const x = atkData[i] || {}, has = !!x.name;
     if (has) { named++; if (x.done) done++; }
@@ -506,13 +513,17 @@ function renderAtk(){
     r.d.classList.toggle('done', !!x.done);
     r.d.classList.toggle('unav', !!x.unavail);
     r.dn.setAttribute('aria-pressed', !!x.done); r.un.setAttribute('aria-pressed', !!x.unavail);
-    const lead = isLeader(), mark = canMark(i) && (lead || has);
+    const lead = isLeader(), mark = canMark(i);
     r.name.readOnly = !lead; r.cars.disabled = !lead;
     r.dn.disabled = r.un.disabled = !mark;
-    r.d.classList.toggle('mine', !lead && me && me.slot === String(i));
+    const own = !lead && mark; if (own) mine++;
+    r.d.classList.toggle('mine', own);
     r.d.classList.toggle('hidden', !lead && !has);          // membro só vê vagas com nome
   });
   $('atk-count').textContent = done + ' de ' + named + ' atacaram';
+  if (me && !isLeader()) $('atk-help').textContent = mine
+    ? 'Toque no ✓ quando atacar ou no ✕ se não puder atacar. Você marca só a linha com o seu nome (a dourada).'
+    : 'O seu nome (' + me.name + ') não está na lista de ataque. Peça ao líder para colocar.';
 }
 $('atk-clear').onclick = () => {
   if (!isLeader() || !confirm('Zerar as marcações (atacou / indisponível) de todos? Os nomes continuam.')) return;
@@ -542,15 +553,23 @@ $('chat-form').onsubmit = e => {
 const genPass = () => Array.from({ length: 6 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join('');
 const appLink = () => APP_URL || (window.Capacitor ? '(cole aqui o link do app)' : location.href.split('#')[0].split('?')[0]);
 const inviteText = (code, pass) =>
-  'Calculadora C.A.T.S\nAbra: ' + appLink() + '\nSeu código: ' + code + (pass ? '\nSenha: ' + pass : '');
+  'Calculadora C.A.T.S\nAbra: ' + appLink() + '\nSeu login: ' + code + (pass ? '\nSenha: ' + pass : '');
 async function copyText(t){
   try { await navigator.clipboard.writeText(t); return true; }
   catch(e){ prompt('Copie o convite:', t); return false; }
 }
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+const LOGIN_MSG = 'O login precisa ter de 4 a 20 letras ou números (sem espaço ou acento).';
+function showCard(msg, code, pass, hint){
+  const box = $('m-new'); box.classList.remove('hidden');
+  box.innerHTML = `<div>${msg}</div><code>${esc(code)}</code>` +
+    (pass ? `<div>Senha: <b>${esc(pass)}</b></div>` : '<div style="color:var(--mute);font-size:.8rem">Sem senha: entra só com o login.</div>') +
+    (hint || '') + '<button id="m-copy">Copiar convite</button>';
+  $('m-copy').onclick = async () => { if (await copyText(inviteText(code, pass))) $('m-copy').textContent = 'Copiado ✓'; };
+}
 $('m-pass-on').onchange = () => $('m-pass').classList.toggle('hidden', !$('m-pass-on').checked);
 $('m-role').onchange = () => {            // líder: já sugere senha
-  const l = $('m-role').value === 'leader';
-  if (l) { $('m-pass-on').checked = true; $('m-pass-on').onchange(); }
+  if ($('m-role').value === 'leader') { $('m-pass-on').checked = true; $('m-pass-on').onchange(); }
 };
 $('m-add').onclick = async () => {
   const err = $('m-err'); err.textContent = '';
@@ -559,48 +578,87 @@ $('m-add').onclick = async () => {
   const role = $('m-role').value, wantPass = $('m-pass-on').checked;
   let pass = $('m-pass').value.trim().slice(0, 30);
   if (wantPass && !pass) pass = genPass();
-  if (role === 'leader' && !wantPass && !confirm('Líder sem senha: quem descobrir o código vira líder. Cadastrar mesmo assim?')) return;
+  if (role === 'leader' && !wantPass && !confirm('Líder sem senha: quem descobrir o login vira líder. Cadastrar mesmo assim?')) return;
   let code = clean($('m-login').value);
   if (code) {
-    if (code.length < 4) { err.textContent = 'O login precisa ter de 4 a 20 letras ou números (sem espaço ou acento).'; return; }
+    if (code.length < 4) { err.textContent = LOGIN_MSG; return; }
     if (usersData[code]) { err.textContent = 'Esse login já está em uso. Escolha outro.'; return; }
   } else {
     const base = clean(name).slice(0, 8) || 'USER';
     do { code = base + String(Math.floor(1000 + Math.random() * 9000)); } while (usersData[code]);
   }
-  const u = { name, role }, up = {};
-  if (wantPass) u.pass = pass;
-  if (role === 'member') {
-    let slot = -1;
-    for (let i = 0; i < N; i++) if (!(atkData[i] && atkData[i].name)) { slot = i; break; }
-    if (slot < 0) { err.textContent = 'A lista de ataque está cheia (' + N + ' vagas).'; return; }
-    u.slot = String(slot); up['attacks/' + slot + '/name'] = name;
-  }
-  up['users/' + code] = u;
-  try { await db.ref().update(up); }
+  const u = { name, role }; if (wantPass) u.pass = pass;
+  try { await db.ref('users/' + code).set(u); }
   catch(e){ err.textContent = 'Não foi possível cadastrar. Tente de novo.'; return; }
   $('m-name').value = ''; $('m-login').value = ''; $('m-pass').value = ''; $('m-pass-on').checked = false; $('m-pass-on').onchange(); $('m-role').value = 'member';
-  const box = $('m-new'); box.classList.remove('hidden');
-  box.innerHTML = `<div><b>${esc(name)}</b> cadastrado como ${role === 'leader' ? 'líder' : 'membro'}.</div>
-    <code>${code}</code>${wantPass ? `<div>Senha: <b>${esc(pass)}</b></div>` : '<div class="ex" style="color:var(--mute)">Sem senha: entra só com o código.</div>'}
-    <button id="m-copy">Copiar convite</button>`;
-  $('m-copy').onclick = async () => { if (await copyText(inviteText(code, wantPass ? pass : ''))) $('m-copy').textContent = 'Copiado ✓'; };
+  const inList = Object.values(atkData).some(x => x && sameName(x.name, name));
+  showCard('<b>' + esc(name) + '</b> cadastrado como ' + (role === 'leader' ? 'líder' : 'membro') + '.', code, wantPass ? pass : '',
+    role === 'member' && !inList ? `<div style="color:var(--gold);font-size:.85rem">Falta colocar “${esc(name)}” na aba Ataques para ele poder marcar.</div>` : '');
 };
-function esc(s){ return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+
+let editing = null, draft = null;
+function buildEditRow(d, code, u){
+  const v = draft || { name: u.name, login: code, pass: u.pass || '', role: u.role };
+  const own = code === me.code;
+  d.classList.add('edit');
+  d.innerHTML = `<div class="ed">
+    <label>Nome<input id="e-name" maxlength="24" value="${esc(v.name)}" autocomplete="off"></label>
+    <label>Login<input id="e-login" maxlength="20" value="${esc(v.login)}" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false"></label>
+    <label>Senha (vazio = sem senha)<input id="e-pass" maxlength="30" value="${esc(v.pass)}" autocomplete="off"></label>
+    <label>Tipo<select id="e-role"${own ? ' disabled' : ''}><option value="member">Membro</option><option value="leader">Líder</option></select></label>
+    <div class="ex" style="color:var(--mute);font-size:.8rem">Mudar o nome também troca o nome dele na lista de ataque.${own ? ' Se mudar o seu login, o app recarrega.' : ' Se mudar login ou senha, avise a pessoa.'}</div>
+    <div class="two"><button id="e-save">Salvar</button><button id="e-cancel" class="ghost">Cancelar</button></div>
+    <div id="e-err" role="alert"></div></div>`;
+  d.querySelector('#e-role').value = v.role;
+  d.querySelector('#e-save').onclick = () => saveEdit(code);
+  d.querySelector('#e-cancel').onclick = () => { editing = null; draft = null; renderUsers(); };
+}
+async function saveEdit(oldCode){
+  const u = usersData[oldCode], err = $('e-err'); err.textContent = '';
+  if (!u) { editing = null; draft = null; return renderUsers(); }
+  const name = $('e-name').value.trim().slice(0, 24), login = clean($('e-login').value), pass = $('e-pass').value.trim().slice(0, 30);
+  const own = oldCode === me.code, role = own ? u.role : $('e-role').value;
+  if (!name) { err.textContent = 'Digite o nome.'; return; }
+  if (login.length < 4) { err.textContent = LOGIN_MSG; return; }
+  if (login !== oldCode && usersData[login]) { err.textContent = 'Esse login já está em uso.'; return; }
+  if (role === 'leader' && !pass && !confirm('Líder sem senha: quem descobrir o login vira líder. Salvar mesmo assim?')) return;
+  const rec = { name, role }; if (pass) rec.pass = pass;
+  const up = {};
+  if (name !== u.name) Object.keys(atkData).forEach(i => { if (sameName(atkData[i] && atkData[i].name, u.name)) up['attacks/' + i + '/name'] = name; });
+  const btn = $('e-save'); btn.disabled = true;
+  try {
+    if (own && login !== oldCode) {                 // mudar o próprio login: copia, troca a sessão, apaga o antigo
+      selfMoving = true;
+      await db.ref('users/' + login).set(rec);
+      const sess = { code: login }; if (pass) sess.pass = pass;
+      await db.ref('sessions/' + auth.currentUser.uid).set(sess);
+      await db.ref('users/' + oldCode).remove();
+      if (Object.keys(up).length) await db.ref().update(up);
+      localStorage.setItem('cats_login', JSON.stringify({ code: login, pass }));
+      location.reload(); return;
+    }
+    if (login !== oldCode) up['users/' + oldCode] = null;
+    up['users/' + login] = rec;
+    await db.ref().update(up);
+    if (own) localStorage.setItem('cats_login', JSON.stringify({ code: login, pass }));
+    editing = null; draft = null; renderUsers();
+    if (!own && (login !== oldCode || pass !== (u.pass || ''))) showCard('Acesso de <b>' + esc(name) + '</b> atualizado. Avise a pessoa:', login, pass, '');
+  } catch (e) { selfMoving = false; btn.disabled = false; err.textContent = 'Não foi possível salvar. Tente de novo.'; }
+}
 function renderUsers(){
+  if (editing && !usersData[editing]) { editing = null; draft = null; }
+  if (editing && $('e-name')) draft = { name: $('e-name').value, login: $('e-login').value, pass: $('e-pass').value, role: $('e-role').value };
   const list = Object.entries(usersData).sort((a, b) => (a[1].role === b[1].role ? 0 : a[1].role === 'leader' ? -1 : 1) || String(a[1].name).localeCompare(b[1].name));
   $('m-list').innerHTML = '';
   list.forEach(([code, u]) => {
     const d = document.createElement('div'); d.className = 'u';
+    if (editing === code) { buildEditRow(d, code, u); $('m-list').appendChild(d); return; }
+    const inList = Object.values(atkData).some(x => x && sameName(x.name, u.name));
     d.innerHTML = `<div><div class="nm">${esc(u.name)} <span class="badge ${u.role === 'leader' ? 'lead' : ''}">${u.role === 'leader' ? 'LÍDER' : 'MEMBRO'}</span>${code === me.code ? '<span class="ex">(você)</span>' : ''}</div>
-      <div class="ex"><code>${code}</code> · ${u.pass ? '🔒 senha: ' + esc(u.pass) : 'sem senha'}${u.slot != null ? ' · vaga ' + (+u.slot + 1) : ''}</div></div>
-      <div class="acts"><button data-a="inv" aria-label="Copiar convite" title="Copiar convite">📋</button><button data-a="pw" aria-label="Senha" title="Definir ou tirar senha">🔑</button>${code === me.code ? '' : '<button data-a="del" aria-label="Remover" title="Remover acesso">🗑</button>'}</div>`;
+      <div class="ex"><code>${esc(code)}</code> · ${u.pass ? '🔒 senha: ' + esc(u.pass) : 'sem senha'}${u.role === 'member' ? (inList ? ' · ✓ na lista de ataque' : ' · ⚠ fora da lista de ataque') : ''}</div></div>
+      <div class="acts"><button data-a="inv" aria-label="Copiar convite" title="Copiar convite">📋</button><button data-a="ed" aria-label="Editar" title="Editar nome, login e senha">✏️</button>${code === me.code ? '' : '<button data-a="del" aria-label="Remover" title="Remover acesso">🗑</button>'}</div>`;
     d.querySelector('[data-a=inv]').onclick = async e => { if (await copyText(inviteText(code, u.pass))) { e.target.textContent = '✓'; setTimeout(() => e.target.textContent = '📋', 1500); } };
-    d.querySelector('[data-a=pw]').onclick = () => {
-      const v = prompt('Nova senha para ' + u.name + ' (deixe vazio para tirar a senha):', '');
-      if (v === null) return;
-      db.ref('users/' + code + '/pass').set(v.trim().slice(0, 30) || null).catch(console.error);
-    };
+    d.querySelector('[data-a=ed]').onclick = () => { editing = code; draft = null; renderUsers(); };
     const del = d.querySelector('[data-a=del]');
     if (del) del.onclick = () => {
       if (!confirm('Remover o acesso de ' + u.name + '? Ele será desconectado.')) return;
@@ -615,9 +673,15 @@ function renderUsers(){
 let synced = false;
 function startSync(){
   if (!db || synced) return; synced = true;
-  const denied = e => { if (e && /permission/i.test(e.code || e.message || '')) forceLogout('Seu acesso foi removido. Fale com o líder.'); };
+  const denied = e => { if (e && /permission/i.test(e.code || e.message || '')) forceLogout('Seu acesso foi alterado ou removido. Fale com o líder.'); };
   db.ref('calc').on('value', s => applyCalc(s.val()), denied);
-  db.ref('attacks').on('value', s => { atkData = s.val() || {}; renderAtk(); }, denied);
+  db.ref('attacks').on('value', s => { atkData = s.val() || {}; renderAtk(); if (isLeader()) renderUsers(); }, denied);
+  db.ref('users/' + me.code).on('value', s => {            // acompanha o próprio cadastro
+    const v = s.val();
+    if (!v) { if (!selfMoving) forceLogout('Seu acesso foi alterado ou removido. Entre de novo com o login que o líder te passou.'); return; }
+    if (v.role !== me.role) { location.reload(); return; }
+    me.name = v.name; $('me').textContent = v.name; renderAtk();
+  }, denied);
   db.ref('chat').limitToLast(100).on('child_added', s => addMsg(s.val()), denied);
   if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); }, denied);
 }

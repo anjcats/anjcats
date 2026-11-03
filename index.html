@@ -120,6 +120,11 @@ textarea:focus{border-color:var(--blue)}
 .strat{background:var(--panel);border-radius:14px;padding:18px;font-size:1.3rem;line-height:1.5;white-space:pre-wrap;word-break:break-word;border-left:5px solid var(--gold);margin-bottom:10px}
 .strat.empty{color:var(--mute);font-size:1rem;border-left-color:var(--line)}
 #str-when{color:var(--mute);font-size:.85rem;margin-top:8px}
+.need{border-top:0;padding-top:0}
+.need label{color:var(--mute);font-weight:600}
+.need b{font-size:1.4rem;font-variant-numeric:tabular-nums}
+.needmsg{font-size:.88rem;color:var(--mute);text-align:right;min-height:1.2em;margin-top:-4px;line-height:1.35}
+.needmsg.ok{color:var(--ok)}.needmsg.bad{color:var(--gold)}
 .help{color:var(--mute);font-size:.8rem;margin-top:10px;line-height:1.4}
 
 /* membros (líder) */
@@ -175,11 +180,15 @@ textarea:focus{border-color:var(--blue)}
         <div class="row"><label for="bp">PPM azul</label><input id="bp" type="number" inputmode="decimal" min="0" value="0"></div>
         <div class="row only-leader"><label for="bs">Pontos azul (informar)</label><input id="bs" type="number" inputmode="decimal" min="0" value="0"></div>
         <div class="row live"><label>Pontos agora</label><b id="lb">0</b></div>
+        <div class="row need"><label>PPM necessário</label><b id="nb">--</b></div>
+        <div class="needmsg" id="mb"></div>
       </div>
       <div class="team r">
         <div class="row"><label for="rp">PPM vermelho</label><input id="rp" type="number" inputmode="decimal" min="0" value="0"></div>
         <div class="row only-leader"><label for="rs">Pontos vermelho (informar)</label><input id="rs" type="number" inputmode="decimal" min="0" value="0"></div>
         <div class="row live"><label>Pontos agora</label><b id="lr">0</b></div>
+        <div class="row need"><label>PPM necessário</label><b id="nr">--</b></div>
+        <div class="needmsg" id="mr"></div>
       </div>
       <div class="panel">
         <div class="row"><label for="tot">Total do round</label><input id="tot" type="number" inputmode="decimal" min="0" value="0"></div>
@@ -395,6 +404,19 @@ function setClock(total){
 const fmt = d => d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 function show(cls, who, sub){ $('result').innerHTML = `<div class="who ${cls}">${who}</div><div class="sub">${sub}</div>`; }
 
+/* Ritmo necessário: quantos pontos por minuto o time precisa fazer, a partir de agora, para bater a meta antes do fim */
+function needInfo(t, now){
+  if (!cs || !cs.ts) return { v: '--', msg: '', cls: '' };
+  const tot = +cs.tot || 0, ppm = +cs[t + 'p'] || 0, cur = liveVal(t, now);
+  if (tot <= 0) return { v: '--', msg: 'Defina o total do round.', cls: '' };
+  if (cur >= tot) return { v: '0', msg: 'Meta atingida ✓', cls: 'ok' };
+  const rem = ((cs.endAt || 0) - now) / 60000;
+  if (rem <= 0) return { v: '--', msg: 'Tempo esgotado. Faltaram ' + fmtN(tot - cur) + ' pontos.', cls: 'bad' };
+  const need = (tot - cur) / rem, final = Math.min(tot, cur + ppm * rem);
+  if (ppm >= need) return { v: fmtN(Math.ceil(need)), msg: 'No ritmo ✓ (PPM atual ' + fmtN(ppm) + ')', cls: 'ok' };
+  return { v: fmtN(Math.ceil(need)), msg: 'Faltam +' + fmtN(Math.ceil(need - ppm)) + ' PPM (atual ' + fmtN(ppm) + '). No ritmo atual termina com ' + fmtN(final) + '.', cls: 'bad' };
+}
+
 /* Calcula a partir do "retrato" salvo pelo líder (pontos no instante ts, fim da luta em endAt) */
 function compute(s){
   if (!s || !s.ts) return { cls: '', who: 'Aguardando', sub: isLeader() ? 'Preencha os dados.' : 'O líder ainda não preencheu os dados.' };
@@ -468,6 +490,9 @@ document.querySelectorAll('.clock .step').forEach(b => b.onclick = () => {
 function tick(){
   const nw = Date.now();
   $('lb').textContent = fmtN(liveVal('b', nw)); $('lr').textContent = fmtN(liveVal('r', nw));
+  [['b', 'nb', 'mb'], ['r', 'nr', 'mr']].forEach(([t, v, m]) => {
+    const r = needInfo(t, nw); $(v).textContent = r.v; $(m).textContent = r.msg; $(m).className = 'needmsg ' + r.cls;
+  });
   if (cs && cs.endAt) {
     const rem = Math.max(0, Math.round((cs.endAt - Date.now()) / 1000));
     $('cd').textContent = pad2(Math.floor(rem / 3600)) + ':' + pad2(Math.floor(rem % 3600 / 60)) + ':' + pad2(rem % 60);

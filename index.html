@@ -46,9 +46,10 @@ header .who{color:var(--mute);font-size:.9rem;display:flex;align-items:center;ga
 .badge.lead{background:var(--gold);color:#2b2100}
 header button{background:none;color:var(--mute);padding:6px 10px;border:1px solid var(--line)}
 main{flex:1;overflow-y:auto;padding:16px;max-width:560px;width:100%;margin:0 auto}
-nav{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);background:var(--panel);padding-bottom:env(safe-area-inset-bottom)}
-body.leader nav{grid-template-columns:repeat(5,1fr)}
-nav button{background:none;border-radius:0;padding:14px 2px;color:var(--mute);font-size:.8rem}
+nav{display:flex;overflow-x:auto;scrollbar-width:none;border-top:1px solid var(--line);background:var(--panel);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1 0 auto;min-width:58px;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border-radius:0;padding:9px 6px 10px;color:var(--mute);font-size:.68rem;font-weight:600}
+nav button .ic{font-size:1.25rem;line-height:1}
+nav::-webkit-scrollbar{display:none}
 nav button.on{color:var(--text);box-shadow:inset 0 3px 0 var(--gold)}
 
 /* calculadora */
@@ -125,6 +126,12 @@ textarea:focus{border-color:var(--blue)}
 .need b{font-size:1.4rem;font-variant-numeric:tabular-nums}
 .needmsg{font-size:.88rem;color:var(--mute);text-align:right;min-height:1.2em;margin-top:-4px;line-height:1.35}
 .needmsg.ok{color:var(--ok)}.needmsg.bad{color:var(--gold)}
+main.full{padding:0;max-width:none}
+#tab-navi{height:100%;display:flex;flex-direction:column}
+.webbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:var(--panel);border-bottom:1px solid var(--line);font-size:.8rem;color:var(--mute)}
+.webbar .acts{display:flex;gap:6px}
+.webbar a,.webbar button{background:var(--bg);border:1px solid var(--line);color:var(--text);text-decoration:none;border-radius:8px;padding:7px 10px;font-size:.8rem;font-weight:600}
+#navi-frame{flex:1;min-height:0;width:100%;border:0;background:#fff}
 .help{color:var(--mute);font-size:.8rem;margin-top:10px;line-height:1.4}
 
 /* membros (líder) */
@@ -173,7 +180,7 @@ textarea:focus{border-color:var(--blue)}
 <!-- APP -->
 <div id="app" class="hidden" style="display:flex;flex-direction:column;flex:1;min-height:0">
   <header><b>Calculadora C.A.T.S</b><span class="who"><span id="me"></span><span id="role" class="badge"></span><button id="logout">Sair</button></span></header>
-  <main>
+  <main id="main">
     <!-- Calculadora -->
     <div id="tab-calc">
       <div class="team b">
@@ -240,6 +247,16 @@ textarea:focus{border-color:var(--blue)}
       <div id="str-when"></div>
     </div>
 
+    <!-- Navimoe (site externo dentro do app) -->
+    <div id="tab-navi" class="hidden">
+      <div class="webbar">
+        <span>Navimoe C.A.T.S. Buddy · por SAK26</span>
+        <span class="acts"><button id="navi-reload" aria-label="Recarregar">↻</button><a id="navi-open" target="_blank" rel="noopener noreferrer">Abrir no navegador ↗</a></span>
+      </div>
+      <iframe id="navi-frame" title="Navimoe" referrerpolicy="no-referrer" allow="fullscreen"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-downloads"></iframe>
+    </div>
+
     <!-- Chat -->
     <div id="tab-chat" class="hidden" style="height:100%">
       <div id="chat-wrap">
@@ -270,11 +287,12 @@ textarea:focus{border-color:var(--blue)}
     </div>
   </main>
   <nav>
-    <button data-tab="calc" class="on">Calculadora</button>
-    <button data-tab="atk">Ataques</button>
-    <button data-tab="str">Estratégia<span id="str-dot" class="dot hidden"></span></button>
-    <button data-tab="chat">Chat</button>
-    <button data-tab="mem" class="only-leader">Membros</button>
+    <button data-tab="calc" class="on"><span class="ic">🧮</span>Calculadora</button>
+    <button data-tab="atk"><span class="ic">⚔️</span>Ataques</button>
+    <button data-tab="str"><span class="ic">🎯</span><span>Estratégia<span id="str-dot" class="dot hidden"></span></span></button>
+    <button data-tab="navi"><span class="ic">🚗</span>Navimoe</button>
+    <button data-tab="chat"><span class="ic">💬</span>Chat</button>
+    <button data-tab="mem" class="only-leader"><span class="ic">👥</span>Membros</button>
   </nav>
 </div>
 
@@ -294,6 +312,7 @@ const FIREBASE_CONFIG = {
 };
 /* Link público do app (usado no convite). Se deixar vazio, usa o endereço atual. */
 const APP_URL = '';
+const NAVI_URL = 'https://sak-20744.github.io/Navimoe/';
 /* ============================ */
 
 const N = 25;                       // vagas na lista de ataque
@@ -364,11 +383,15 @@ function enter(){
 }
 
 /* ---------- Abas ---------- */
+$('navi-open').href = NAVI_URL;
+$('navi-reload').onclick = () => { $('navi-frame').src = NAVI_URL; };
 let curTab = 'calc';
 document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
   curTab = b.dataset.tab;
   document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
-  ['calc','atk','str','chat','mem'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== curTab));
+  ['calc','atk','str','navi','chat','mem'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== curTab));
+  $('main').classList.toggle('full', curTab === 'navi');
+  if (curTab === 'navi' && !$('navi-frame').getAttribute('src')) $('navi-frame').src = NAVI_URL;   // só carrega quando abrir a aba
   if (curTab === 'chat') { $('msgs').scrollTop = 1e9; }
   if (curTab === 'str') markStrSeen();
 });

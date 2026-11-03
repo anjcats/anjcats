@@ -127,11 +127,14 @@ textarea:focus{border-color:var(--blue)}
 .needmsg{font-size:.88rem;color:var(--mute);text-align:right;min-height:1.2em;margin-top:-4px;line-height:1.35}
 .needmsg.ok{color:var(--ok)}.needmsg.bad{color:var(--gold)}
 main.full{padding:0;max-width:none}
-#tab-navi{height:100%;display:flex;flex-direction:column}
+#tab-cars{height:100%;display:flex;flex-direction:column}
+.subtabs{display:flex;background:var(--bg);border-bottom:1px solid var(--line)}
+.subtabs button{flex:1;background:none;border-radius:0;padding:11px 8px;color:var(--mute);font-size:.85rem;font-weight:700}
+.subtabs button.on{color:var(--text);box-shadow:inset 0 -3px 0 var(--gold)}
 .webbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:var(--panel);border-bottom:1px solid var(--line);font-size:.8rem;color:var(--mute)}
 .webbar .acts{display:flex;gap:6px}
 .webbar a,.webbar button{background:var(--bg);border:1px solid var(--line);color:var(--text);text-decoration:none;border-radius:8px;padding:7px 10px;font-size:.8rem;font-weight:600}
-#navi-frame{flex:1;min-height:0;width:100%;border:0;background:#fff}
+.carframe{flex:1;min-height:0;width:100%;border:0;background:#fff}
 .help{color:var(--mute);font-size:.8rem;margin-top:10px;line-height:1.4}
 
 /* membros (líder) */
@@ -247,13 +250,19 @@ main.full{padding:0;max-width:none}
       <div id="str-when"></div>
     </div>
 
-    <!-- Navimoe (site externo dentro do app) -->
-    <div id="tab-navi" class="hidden">
-      <div class="webbar">
-        <span>Navimoe C.A.T.S. Buddy · por SAK26</span>
-        <span class="acts"><button id="navi-reload" aria-label="Recarregar">↻</button><a id="navi-open" target="_blank" rel="noopener noreferrer">Abrir no navegador ↗</a></span>
+    <!-- Carros (sites externos dentro do app: Navimoe + Calculadora de peças) -->
+    <div id="tab-cars" class="hidden">
+      <div class="subtabs">
+        <button data-sub="navi" class="on">🚗 Navimoe</button>
+        <button data-sub="parts">🔧 Calc. de peças</button>
       </div>
-      <iframe id="navi-frame" title="Navimoe" referrerpolicy="no-referrer" allow="fullscreen"
+      <div class="webbar">
+        <span id="cars-title">Navimoe C.A.T.S. Buddy · por SAK26</span>
+        <span class="acts"><button id="cars-reload" aria-label="Recarregar">↻</button><a id="cars-open" target="_blank" rel="noopener noreferrer">Abrir no navegador ↗</a></span>
+      </div>
+      <iframe id="frame-navi" class="carframe" title="Navimoe" referrerpolicy="no-referrer" allow="fullscreen"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-downloads"></iframe>
+      <iframe id="frame-parts" class="carframe hidden" title="Calculadora de peças" referrerpolicy="no-referrer" allow="fullscreen"
         sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-downloads"></iframe>
     </div>
 
@@ -290,7 +299,7 @@ main.full{padding:0;max-width:none}
     <button data-tab="calc" class="on"><span class="ic">🧮</span>Calculadora</button>
     <button data-tab="atk"><span class="ic">⚔️</span>Ataques</button>
     <button data-tab="str"><span class="ic">🎯</span><span>Estratégia<span id="str-dot" class="dot hidden"></span></span></button>
-    <button data-tab="navi"><span class="ic">🚗</span>Navimoe</button>
+    <button data-tab="cars"><span class="ic">🚗</span>Carros</button>
     <button data-tab="chat"><span class="ic">💬</span>Chat</button>
     <button data-tab="mem" class="only-leader"><span class="ic">👥</span>Membros</button>
   </nav>
@@ -312,7 +321,10 @@ const FIREBASE_CONFIG = {
 };
 /* Link público do app (usado no convite). Se deixar vazio, usa o endereço atual. */
 const APP_URL = '';
-const NAVI_URL = 'https://sak-20744.github.io/Navimoe/';
+const CARS = {
+  navi:  { url: 'https://sak-20744.github.io/Navimoe/', title: 'Navimoe C.A.T.S. Buddy · por SAK26' },
+  parts: { url: 'https://elitecatstools.vercel.app/parts-calculator/index.html', title: 'Calculadora de peças · Elite CATS Tools' }
+};
 /* ============================ */
 
 const N = 25;                       // vagas na lista de ataque
@@ -383,15 +395,25 @@ function enter(){
 }
 
 /* ---------- Abas ---------- */
-$('navi-open').href = NAVI_URL;
-$('navi-reload').onclick = () => { $('navi-frame').src = NAVI_URL; };
+let curSub = 'navi';
+function showSub(k) {
+  curSub = k;
+  document.querySelectorAll('.subtabs button').forEach(x => x.classList.toggle('on', x.dataset.sub === k));
+  Object.keys(CARS).forEach(n => $('frame-' + n).classList.toggle('hidden', n !== k));
+  $('cars-title').textContent = CARS[k].title;
+  $('cars-open').href = CARS[k].url;
+  const f = $('frame-' + k);
+  if (!f.getAttribute('src')) f.src = CARS[k].url;   // só carrega quando abrir
+}
+document.querySelectorAll('.subtabs button').forEach(b => b.onclick = () => showSub(b.dataset.sub));
+$('cars-reload').onclick = () => { $('frame-' + curSub).src = CARS[curSub].url; };
 let curTab = 'calc';
 document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
   curTab = b.dataset.tab;
   document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
-  ['calc','atk','str','navi','chat','mem'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== curTab));
-  $('main').classList.toggle('full', curTab === 'navi');
-  if (curTab === 'navi' && !$('navi-frame').getAttribute('src')) $('navi-frame').src = NAVI_URL;   // só carrega quando abrir a aba
+  ['calc','atk','str','cars','chat','mem'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== curTab));
+  $('main').classList.toggle('full', curTab === 'cars');
+  if (curTab === 'cars') showSub(curSub);
   if (curTab === 'chat') { $('msgs').scrollTop = 1e9; }
   if (curTab === 'str') markStrSeen();
 });

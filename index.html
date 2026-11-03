@@ -46,9 +46,9 @@ header .who{color:var(--mute);font-size:.9rem;display:flex;align-items:center;ga
 .badge.lead{background:var(--gold);color:#2b2100}
 header button{background:none;color:var(--mute);padding:6px 10px;border:1px solid var(--line)}
 main{flex:1;overflow-y:auto;padding:16px;max-width:560px;width:100%;margin:0 auto}
-nav{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);background:var(--panel);padding-bottom:env(safe-area-inset-bottom)}
-body.leader nav{grid-template-columns:repeat(4,1fr)}
-nav button{background:none;border-radius:0;padding:14px 4px;color:var(--mute);font-size:.92rem}
+nav{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);background:var(--panel);padding-bottom:env(safe-area-inset-bottom)}
+body.leader nav{grid-template-columns:repeat(5,1fr)}
+nav button{background:none;border-radius:0;padding:14px 2px;color:var(--mute);font-size:.8rem}
 nav button.on{color:var(--text);box-shadow:inset 0 3px 0 var(--gold)}
 
 /* calculadora */
@@ -109,6 +109,17 @@ body.member .atk{grid-template-columns:24px 1fr 30px 42px 42px}
 .ed .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .ed .ghost{background:var(--bg);border:1px solid var(--line);color:var(--mute)}
 #e-err{color:var(--red);min-height:1em;font-size:.9rem}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-left:4px;vertical-align:middle}
+body.leader .only-member{display:none!important}
+.live{border-top:1px dashed rgba(255,255,255,.12);padding-top:8px}
+.live label{color:var(--mute);font-weight:600}
+.live b{font-size:1.7rem;font-variant-numeric:tabular-nums}
+.team.b .live b{color:#7db4ff}.team.r .live b{color:#ff8a96}
+textarea{width:100%;min-height:150px;resize:vertical;background:#0a1120;border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--text);font-size:1.05rem;font-family:inherit;line-height:1.4;outline:none}
+textarea:focus{border-color:var(--blue)}
+.strat{background:var(--panel);border-radius:14px;padding:18px;font-size:1.3rem;line-height:1.5;white-space:pre-wrap;word-break:break-word;border-left:5px solid var(--gold);margin-bottom:10px}
+.strat.empty{color:var(--mute);font-size:1rem;border-left-color:var(--line)}
+#str-when{color:var(--mute);font-size:.85rem;margin-top:8px}
 .help{color:var(--mute);font-size:.8rem;margin-top:10px;line-height:1.4}
 
 /* membros (líder) */
@@ -162,11 +173,13 @@ body.member .atk{grid-template-columns:24px 1fr 30px 42px 42px}
     <div id="tab-calc">
       <div class="team b">
         <div class="row"><label for="bp">PPM azul</label><input id="bp" type="number" inputmode="decimal" min="0" value="0"></div>
-        <div class="row"><label for="bs">Pontos azul</label><input id="bs" type="number" inputmode="decimal" min="0" value="0"></div>
+        <div class="row only-leader"><label for="bs">Pontos azul (informar)</label><input id="bs" type="number" inputmode="decimal" min="0" value="0"></div>
+        <div class="row live"><label>Pontos agora</label><b id="lb">0</b></div>
       </div>
       <div class="team r">
         <div class="row"><label for="rp">PPM vermelho</label><input id="rp" type="number" inputmode="decimal" min="0" value="0"></div>
-        <div class="row"><label for="rs">Pontos vermelho</label><input id="rs" type="number" inputmode="decimal" min="0" value="0"></div>
+        <div class="row only-leader"><label for="rs">Pontos vermelho (informar)</label><input id="rs" type="number" inputmode="decimal" min="0" value="0"></div>
+        <div class="row live"><label>Pontos agora</label><b id="lr">0</b></div>
       </div>
       <div class="panel">
         <div class="row"><label for="tot">Total do round</label><input id="tot" type="number" inputmode="decimal" min="0" value="0"></div>
@@ -206,6 +219,18 @@ body.member .atk{grid-template-columns:24px 1fr 30px 42px 42px}
       <p class="help" id="atk-help"></p>
     </div>
 
+    <!-- Estratégia -->
+    <div id="tab-str" class="hidden">
+      <div id="str-view" class="strat empty only-member">Nenhuma estratégia definida ainda.</div>
+      <div class="card only-leader">
+        <h3>Mensagem de estratégia</h3>
+        <textarea id="str-in" maxlength="600" placeholder="Ex.: Atacar 4 prédios apenas"></textarea>
+        <button id="str-save">Salvar estratégia</button>
+        <div class="help" style="margin:0">Todos os membros veem esta mensagem. Só líderes podem mudar. Deixe vazio e salve para limpar.</div>
+      </div>
+      <div id="str-when"></div>
+    </div>
+
     <!-- Chat -->
     <div id="tab-chat" class="hidden" style="height:100%">
       <div id="chat-wrap">
@@ -238,6 +263,7 @@ body.member .atk{grid-template-columns:24px 1fr 30px 42px 42px}
   <nav>
     <button data-tab="calc" class="on">Calculadora</button>
     <button data-tab="atk">Ataques</button>
+    <button data-tab="str">Estratégia<span id="str-dot" class="dot hidden"></span></button>
     <button data-tab="chat">Chat</button>
     <button data-tab="mem" class="only-leader">Membros</button>
   </nav>
@@ -329,10 +355,13 @@ function enter(){
 }
 
 /* ---------- Abas ---------- */
+let curTab = 'calc';
 document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  curTab = b.dataset.tab;
   document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
-  ['calc','atk','chat','mem'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== b.dataset.tab));
-  if (b.dataset.tab === 'chat') { $('msgs').scrollTop = 1e9; }
+  ['calc','atk','str','chat','mem'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== curTab));
+  if (curTab === 'chat') { $('msgs').scrollTop = 1e9; }
+  if (curTab === 'str') markStrSeen();
 });
 
 /* ---------- Calculadora (líder edita, todos veem ao vivo) ---------- */
@@ -343,6 +372,16 @@ const CALC_IDS = ['bp','bs','rp','rs','tot','th','tn'];
 const calcFocused = () => CALC_IDS.includes(document.activeElement && document.activeElement.id);
 
 const pad2 = n => String(n).padStart(2, '0');
+const fmtN = v => Math.floor(v).toLocaleString('pt-BR');
+/* Pontos de agora = pontos do retrato + PPM x minutos passados (para quando o tempo acaba ou ao chegar no total) */
+function liveVal(t, now){
+  if (!cs || !cs.ts) return 0;
+  const base = +cs[t + 's'] || 0, ppm = +cs[t + 'p'] || 0;
+  const end = cs.endAt ? Math.min(now, cs.endAt) : now;
+  let v = base + ppm * Math.max(0, end - cs.ts) / 60000;
+  if (cs.tot > 0) v = Math.min(v, Math.max(base, +cs.tot));
+  return v;
+}
 const MAXMIN = 99 * 60 + 59;
 function clockMinutes(){
   const h = parseInt($('th').value, 10) || 0, m = parseInt($('tn').value, 10) || 0;
@@ -383,7 +422,9 @@ function renderCalc(){
   schedule();
 }
 function fillInputs(){
-  ['bp','bs','rp','rs','tot'].forEach(k => { $(k).value = cs ? (cs[k] || 0) : 0; });
+  const now = Date.now();
+  ['bp','rp','tot'].forEach(k => { $(k).value = cs ? (cs[k] || 0) : 0; });
+  $('bs').value = Math.floor(liveVal('b', now)); $('rs').value = Math.floor(liveVal('r', now));
   setClock(cs && cs.endAt ? Math.max(0, Math.ceil((cs.endAt - Date.now()) / 60000)) : 0);
 }
 function applyCalc(v){
@@ -392,34 +433,41 @@ function applyCalc(v){
 }
 
 /* O líder edita → grava o retrato no servidor (com pequena pausa para não gravar a cada tecla) */
-function leaderEdit(clockEdit){
+function leaderEdit(clockEdit, which){
   if (!isLeader()) return;
-  const now = Date.now();
-  const s = { bp: +$('bp').value || 0, bs: +$('bs').value || 0, rp: +$('rp').value || 0, rs: +$('rs').value || 0,
-              tot: +$('tot').value || 0, endAt: (cs && cs.endAt) || 0, ts: now };
+  const now = Date.now(), typed = k => +$(k).value || 0;
+  /* Ao mudar PPM, total ou tempo, os pontos de agora viram o novo ponto de partida (nada se perde).
+     Ao digitar os pontos de um time, vale o que foi digitado; o outro time segue de onde estava. */
+  const bs = (!cs || which === 'bs') ? typed('bs') : liveVal('b', now);
+  const rs = (!cs || which === 'rs') ? typed('rs') : liveVal('r', now);
+  const s = { bp: typed('bp'), bs, rp: typed('rp'), rs, tot: typed('tot'), endAt: (cs && cs.endAt) || 0, ts: now };
   if (clockEdit || !s.endAt) s.endAt = now + clockMinutes() * 60000;
+  if (which !== 'bs' && document.activeElement !== $('bs')) $('bs').value = Math.floor(bs);
+  if (which !== 'rs' && document.activeElement !== $('rs')) $('rs').value = Math.floor(rs);
   cs = s; renderCalc(); tick();
   clearTimeout(wTimer);
   wTimer = setTimeout(() => db.ref('calc').set(cs).catch(console.error), 350);
 }
-['bp','bs','rp','rs','tot'].forEach(id => $(id).addEventListener('input', () => leaderEdit(false)));
+['bp','bs','rp','rs','tot'].forEach(id => $(id).addEventListener('input', () => leaderEdit(false, id)));
 ['th','tn'].forEach(id => {
   const el = $(id);
   el.addEventListener('focus', () => setTimeout(() => el.select(), 0));
   el.addEventListener('input', () => {
     el.value = el.value.replace(/\D/g, '').slice(0, 2);
     if (id === 'th' && el.value.length === 2) { $('tn').focus(); }
-    leaderEdit(true);
+    leaderEdit(true, 'clock');
   });
   el.addEventListener('blur', () => setClock(clockMinutes()));     // 90 min vira 01:30
   el.addEventListener('keydown', e => { if (e.key === 'Enter') el.blur(); });
 });
 document.querySelectorAll('.clock .step').forEach(b => b.onclick = () => {
-  setClock(clockMinutes() + (+b.dataset.add)); leaderEdit(true);
+  setClock(clockMinutes() + (+b.dataset.add)); leaderEdit(true, 'clock');
 });
 
 /* Contagem regressiva ao vivo */
 function tick(){
+  const nw = Date.now();
+  $('lb').textContent = fmtN(liveVal('b', nw)); $('lr').textContent = fmtN(liveVal('r', nw));
   if (cs && cs.endAt) {
     const rem = Math.max(0, Math.round((cs.endAt - Date.now()) / 1000));
     $('cd').textContent = pad2(Math.floor(rem / 3600)) + ':' + pad2(Math.floor(rem % 3600 / 60)) + ':' + pad2(rem % 60);
@@ -530,6 +578,31 @@ $('atk-clear').onclick = () => {
   const up = {};
   rows.forEach((r, i) => { const x = atkData[i]; if (x && (x.done || x.unavail)) { up['attacks/' + i + '/done'] = false; up['attacks/' + i + '/unavail'] = false; } });
   if (Object.keys(up).length) db.ref().update(up).catch(console.error);
+};
+
+/* ---------- Estratégia (líder escreve, todos leem) ---------- */
+let strData = null;
+function markStrSeen(){
+  if (strData && strData.ts) localStorage.setItem('cats_str_seen', String(strData.ts));
+  $('str-dot').classList.add('hidden');
+}
+function applyStrategy(v){
+  strData = v || null;
+  const txt = (v && v.text) || '';
+  const view = $('str-view'); view.textContent = txt || 'Nenhuma estratégia definida ainda.'; view.classList.toggle('empty', !txt);
+  $('str-when').textContent = v && v.ts && txt ? 'Atualizado às ' + new Date(v.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+  if (isLeader() && document.activeElement !== $('str-in')) $('str-in').value = txt;
+  if (curTab === 'str') markStrSeen();
+  else $('str-dot').classList.toggle('hidden', !(txt && v.ts > (+localStorage.getItem('cats_str_seen') || 0)));
+}
+$('str-save').onclick = async () => {
+  if (!isLeader()) return;
+  const btn = $('str-save'); btn.disabled = true;
+  try {
+    await timeout(db.ref('strategy').set({ text: $('str-in').value.trim().slice(0, 600), ts: firebase.database.ServerValue.TIMESTAMP }));
+    btn.textContent = 'Salvo ✓';
+  } catch (e) { btn.textContent = 'Erro, tente de novo'; }
+  setTimeout(() => { btn.textContent = 'Salvar estratégia'; btn.disabled = false; }, 1600);
 };
 
 /* ---------- Chat ---------- */
@@ -675,6 +748,7 @@ function startSync(){
   if (!db || synced) return; synced = true;
   const denied = e => { if (e && /permission/i.test(e.code || e.message || '')) forceLogout('Seu acesso foi alterado ou removido. Fale com o líder.'); };
   db.ref('calc').on('value', s => applyCalc(s.val()), denied);
+  db.ref('strategy').on('value', s => applyStrategy(s.val()), denied);
   db.ref('attacks').on('value', s => { atkData = s.val() || {}; renderAtk(); if (isLeader()) renderUsers(); }, denied);
   db.ref('users/' + me.code).on('value', s => {            // acompanha o próprio cadastro
     const v = s.val();

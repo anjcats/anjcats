@@ -98,7 +98,6 @@ input[readonly].lk{background:transparent;border-color:transparent;pointer-event
 .btabs button small{font-size:.72rem;font-weight:600;opacity:.85}
 .btabs button.on{color:var(--text);border-color:var(--gold);box-shadow:inset 0 -3px 0 var(--gold)}
 .atk{display:grid;grid-template-columns:24px 1fr 56px 42px 42px;gap:6px;align-items:center;margin-bottom:8px;padding-left:6px;border-left:3px solid transparent}
-body.member .atk{grid-template-columns:24px 1fr 30px 42px 42px}
 .atk.mine{border-left-color:var(--gold)}
 .atk i{color:var(--mute);font-style:normal;font-size:.85rem;text-align:right}
 .atk select{padding:10px 4px}
@@ -108,8 +107,8 @@ body.member .atk{grid-template-columns:24px 1fr 30px 42px 42px}
 .atk .tg:disabled{opacity:.45}
 .atk.done .dn{background:var(--ok);border-color:var(--ok);color:#04230f;opacity:1}
 .atk.unav .un{background:var(--red);border-color:var(--red);color:#2b0509;opacity:1}
-.atk.done input.nm{opacity:.55;text-decoration:line-through}
-.atk.unav input.nm{opacity:.55}
+.atk.done input.nm{background:#134a2e;border-color:var(--ok)}
+.atk.unav input.nm{background:#4d141c;border-color:var(--red)}
 .u.edit{grid-template-columns:1fr}
 .ed{display:grid;gap:8px}
 .ed label{display:grid;gap:4px;color:var(--mute);font-size:.8rem}
@@ -396,9 +395,7 @@ function enter(){
   if (!isLeader()) {
     ['bp','bs','rp','rs','tot'].forEach(id => { $(id).readOnly = true; $(id).classList.add('lk'); });
   }
-  $('atk-help').textContent = isLeader()
-    ? 'Escolha o prédio, digite o nome do jogador e os carros. Ao preencher um nome, abre a próxima vaga. Para tirar alguém, apague o nome. Só quem tem o mesmo nome do cadastro marca ✓ ou ✕; você marca qualquer linha.'
-    : 'Toque no ✓ quando atacar ou no ✕ se não puder atacar. Você só marca a sua linha (a dourada).';
+  $('atk-help').textContent = 'Escolha o prédio, digite o nome do jogador e os carros. Ao preencher um nome, abre a próxima vaga. ✓ deixa a barra verde (atacou) e ✕ deixa vermelha (indisponível). Para tirar alguém, apague o nome.';
   startSync();
 }
 
@@ -609,7 +606,7 @@ const rows = [];                                // rows[prédio][vaga]
 const bBtns = [];
 let curB = 0;
 const sameName = (a, b) => !!a && !!b && String(a).toLowerCase() === String(b).toLowerCase();
-const canMark = k => isLeader() || (!!me && sameName((atkData[k] || {}).name, me.name));
+const canMark = k => !!me;                       // qualquer pessoa com acesso ao app marca
 
 for (let b = 0; b < NB; b++) {
   const bt = document.createElement('button');
@@ -628,7 +625,7 @@ for (let b = 0; b < NB; b++) {
       <button class="tg un" aria-label="Indisponível" aria-pressed="false">✕</button>`;
     const [, name, cars, dn, un] = d.children;
     name.onchange = () => {
-      if (!isLeader()) return;
+      if (!me) return;
       const v = name.value.trim();
       if (v) db.ref('attacks/' + k + '/name').set(v).catch(console.error);
       else {                                    // nome apagado = remove o jogador da lista
@@ -637,7 +634,7 @@ for (let b = 0; b < NB; b++) {
       }
     };
     name.addEventListener('keydown', e => { if (e.key === 'Enter') name.blur(); });
-    cars.onchange = () => { if (isLeader()) db.ref('attacks/' + k + '/cars').set(+cars.value); };
+    cars.onchange = () => { if (me) db.ref('attacks/' + k + '/cars').set(+cars.value); };
     dn.onclick = () => {
       if (!canMark(k)) return;
       const x = atkData[k] || {}, nv = !x.done, up = {};
@@ -669,13 +666,12 @@ function renderAtk(){
       r.d.classList.toggle('done', !!x.done);
       r.d.classList.toggle('unav', !!x.unavail);
       r.dn.setAttribute('aria-pressed', !!x.done); r.un.setAttribute('aria-pressed', !!x.unavail);
-      r.name.readOnly = !lead; r.cars.disabled = !lead || !has;
-      const mark = has && canMark(k);
-      r.dn.disabled = r.un.disabled = !mark;
-      const own = !lead && mark; if (own) mine++;
+      r.name.readOnly = false; r.cars.disabled = !has;
+      r.dn.disabled = r.un.disabled = !has;
+      const own = has && !!me && sameName(x.name, me.name); if (own) mine++;
       r.d.classList.toggle('mine', own);
-      /* líder vê os nomes + UMA vaga vazia (a próxima); membro só vê quem tem nome */
-      const show = has || (lead && (i === firstEmpty || document.activeElement === r.name));
+      /* todos veem os nomes + UMA vaga vazia (a próxima) */
+      const show = has || i === firstEmpty || document.activeElement === r.name;
       r.d.classList.toggle('hidden', !show);
     }
     allNamed += named; allDone += done;
@@ -685,10 +681,7 @@ function renderAtk(){
     rows[b][0].d.parentNode.classList.toggle('hidden', b !== curB);
   }
   $('atk-count').textContent = 'Prédio ' + (curB + 1) + ': ' + curDone + ' de ' + curNamed + ' atacaram' + (allNamed > curNamed ? ' · geral ' + allDone + '/' + allNamed : '');
-  $('atk-empty').textContent = (!curNamed && !lead) ? 'Ninguém na lista do Prédio ' + (curB + 1) + ' ainda.' : '';
-  if (me && !lead) $('atk-help').textContent = mine
-    ? 'Toque no ✓ quando atacar ou no ✕ se não puder atacar. Você marca só a linha com o seu nome (a dourada).'
-    : 'O seu nome (' + me.name + ') não está em nenhum prédio. Peça ao líder para colocar.';
+  $('atk-empty').textContent = '';
 }
 function clearMarks(list){
   const up = {};

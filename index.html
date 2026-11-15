@@ -13,16 +13,21 @@
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
-:root{--bg:#0a0f1a;--panel:#131b2c;--line:#23304a;--text:#eaf0fb;--mute:#8896b3;--blue:#3d8bff;--red:#ff4d5e;--gold:#ffc83d;--ok:#2fd27a}
+:root{color-scheme:dark;--bg:#0a0f1a;--panel:#131b2c;--line:#23304a;--text:#eaf0fb;--mute:#8896b3;--blue:#3d8bff;--red:#ff4d5e;--gold:#ffc83d;--ok:#2fd27a;
+  --inp:#0a1120;--deep:#050a14;--tb:#0e2342;--tr:#3a1220;--newbg:#0e2a1d;--donebg:#134a2e;--unbg:#4d141c;--meb:#16407a;--badge:#1d2a45;
+  --noff:#4a2026;--non:#1d5b3a;--lb:#7db4ff;--lr:#ff8a96;--dash:rgba(255,255,255,.12);--gshadow:rgba(255,200,61,.35);--btnfg:#eaf0fb}
+:root[data-theme="light"]{color-scheme:light;--bg:#f3f6fc;--panel:#ffffff;--line:#d3dbe9;--text:#111a2e;--mute:#5c6b88;--blue:#2f73e0;--red:#d93a4b;--gold:#b9800a;--ok:#1f9d5a;
+  --inp:#ffffff;--deep:#eaf0fa;--tb:#e3eeff;--tr:#ffe7eb;--newbg:#e2f6ea;--donebg:#cdf1dd;--unbg:#fcd9de;--meb:#d3e4ff;--badge:#e1e8f5;
+  --noff:#f7d7db;--non:#cdf1dd;--lb:#1f5fc4;--lr:#c42b3d;--dash:rgba(0,0,0,.14);--gshadow:transparent;--btnfg:#ffffff}
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 html,body{height:100%}
 body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
 .hidden{display:none!important}
 body.member .only-leader{display:none!important}
 input,select,button{font-size:1rem;color:var(--text)}
-input,select{background:#0a1120;border:1px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;min-width:0}
+input,select{background:var(--inp);border:1px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;min-width:0}
 input:focus,select:focus{border-color:var(--blue)}
-button{border:0;border-radius:10px;padding:12px;font-weight:700;cursor:pointer;background:var(--blue)}
+button{border:0;border-radius:10px;padding:12px;font-weight:700;cursor:pointer;background:var(--blue);color:var(--btnfg)}
 button:disabled{cursor:default}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 
@@ -42,7 +47,7 @@ button:disabled{cursor:default}
 header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);gap:8px}
 header b{font-size:1.1rem}
 header .who{color:var(--mute);font-size:.9rem;display:flex;align-items:center;gap:8px}
-.badge{font-size:.65rem;font-weight:800;letter-spacing:.08em;padding:3px 7px;border-radius:99px;background:#1d2a45;color:var(--mute)}
+.badge{font-size:.65rem;font-weight:800;letter-spacing:.08em;padding:3px 7px;border-radius:99px;background:var(--badge);color:var(--mute)}
 .badge.lead{background:var(--gold);color:#2b2100}
 header button{background:none;color:var(--mute);padding:6px 10px;border:1px solid var(--line)}
 main{flex:1;overflow-y:auto;padding:16px;max-width:560px;width:100%;margin:0 auto}
@@ -54,23 +59,23 @@ nav button.on{color:var(--text);box-shadow:inset 0 3px 0 var(--gold)}
 
 /* calculadora */
 .team{border-radius:14px;padding:14px;margin-bottom:12px;display:grid;gap:10px}
-.team.b{background:#0e2342;border-left:5px solid var(--blue)}
-.team.r{background:#3a1220;border-left:5px solid var(--red)}
+.team.b{background:var(--tb);border-left:5px solid var(--blue)}
+.team.r{background:var(--tr);border-left:5px solid var(--red)}
 .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .row label{font-weight:600}
 .row input{width:55%;text-align:right;font-size:1.3rem;font-weight:700}
 input[readonly].lk{background:transparent;border-color:transparent;pointer-events:none}
 .panel{background:var(--panel);border-radius:14px;padding:14px;margin-bottom:12px;display:grid;gap:10px}
-.btn-n.off{background:#4a2026}.btn-n.on{background:#1d5b3a}
+.btn-n{color:var(--text)}.btn-n.off{background:var(--noff)}.btn-n.on{background:var(--non)}
 
 /* relógio (horas e minutos) */
 .clock-box{display:grid;gap:8px;justify-items:center}
 .clock-box>label{font-weight:600;justify-self:start}
-.clock{display:flex;align-items:center;justify-content:center;gap:6px;background:#050a14;border:1px solid var(--line);border-radius:16px;padding:10px 16px;box-shadow:inset 0 0 22px rgba(61,139,255,.12)}
+.clock{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--deep);border:1px solid var(--line);border-radius:16px;padding:10px 16px;box-shadow:inset 0 0 22px rgba(61,139,255,.12)}
 .clock .unit{display:grid;justify-items:center;gap:2px}
 .clock .step{background:none;color:var(--mute);padding:4px 14px;font-size:.95rem;line-height:1;border-radius:8px}
 .clock .step:active{color:var(--gold);background:var(--panel)}
-.clock input{width:2.1ch;box-sizing:content-box;text-align:center;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;font-size:3rem;font-weight:700;line-height:1.1;color:var(--gold);background:transparent;border:0;border-bottom:2px solid transparent;border-radius:0;padding:0 2px;text-shadow:0 0 14px rgba(255,200,61,.35)}
+.clock input{width:2.1ch;box-sizing:content-box;text-align:center;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;font-size:3rem;font-weight:700;line-height:1.1;color:var(--gold);background:transparent;border:0;border-bottom:2px solid transparent;border-radius:0;padding:0 2px;text-shadow:0 0 14px var(--gshadow)}
 .clock input:focus{border-bottom-color:var(--gold)}
 .clock small{color:var(--mute);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase}
 .clock .colon{font-family:ui-monospace,monospace;font-size:3rem;font-weight:700;color:var(--gold);line-height:1;margin-bottom:18px;animation:blink 1.6s steps(1) infinite}
@@ -78,9 +83,9 @@ input[readonly].lk{background:transparent;border-color:transparent;pointer-event
 @media (prefers-reduced-motion:reduce){.clock .colon{animation:none}}
 
 /* contagem regressiva ao vivo (todos veem) */
-.count-box{display:grid;gap:4px;justify-items:center;background:#050a14;border:1px solid var(--line);border-radius:16px;padding:12px 16px;box-shadow:inset 0 0 22px rgba(61,139,255,.12)}
+.count-box{display:grid;gap:4px;justify-items:center;background:var(--deep);border:1px solid var(--line);border-radius:16px;padding:12px 16px;box-shadow:inset 0 0 22px rgba(61,139,255,.12)}
 .count-box small{color:var(--mute);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase}
-#cd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;font-size:2.4rem;font-weight:700;color:var(--gold);text-shadow:0 0 14px rgba(255,200,61,.35)}
+#cd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;font-size:2.4rem;font-weight:700;color:var(--gold);text-shadow:0 0 14px var(--gshadow)}
 #cd-end{color:var(--mute);font-size:.85rem;min-height:1.1em}
 #result{background:var(--panel);border-radius:14px;padding:16px;border:1px solid var(--line)}
 #result .who{font-size:1.6rem;font-weight:800;letter-spacing:-.02em}
@@ -107,8 +112,8 @@ input[readonly].lk{background:transparent;border-color:transparent;pointer-event
 .atk .tg:disabled{opacity:.45}
 .atk.done .dn{background:var(--ok);border-color:var(--ok);color:#04230f;opacity:1}
 .atk.unav .un{background:var(--red);border-color:var(--red);color:#2b0509;opacity:1}
-.atk.done input.nm{background:#134a2e;border-color:var(--ok)}
-.atk.unav input.nm{background:#4d141c;border-color:var(--red)}
+.atk.done input.nm{background:var(--donebg);border-color:var(--ok)}
+.atk.unav input.nm{background:var(--unbg);border-color:var(--red)}
 .u.edit{grid-template-columns:1fr}
 .ed{display:grid;gap:8px}
 .ed label{display:grid;gap:4px;color:var(--mute);font-size:.8rem}
@@ -117,11 +122,11 @@ input[readonly].lk{background:transparent;border-color:transparent;pointer-event
 #e-err{color:var(--red);min-height:1em;font-size:.9rem}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-left:4px;vertical-align:middle}
 body.leader .only-member{display:none!important}
-.live{border-top:1px dashed rgba(255,255,255,.12);padding-top:8px}
+.live{border-top:1px dashed var(--dash);padding-top:8px}
 .live label{color:var(--mute);font-weight:600}
 .live b{font-size:1.7rem;font-variant-numeric:tabular-nums}
-.team.b .live b{color:#7db4ff}.team.r .live b{color:#ff8a96}
-textarea{width:100%;min-height:150px;resize:vertical;background:#0a1120;border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--text);font-size:1.05rem;font-family:inherit;line-height:1.4;outline:none}
+.team.b .live b{color:var(--lb)}.team.r .live b{color:var(--lr)}
+textarea{width:100%;min-height:150px;resize:vertical;background:var(--inp);border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--text);font-size:1.05rem;font-family:inherit;line-height:1.4;outline:none}
 textarea:focus{border-color:var(--blue)}
 .strat{background:var(--panel);border-radius:14px;padding:18px;font-size:1.3rem;line-height:1.5;white-space:pre-wrap;word-break:break-word;border-left:5px solid var(--gold);margin-bottom:10px}
 .strat.empty{color:var(--mute);font-size:1rem;border-left-color:var(--line)}
@@ -149,7 +154,7 @@ main.full{padding:0;max-width:none}
 .card label.chk{display:flex;align-items:center;gap:8px;color:var(--mute)}
 .card label.chk input{width:18px;height:18px}
 #m-err{color:var(--red);min-height:1.1em;font-size:.9rem}
-#m-new{background:#0e2a1d;border:1px solid var(--ok);border-radius:14px;padding:14px;margin-bottom:12px;display:grid;gap:8px}
+#m-new{background:var(--newbg);border:1px solid var(--ok);border-radius:14px;padding:14px;margin-bottom:12px;display:grid;gap:8px}
 #m-new code{font-size:1.6rem;font-weight:800;letter-spacing:.06em;color:var(--gold)}
 .u{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
 .u:first-child{border-top:0}
@@ -157,17 +162,26 @@ main.full{padding:0;max-width:none}
 .u code{font-family:ui-monospace,monospace;color:var(--gold);letter-spacing:.04em}
 .u .ex{color:var(--mute);font-size:.8rem}
 .u .acts{display:flex;gap:6px}
-.u .acts button{background:var(--bg);border:1px solid var(--line);padding:8px 10px;font-size:.95rem}
+.u .acts button{color:var(--text);background:var(--bg);border:1px solid var(--line);padding:8px 10px;font-size:.95rem}
+
+/* configuração */
+.themes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.themes button{display:grid;gap:6px;justify-items:center;padding:18px 8px;background:var(--bg);border:2px solid var(--line);color:var(--text);font-size:.95rem}
+.themes button .sw{width:44px;height:44px;border-radius:50%;border:2px solid var(--line)}
+.themes button[data-theme-opt=dark] .sw{background:#0a0f1a}
+.themes button[data-theme-opt=light] .sw{background:#ffffff}
+.themes button.on{border-color:var(--gold);box-shadow:inset 0 -4px 0 var(--gold)}
 
 /* chat */
 #chat-wrap{display:flex;flex-direction:column;height:100%}
 #msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:10px}
 .msg{max-width:80%;padding:9px 12px;border-radius:14px;background:var(--panel);line-height:1.35;word-break:break-word}
 .msg small{display:block;color:var(--mute);font-size:.72rem;margin-bottom:2px}
-.msg.me{align-self:flex-end;background:#16407a}
+.msg.me{align-self:flex-end;background:var(--meb)}
 #chat-form{display:flex;gap:8px;padding-top:8px}
 #chat-in{flex:1}
 </style>
+<script>try{if(localStorage.getItem('cats_theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
 </head>
 <body>
 
@@ -281,6 +295,19 @@ main.full{padding:0;max-width:none}
       </div>
     </div>
 
+    <!-- Configuração -->
+    <div id="tab-cfg" class="hidden">
+      <div class="card">
+        <h3>Cor de fundo</h3>
+        <div class="themes">
+          <button data-theme-opt="dark" aria-pressed="false"><span class="sw"></span>⚫ Preto</button>
+          <button data-theme-opt="light" aria-pressed="false"><span class="sw"></span>⚪ Branco</button>
+        </div>
+        <div class="help" style="margin:0">A escolha fica salva neste aparelho.</div>
+      </div>
+      <div class="credits">Desenvolvido por <b>NITRO ZEUS</b></div>
+    </div>
+
     <!-- Membros (só líder) -->
     <div id="tab-mem" class="hidden only-leader">
       <div class="card">
@@ -309,6 +336,7 @@ main.full{padding:0;max-width:none}
     <button data-tab="cars"><span class="ic">🚗</span>Carros</button>
     <button data-tab="chat"><span class="ic">💬</span>Chat</button>
     <button data-tab="mem" class="only-leader"><span class="ic">👥</span>Membros</button>
+    <button data-tab="cfg"><span class="ic">⚙️</span>Configuração</button>
   </nav>
 </div>
 
@@ -399,6 +427,18 @@ function enter(){
   startSync();
 }
 
+/* ---------- Tema (preto / branco) ---------- */
+function applyTheme(t){
+  if (t === 'light') document.documentElement.setAttribute('data-theme', 'light'); else document.documentElement.removeAttribute('data-theme');
+  const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = t === 'light' ? '#f3f6fc' : '#0a0f1a';
+  document.querySelectorAll('[data-theme-opt]').forEach(b => { const on = b.dataset.themeOpt === t; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+}
+document.querySelectorAll('[data-theme-opt]').forEach(b => b.onclick = () => {
+  try { localStorage.setItem('cats_theme', b.dataset.themeOpt); } catch(e){}
+  applyTheme(b.dataset.themeOpt);
+});
+(() => { let t = 'dark'; try { t = localStorage.getItem('cats_theme') === 'light' ? 'light' : 'dark'; } catch(e){} applyTheme(t); })();
+
 /* ---------- Abas ---------- */
 let curSub = 'navi';
 function showSub(k) {
@@ -416,7 +456,7 @@ let curTab = 'calc';
 document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
   curTab = b.dataset.tab;
   document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
-  ['calc','atk','str','cars','chat','mem'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== curTab));
+  ['calc','atk','str','cars','chat','mem','cfg'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== curTab));
   $('main').classList.toggle('full', curTab === 'cars');
   if (curTab === 'cars') showSub(curSub);
   if (curTab === 'chat') { $('msgs').scrollTop = 1e9; }

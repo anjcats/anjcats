@@ -176,7 +176,7 @@ main.full{padding:0;max-width:none}
 .themes button.on{border-color:var(--gold);box-shadow:inset 0 -4px 0 var(--gold)}
 
 /* tags: DEV e patente */
-.devtag{display:inline-block;margin-left:5px;padding:0 5px;border-radius:4px;font-size:.62rem;font-weight:800;letter-spacing:.06em;background:#0ea5a4;color:#fff;vertical-align:1px}
+.devtag{display:inline-block;margin:0 5px 0 1px;padding:0 5px;border-radius:4px;font-size:.62rem;font-weight:800;letter-spacing:.06em;background:#0ea5a4;color:#fff;vertical-align:1px}
 .rk{display:inline-block;margin-left:5px;padding:0 5px;border-radius:4px;font-size:.62rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;vertical-align:1px;background:#5b6785;color:#fff}
 .rk[data-t="1"]{background:#2f73e0}
 .rk[data-t="2"]{background:#d9711a}
@@ -214,6 +214,22 @@ main.full{padding:0;max-width:none}
 .msg.me{align-self:flex-end;background:var(--meb)}
 #chat-form{display:flex;gap:8px;padding-top:8px}
 #chat-in{flex:1}
+.nmc{font-weight:700}
+.tg{display:inline-block;margin:0 5px 0 1px;padding:0 5px;border-radius:4px;font-size:.62rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#fff;vertical-align:1px}
+.msg.big .mt{font-size:2rem;line-height:1.2}
+.rx{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.rx button{background:var(--bg);border:1px solid var(--line);color:var(--text);padding:2px 8px;border-radius:99px;font-size:.78rem;line-height:1.5}
+.rx button.mine{border-color:var(--blue)}
+.rx .add{color:var(--mute)}
+.pick,#emo{display:flex;flex-wrap:wrap;gap:2px;margin-top:5px}
+.pick button,#emo button{background:none;font-size:1.3rem;padding:3px 6px}
+#emo{background:var(--panel);border-radius:12px;padding:6px;margin:6px 0 0}
+#emo-btn{background:var(--panel);padding:10px 12px}
+.cols{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.cols button{width:34px;height:34px;border-radius:50%;padding:0;border:2px solid transparent;color:#fff}
+.cols button.on{border-color:var(--text)}
+.on-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ok);margin-right:6px}
+#on-list div{padding:4px 0}
 </style>
 <script>try{if(localStorage.getItem('cats_theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
 </head>
@@ -361,7 +377,7 @@ main.full{padding:0;max-width:none}
     <div id="tab-chat" class="hidden" style="height:100%">
       <div id="chat-wrap">
         <div id="msgs"></div>
-        <form id="chat-form"><input id="chat-in" placeholder="Mensagem" autocomplete="off" maxlength="500"><button>Enviar</button></form>
+        <div id="emo" class="hidden"></div><form id="chat-form"><button type="button" id="emo-btn" aria-label="Emotes">😊</button><input id="chat-in" placeholder="Mensagem" autocomplete="off" maxlength="500"><button>Enviar</button></form>
       </div>
     </div>
 
@@ -380,11 +396,25 @@ main.full{padding:0;max-width:none}
         <div id="rk-list"></div>
         <div class="help" style="margin:0">A patente aparece ao lado do nome no chat e nas sugestões, em mensagens novas.</div>
       </div>
+      <div class="card only-leader">
+        <h3>Tags dos membros</h3>
+        <div id="tg-list"></div>
+        <div class="help" style="margin:0">A tag aparece à esquerda do nome, no chat e nas sugestões, em mensagens novas.</div>
+      </div>
+      <div class="card">
+        <h3>Cor do seu nome</h3>
+        <div class="cols" id="col-list"></div>
+        <div class="help" style="margin:0">Aparece no chat e nas sugestões, em mensagens novas.</div>
+      </div>
       <div class="credits">Desenvolvido por <b>NITRO ZEUS</b></div>
     </div>
 
     <!-- Membros (só líder) -->
     <div id="tab-mem" class="hidden only-staff">
+      <div class="card only-leader">
+        <h3>Online agora <span id="on-n"></span></h3>
+        <div id="on-list" class="help" style="margin:0">Ninguém online.</div>
+      </div>
       <div class="card">
         <h3>Cadastrar acesso</h3>
         <input id="m-name" placeholder="Nome do jogador" maxlength="24" autocomplete="off">
@@ -474,7 +504,7 @@ async function doLogin(code, pass){
   await timeout(db.ref('sessions/' + auth.currentUser.uid).set(sess));
   const snap = await timeout(db.ref('users/' + code).once('value'));
   const u = snap.val(); if (!u) throw { code: 'permission' };
-  me = { code, name: u.name, role: u.role, rank: u.rank || '' };
+  me = { code, name: u.name, role: u.role, rank: u.rank || '', tag: u.tag || '' };
   localStorage.setItem('cats_login', JSON.stringify({ code, pass: pass || '' }));
   enter();
 }
@@ -855,20 +885,77 @@ let isDev = false;   // vira true se o login for o definido em config/dev no Fir
 
 const crownSvg = c => `<svg class="crown" viewBox="0 0 24 24" aria-hidden="true"><path fill="${c}" stroke="rgba(0,0,0,.35)" stroke-width="1" stroke-linejoin="round" d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>`;
 const roleCrown = r => r === 'leader' ? crownSvg('#ffc83d') : r === 'mod' ? crownSvg('#c8d0dc') : '';
-const nameTag = m => roleCrown(m.role) + esc(m.user) + devTag(m.dev) + rankTag(m.rank);
+const TAGS = [['dev','Dev','#0ea5a4'],['lider','Líder','#e0a21b'],['vice','Vice-líder','#d9711a'],['capitao','Capitão','#2f73e0'],['estrategista','Estrategista','#8b5cf6'],['veterano','Veterano','#5b6785'],['elite','Elite','#d93a4b'],['suporte','Suporte','#20a56b']];
+const tagPill = t => { const x = TAGS.find(a => a[0] === t); return x ? `<span class="tg" style="background:${x[2]}">${x[1]}</span>` : ''; };
+const colOk = c => /^#[0-9a-f]{6}$/.test(c || '');
+const nameTag = m => roleCrown(m.role) + tagPill(m.tag) + (m.tag === 'dev' ? '' : devTag(m.dev)) + '<span class="nmc"' + (colOk(m.color) ? ` style="color:${m.color}"` : '') + '>' + esc(m.user) + '</span>' + rankTag(m.rank);
 const postMeta = () => {                                // campos de cargo/patente/dev que acompanham cada mensagem
   const o = { role: me.role };
   if (me.rank) o.rank = me.rank;
+  if (me.tag) o.tag = me.tag;
   if (isDev) o.dev = true;
+  if (colOk(myColor)) o.color = myColor;
   return o;
 };
-function addMsg(m, box){
+/* ---- cor do nome, reações, emotes e presença ---- */
+let myColor = '', presData = {};
+const COLORS = ['#ff6b6b','#ff9f43','#ffd43b','#51cf66','#20c997','#4dabf7','#748ffc','#da77f2','#f783ac','#adb5bd'];
+function renderCols(){
+  const box = $('col-list'); box.innerHTML = '';
+  [''].concat(COLORS).forEach(c => {
+    const b = document.createElement('button'); b.type = 'button';
+    b.style.background = c || 'var(--panel)'; if (!c) { b.textContent = '✕'; b.style.color = 'var(--mute)'; b.title = 'Cor padrão'; }
+    if (c === myColor) b.className = 'on';
+    b.onclick = () => { myColor = c; renderCols(); if (db && me) (c ? db.ref('prefs/' + me.code + '/color').set(c) : db.ref('prefs/' + me.code).remove()).catch(console.error); };
+    box.appendChild(b);
+  });
+}
+renderCols();
+const RX = [['like','👍'],['heart','❤️'],['laugh','😂'],['wow','😮'],['sad','😢'],['fire','🔥']];
+const rxData = {}, msgEls = {};
+function toggleRx(id, k){
+  const on = rxData[id] && rxData[id][k] && rxData[id][k][me.code], r = db.ref('reactions/' + id + '/' + k + '/' + me.code);
+  (on ? r.remove() : r.set(true)).catch(console.error);
+}
+function renderRx(id){
+  const el = msgEls[id]; if (!el || !me) return;
+  const box = el.querySelector('.rx'), d = rxData[id] || {}; box.innerHTML = '';
+  RX.forEach(([k, e]) => {
+    const n = Object.keys(d[k] || {}).length; if (!n) return;
+    const b = document.createElement('button'); b.textContent = e + ' ' + n; if (d[k][me.code]) b.className = 'mine'; b.onclick = () => toggleRx(id, k); box.appendChild(b);
+  });
+  const add = document.createElement('button'); add.className = 'add'; add.textContent = '☺ +'; add.setAttribute('aria-label', 'Reagir');
+  add.onclick = () => el.querySelector('.pick').classList.toggle('hidden'); box.appendChild(add);
+}
+const EMO = ['😀','😂','🤣','😍','😎','🤔','😅','😭','😡','👍','👎','👏','🙏','💪','🔥','🎯','⚔️','🚗','💥','🏆','❤️','😱','🤝','🫡'];
+EMO.forEach(e => { const b = document.createElement('button'); b.type = 'button'; b.textContent = e; b.onclick = () => { $('chat-in').value += e; $('chat-in').focus(); }; $('emo').appendChild(b); });
+$('emo-btn').onclick = () => $('emo').classList.toggle('hidden');
+function renderOnline(){
+  const arr = Object.entries(presData).sort((a, b) => String(a[1].name).localeCompare(b[1].name));
+  $('on-n').textContent = arr.length ? '(' + arr.length + ')' : '';
+  $('on-list').innerHTML = arr.length ? arr.map(([c, p]) => `<div><span class="on-dot"></span>${esc(p.name)}${usersData[c] ? ' ' + roleBadge(usersData[c].role) : ''}</div>`).join('') : 'Ninguém online.';
+}
+function startPresence(){
+  const ref = db.ref('presence/' + me.code);
+  const go = () => ref.onDisconnect().remove().then(() => ref.set({ name: me.name, ts: firebase.database.ServerValue.TIMESTAMP })).catch(() => {});
+  db.ref('.info/connected').on('value', s => { if (s.val() === true && !document.hidden) go(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) ref.remove().catch(() => {}); else go(); });
+  if (isLeader()) db.ref('presence').on('value', s => { presData = s.val() || {}; renderOnline(); renderUsers(); }, () => {});
+}
+function addMsg(m, box, key){
   box = box || $('msgs');
   const mine = !!auth.currentUser && m.uid === auth.currentUser.uid;
-  const el = document.createElement('div'); el.className = 'msg' + (mine ? ' me' : '');
+  const big = /^[\p{Extended_Pictographic}\uFE0F\u200D\s]{1,16}$/u.test(m.text);
+  const el = document.createElement('div'); el.className = 'msg' + (mine ? ' me' : '') + (big ? ' big' : '');
   const t = new Date(m.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
   const s = document.createElement('small'); s.innerHTML = nameTag(m) + ' · ' + t;
-  el.appendChild(s); el.appendChild(document.createTextNode(m.text));
+  const tx = document.createElement('div'); tx.className = 'mt'; tx.textContent = m.text;
+  el.appendChild(s); el.appendChild(tx);
+  if (key) {
+    const rx = document.createElement('div'); rx.className = 'rx'; const pk = document.createElement('div'); pk.className = 'pick hidden';
+    RX.forEach(([k, e]) => { const b = document.createElement('button'); b.textContent = e; b.onclick = () => { pk.classList.add('hidden'); toggleRx(key, k); }; pk.appendChild(b); });
+    el.appendChild(rx); el.appendChild(pk); msgEls[key] = el; renderRx(key);
+  }
   const bottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   box.appendChild(el); if (bottom || mine) box.scrollTop = 1e9;
 }
@@ -975,6 +1062,22 @@ function renderRanks(){
   if (!box.children.length) box.textContent = 'Nenhum acesso cadastrado.';
 }
 
+function renderTags(){
+  if (!isLeader()) return;
+  const box = $('tg-list'); if (box.contains(document.activeElement)) return;
+  box.innerHTML = '';
+  Object.entries(usersData).sort((a, b) => String(a[1].name).localeCompare(String(b[1].name))).forEach(([code, u]) => {
+    const row = document.createElement('div'); row.className = 'rkrow';
+    row.innerHTML = `<div>${tagPill(u.tag)}${esc(u.name)}</div>`;
+    const sel = document.createElement('select'); sel.setAttribute('aria-label', 'Tag de ' + u.name);
+    sel.innerHTML = '<option value="">— sem tag —</option>' + TAGS.map(t => `<option value="${t[0]}">${t[1]}</option>`).join('');
+    sel.value = u.tag || '';
+    sel.onchange = () => { const v = sel.value, r = db.ref('users/' + code + '/tag'); (v ? r.set(v) : r.remove()).catch(console.error); };
+    row.appendChild(sel); box.appendChild(row);
+  });
+  if (!box.children.length) box.textContent = 'Nenhum acesso cadastrado.';
+}
+
 /* ---------- Membros (só líder) ---------- */
 const genPass = () => Array.from({ length: 6 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join('');
 const appLink = () => APP_URL || (window.Capacitor ? '(cole aqui o link do app)' : location.href.split('#')[0].split('?')[0]);
@@ -1049,7 +1152,7 @@ async function saveEdit(oldCode){
   if (login.length < 4) { err.textContent = LOGIN_MSG; return; }
   if (login !== oldCode && usersData[login]) { err.textContent = 'Esse login já está em uso.'; return; }
   if (role !== 'member' && !pass && !confirm('Sem senha: quem descobrir o login ganha o poder de ' + roleName(role) + '. Salvar mesmo assim?')) return;
-  const rec = { name, role }; if (pass) rec.pass = pass; if (u.rank) rec.rank = u.rank;   // mantém a patente
+  const rec = { name, role }; if (pass) rec.pass = pass; if (u.rank) rec.rank = u.rank; if (u.tag) rec.tag = u.tag;   // mantém a patente
   const up = {};
   if (name !== u.name) Object.keys(atkData).forEach(i => { if (sameName(atkData[i] && atkData[i].name, u.name)) up['attacks/' + i + '/name'] = name; });
   const btn = $('e-save'); btn.disabled = true;
@@ -1085,7 +1188,7 @@ function renderUsers(){
     }
     if (editing === code) { buildEditRow(d, code, u); $('m-list').appendChild(d); return; }
     const inList = Object.values(atkData).some(x => x && sameName(x.name, u.name));
-    d.innerHTML = `<div><div class="nm">${esc(u.name)} ${roleBadge(u.role)}${rankTag(u.rank)}${code === me.code ? '<span class="ex">(você)</span>' : ''}</div>
+    d.innerHTML = `<div><div class="nm">${presData[code] ? '<span class="on-dot"></span>' : ''}${esc(u.name)} ${roleBadge(u.role)}${rankTag(u.rank)}${code === me.code ? '<span class="ex">(você)</span>' : ''}</div>
       <div class="ex"><code>${esc(code)}</code> · ${u.pass ? '🔒 senha: ' + esc(u.pass) : 'sem senha'}${u.role === 'member' ? (inList ? ' · ✓ na lista de ataque' : ' · ⚠ fora da lista de ataque') : ''}</div></div>
       <div class="acts"><button data-a="inv" aria-label="Copiar convite" title="Copiar convite">📋</button><button data-a="ed" aria-label="Editar" title="Editar nome, login e senha">✏️</button>${code === me.code ? '' : '<button data-a="del" aria-label="Remover" title="Remover acesso">🗑</button>'}</div>`;
     d.querySelector('[data-a=inv]').onclick = async e => { if (await copyText(inviteText(code, u.pass))) { e.target.textContent = '✓'; setTimeout(() => e.target.textContent = '📋', 1500); } };
@@ -1112,11 +1215,17 @@ function startSync(){
     const v = s.val();
     if (!v) { if (!selfMoving) forceLogout('Seu acesso foi alterado ou removido. Entre de novo com o login que o líder te passou.'); return; }
     if (v.role !== me.role) { location.reload(); return; }
-    me.name = v.name; me.rank = v.rank || ''; $('me').textContent = v.name; renderAtk();
+    me.name = v.name; me.rank = v.rank || ''; me.tag = v.tag || ''; $('me').textContent = v.name; renderAtk();
   }, denied);
-  db.ref('chat').limitToLast(100).on('child_added', s => addMsg(s.val()), denied);
+  db.ref('chat').limitToLast(100).on('child_added', s => addMsg(s.val(), null, s.key), denied);
+  const rxSet = s => { rxData[s.key] = s.val() || {}; renderRx(s.key); };
+  db.ref('reactions').limitToLast(200).on('child_added', rxSet, () => {});
+  db.ref('reactions').limitToLast(200).on('child_changed', rxSet, () => {});
+  db.ref('reactions').limitToLast(200).on('child_removed', s => { delete rxData[s.key]; renderRx(s.key); }, () => {});
+  db.ref('prefs/' + me.code + '/color').once('value').then(s => { myColor = colOk(s.val()) ? s.val() : ''; renderCols(); }).catch(() => {});
+  startPresence();
   const quiet = () => {};                                  // se as regras ainda não permitem, não desloga o moderador
-  if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); renderRanks(); }, denied);
+  if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); renderRanks(); renderTags(); }, denied);
   else if (isMod()) db.ref('users').orderByChild('role').equalTo('member').on('value', s => { usersData = s.val() || {}; renderUsers(); }, quiet);   // moderador só enxerga membros
   db.ref('config/dev').once('value').then(s => { isDev = s.val() === me.code; }).catch(() => {});                  // quem é o DEV (definido no Firebase)
   db.ref('ideas').limitToLast(100).on('child_added', s => addIdea(s.key, s.val()), quiet);

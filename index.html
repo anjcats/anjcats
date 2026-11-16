@@ -38,11 +38,18 @@ button:disabled{cursor:default}
 
 /* login */
 #boot{flex:1;display:flex;align-items:center;justify-content:center;color:var(--mute)}
-#login{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:28px;max-width:420px;margin:auto;width:100%}
-#login h1{font-size:2.4rem;letter-spacing:-.03em;line-height:1}
-#login p{color:var(--mute)}
+#login,#apply{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:28px;max-width:420px;margin:auto;width:100%}
+#login h1,#apply h1{font-size:2.4rem;letter-spacing:-.03em;line-height:1}
+#login p,#apply p{color:var(--mute)}
 #login-err{color:var(--red);min-height:1.2em}
 #login-in{text-transform:uppercase}
+#apply-btn,#ap-back{background:none;border:1px solid var(--line);color:var(--mute)}
+#ap-form{display:grid;gap:10px}
+#ap-login{text-transform:uppercase}
+.hp{position:absolute;left:-9999px;opacity:0;height:0;width:0}
+#ap-err{color:var(--red);min-height:1.2em}
+#ap-status,#rec-new{background:var(--panel);border-radius:14px;padding:14px;display:grid;gap:8px}
+#ap-status code,#rec-new code{font-size:1.3rem;color:var(--gold);letter-spacing:.04em}
 
 /* app */
 header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);gap:8px}
@@ -246,7 +253,23 @@ main.full{padding:0;max-width:none}
   <input id="login-pw" type="password" placeholder="Senha (só se você tiver uma)" autocomplete="off">
   <button id="login-btn">Entrar</button>
   <div id="login-err" role="alert"></div>
+  <button id="apply-btn" type="button">Quero me juntar ao clã</button>
   <div class="credits">Desenvolvido por <b>NITRO ZEUS</b></div>
+</section>
+
+<section id="apply" class="hidden">
+  <h1>Juntar-se ao clã</h1>
+  <div id="ap-form">
+    <p>Escolha como você vai entrar no app. Os líderes avaliam e, se aprovarem, você entra com o login e a senha que colocar aqui.</p>
+    <input id="ap-name" placeholder="Seu nome no jogo" maxlength="24" autocomplete="off">
+    <input id="ap-login" placeholder="Login para entrar (4 a 20 letras ou números)" maxlength="20" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false">
+    <input id="ap-pass" placeholder="Senha (só se quiser uma)" maxlength="30" autocomplete="off">
+    <input id="ap-site" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <button id="ap-send" type="button">Enviar pedido</button>
+  </div>
+  <div id="ap-status" class="hidden"></div>
+  <div id="ap-err" role="alert"></div>
+  <button id="ap-back" type="button">Voltar ao login</button>
 </section>
 
 <!-- APP -->
@@ -411,6 +434,12 @@ main.full{padding:0;max-width:none}
 
     <!-- Membros (só líder) -->
     <div id="tab-mem" class="hidden only-staff">
+      <div id="rec-new" class="hidden only-leader"></div>
+      <div class="card only-leader">
+        <h3>Pedidos para entrar <span id="rec-n"></span></h3>
+        <div id="rec-list">Nenhum pedido.</div>
+        <div class="help" style="margin:0">✅ aprova e cria o acesso com o login e a senha que a pessoa escolheu. ❌ recusa.</div>
+      </div>
       <div class="card only-leader">
         <h3>Online agora <span id="on-n"></span></h3>
         <div id="on-list" class="help" style="margin:0">Ninguém online.</div>
@@ -440,7 +469,7 @@ main.full{padding:0;max-width:none}
     <button data-tab="str"><span class="ic">🎯</span><span>Estratégia<span id="str-dot" class="dot hidden"></span></span></button>
     <button data-tab="cars"><span class="ic">🚗</span>Carros</button>
     <button data-tab="chat"><span class="ic">💬</span>Chat</button>
-    <button data-tab="mem" class="only-staff"><span class="ic">👥</span>Membros</button>
+    <button data-tab="mem" class="only-staff"><span class="ic">👥</span><span>Membros<span id="rec-dot" class="dot hidden"></span></span></button>
     <button data-tab="cfg"><span class="ic">⚙️</span>Configuração</button>
   </nav>
 </div>
@@ -926,6 +955,11 @@ function renderRx(id){
   });
   const add = document.createElement('button'); add.className = 'add'; add.textContent = '☺ +'; add.setAttribute('aria-label', 'Reagir');
   add.onclick = () => el.querySelector('.pick').classList.toggle('hidden'); box.appendChild(add);
+  if (isLeader()) {
+    const x = document.createElement('button'); x.className = 'add'; x.textContent = '🗑'; x.setAttribute('aria-label', 'Apagar mensagem');
+    x.onclick = () => { if (!confirm('Apagar esta mensagem para todos?')) return; db.ref('chat/' + id).remove().catch(console.error); db.ref('reactions/' + id).remove().catch(() => {}); };
+    box.appendChild(x);
+  }
 }
 const EMO = ['😀','😂','🤣','😍','😎','🤔','😅','😭','😡','👍','👎','👏','🙏','💪','🔥','🎯','⚔️','🚗','💥','🏆','❤️','😱','🤝','🫡'];
 EMO.forEach(e => { const b = document.createElement('button'); b.type = 'button'; b.textContent = e; b.onclick = () => { $('chat-in').value += e; $('chat-in').focus(); }; $('emo').appendChild(b); });
@@ -1218,6 +1252,8 @@ function startSync(){
     me.name = v.name; me.rank = v.rank || ''; me.tag = v.tag || ''; $('me').textContent = v.name; renderAtk();
   }, denied);
   db.ref('chat').limitToLast(100).on('child_added', s => addMsg(s.val(), null, s.key), denied);
+  db.ref('chat').limitToLast(100).on('child_removed', s => { const el = msgEls[s.key]; if (el) { el.remove(); delete msgEls[s.key]; } }, () => {});
+  if (isLeader()) db.ref('applications').on('value', s => { appsData = s.val() || {}; renderRec(); }, () => {});
   const rxSet = s => { rxData[s.key] = s.val() || {}; renderRx(s.key); };
   db.ref('reactions').limitToLast(200).on('child_added', rxSet, () => {});
   db.ref('reactions').limitToLast(200).on('child_changed', rxSet, () => {});
@@ -1225,13 +1261,82 @@ function startSync(){
   db.ref('prefs/' + me.code + '/color').once('value').then(s => { myColor = colOk(s.val()) ? s.val() : ''; renderCols(); }).catch(() => {});
   startPresence();
   const quiet = () => {};                                  // se as regras ainda não permitem, não desloga o moderador
-  if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); renderRanks(); renderTags(); }, denied);
+  if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); renderRanks(); renderTags(); renderRec(); }, denied);
   else if (isMod()) db.ref('users').orderByChild('role').equalTo('member').on('value', s => { usersData = s.val() || {}; renderUsers(); }, quiet);   // moderador só enxerga membros
   db.ref('config/dev').once('value').then(s => { isDev = s.val() === me.code; }).catch(() => {});                  // quem é o DEV (definido no Firebase)
   db.ref('ideas').limitToLast(100).on('child_added', s => addIdea(s.key, s.val()), quiet);
   db.ref('ideas').on('child_removed', s => { const el = ideaEls[s.key]; if (el) { el.remove(); delete ideaEls[s.key]; } }, quiet);
   db.ref('battles').on('value', s => { batData = s.val() || {}; renderBat(); }, quiet);
 
+}
+
+/* ---------- Pedidos para entrar no clã: formulário público + aba Membros ---------- */
+let apRef = null, appsData = {};
+function renderApp(a){
+  $('ap-form').classList.toggle('hidden', !!a); const box = $('ap-status'); box.classList.toggle('hidden', !a);
+  if (!a) return;
+  if (a.status === 'approved') {
+    box.innerHTML = `<b>Aprovado! 🎉 Bem-vindo, ${esc(a.name)}.</b><div>Entre com o login <code>${esc(a.login)}</code>${a.pass ? ' e a senha que você escolheu' : ' (sem senha)'}.</div><button id="ap-go" type="button">Entrar agora</button>`;
+    $('ap-go').onclick = () => { $('apply').classList.add('hidden'); $('login').classList.remove('hidden'); $('login-in').value = a.login; $('login-pw').value = a.pass || ''; };
+  } else if (a.status === 'rejected') box.innerHTML = '<b>Pedido não aprovado.</b><div>Fale com um líder do clã se quiser tentar de novo.</div>';
+  else box.innerHTML = `<b>Pedido enviado ✓</b><div>Os líderes vão avaliar. Volte a esta tela depois: se for aprovado, você entra com o login <code>${esc(a.login)}</code>.</div>`;
+}
+async function watchApp(){
+  if (!online) { $('ap-err').textContent = 'Servidor indisponível. Confira a conexão.'; return; }
+  try { if (!auth.currentUser) await timeout(auth.signInAnonymously()); } catch (e) { $('ap-err').textContent = errText(e); return; }
+  if (apRef) apRef.off();
+  apRef = db.ref('applications/' + auth.currentUser.uid);
+  apRef.on('value', s => renderApp(s.val()), () => renderApp(null));
+}
+$('apply-btn').onclick = () => { $('login').classList.add('hidden'); $('apply').classList.remove('hidden'); $('ap-err').textContent = ''; watchApp(); };
+$('ap-back').onclick = () => { if (apRef) { apRef.off(); apRef = null; } $('apply').classList.add('hidden'); $('login').classList.remove('hidden'); };
+$('ap-send').onclick = async () => {
+  const err = $('ap-err'); err.textContent = '';
+  if ($('ap-site').value) return;                         // campo-isca: só robô preenche
+  const name = $('ap-name').value.trim().slice(0, 24), login = clean($('ap-login').value), pass = $('ap-pass').value.trim().slice(0, 30);
+  if (!name) { err.textContent = 'Digite o seu nome no jogo.'; return; }
+  if (login.length < 4) { err.textContent = LOGIN_MSG; return; }
+  if (name.toLowerCase() === login.toLowerCase() || clean(name) === login) { err.textContent = 'O nome no jogo não pode ser igual ao login. Escolha outro login.'; return; }
+  const a = { name, login, status: 'new', ts: firebase.database.ServerValue.TIMESTAMP }; if (pass) a.pass = pass;
+  const btn = $('ap-send'); btn.disabled = true;
+  try { if (!auth.currentUser) await timeout(auth.signInAnonymously()); await timeout(db.ref('applications/' + auth.currentUser.uid).set(a)); if (!apRef) watchApp(); }
+  catch (e) { err.textContent = 'Não foi possível enviar. Esse login pode já estar em uso, tente outro.'; }
+  btn.disabled = false;
+};
+function showInvite(a){
+  const box = $('rec-new'); box.className = 'card only-leader';
+  box.innerHTML = `<div><b>${esc(a.name)}</b> aprovado. Ele já pode entrar pela tela de pedido dele, ou com os dados abaixo.</div><code>${esc(a.login)}</code>` +
+    (a.pass ? `<div>Senha: <b>${esc(a.pass)}</b></div>` : '<div style="color:var(--mute);font-size:.8rem">Sem senha: entra só com o login.</div>') +
+    '<button id="rec-copy" type="button">Copiar convite</button>' +
+    `<div style="color:var(--gold);font-size:.85rem">Falta colocar “${esc(a.name)}” na aba Ataques para ele poder marcar.</div>`;
+  $('rec-copy').onclick = async () => { if (await copyText(inviteText(a.login, a.pass || ''))) $('rec-copy').textContent = 'Copiado ✓'; };
+  box.scrollIntoView({ block: 'nearest' });
+}
+async function approve(uid, a){
+  if (usersData[a.login]) { alert('O login ' + a.login + ' já está em uso. Recuse o pedido e peça para a pessoa escolher outro.'); return; }
+  if (!confirm('Aprovar ' + a.name + ' com o login ' + a.login + '?')) return;
+  const u = { name: a.name, role: 'member' }; if (a.pass) u.pass = a.pass;
+  try { await db.ref().update({ ['users/' + a.login]: u, ['applications/' + uid + '/status']: 'approved' }); }
+  catch (e) { alert('Não foi possível aprovar. Tente de novo.'); return; }
+  showInvite(a);
+}
+function renderRec(){
+  const arr = Object.entries(appsData).sort((x, y) => (x[1].status === 'new' ? 0 : 1) - (y[1].status === 'new' ? 0 : 1) || (y[1].ts || 0) - (x[1].ts || 0));
+  const n = arr.filter(x => x[1].status === 'new').length;
+  $('rec-n').textContent = n ? '(' + n + (n > 1 ? ' novos)' : ' novo)') : ''; $('rec-dot').classList.toggle('hidden', !n);
+  const box = $('rec-list'); box.innerHTML = '';
+  arr.forEach(([uid, a]) => {
+    const d = document.createElement('div'); d.className = 'u';
+    const st = a.status === 'approved' ? '✅ aprovado' : a.status === 'rejected' ? '❌ recusado' : '🆕 novo';
+    d.innerHTML = `<div><div class="nm">${esc(a.name)} <span class="ex">${st}</span></div><div class="ex">login <code>${esc(a.login)}</code> · ${a.pass ? '🔒 senha: ' + esc(a.pass) : 'sem senha'}${a.status === 'new' && usersData[a.login] ? ' · ⚠ login já em uso' : ''}</div></div><div class="acts"></div>`;
+    const acts = d.querySelector('.acts');
+    const add = (t, title, fn) => { const b = document.createElement('button'); b.textContent = t; b.title = title; b.setAttribute('aria-label', title); b.onclick = fn; acts.appendChild(b); };
+    if (a.status === 'new') { add('✅', 'Aprovar', () => approve(uid, a)); add('❌', 'Recusar', () => db.ref('applications/' + uid + '/status').set('rejected').catch(console.error)); }
+    if (a.status === 'approved') add('📲', 'Ver convite', () => showInvite(a));
+    add('🗑', 'Apagar', () => { if (confirm('Apagar o pedido de ' + a.name + '?')) db.ref('applications/' + uid).remove().catch(console.error); });
+    box.appendChild(d);
+  });
+  if (!arr.length) box.textContent = 'Nenhum pedido.';
 }
 
 /* ---------- Início: tenta entrar sozinho com o último acesso ---------- */

@@ -175,6 +175,37 @@ main.full{padding:0;max-width:none}
 .themes button[data-theme-opt=light] .sw{background:#ffffff}
 .themes button.on{border-color:var(--gold);box-shadow:inset 0 -4px 0 var(--gold)}
 
+/* tags: DEV e patente */
+.devtag{display:inline-block;margin-left:5px;padding:0 5px;border-radius:4px;font-size:.62rem;font-weight:800;letter-spacing:.06em;background:#0ea5a4;color:#fff;vertical-align:1px}
+.rk{display:inline-block;margin-left:5px;padding:0 5px;border-radius:4px;font-size:.62rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;vertical-align:1px;background:#5b6785;color:#fff}
+.rk[data-t="1"]{background:#2f73e0}
+.rk[data-t="2"]{background:#d9711a}
+.rk[data-t="3"]{background:var(--gold);color:#2b2100}
+
+/* estratégia: sub-abas, sugestões, batalhas */
+.stabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.stabs button{background:var(--panel);border:1px solid var(--line);color:var(--mute);padding:10px 2px;font-size:.82rem}
+.stabs button.on{color:var(--text);border-color:var(--gold);box-shadow:inset 0 -3px 0 var(--gold)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.seg button{background:var(--bg);border:2px solid var(--line);color:var(--mute);padding:10px 4px;font-size:.9rem}
+.seg button.on{color:var(--text);border-color:var(--gold)}
+.idea{background:var(--panel);border-radius:12px;padding:12px;margin-bottom:8px;border-left:4px solid var(--blue);word-break:break-word;position:relative;line-height:1.4}
+.idea.trip{border-left-color:var(--gold)}
+.idea small{display:block;color:var(--mute);font-size:.74rem;margin-bottom:4px;padding-right:34px}
+.idea .x{position:absolute;top:6px;right:6px;background:none;color:var(--mute);padding:4px 8px;font-size:.9rem}
+.bsum{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:center;text-align:center}
+.bsum b{font-size:1.15rem}
+.win{color:var(--ok)}.loss{color:var(--red)}
+.bat{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--panel);border-radius:12px;padding:10px 12px;margin-bottom:6px;border-left:4px solid var(--line)}
+.bat.w{border-left-color:var(--ok)}.bat.l{border-left-color:var(--red)}
+.bat .g{font-weight:700;word-break:break-word}
+.bat small{display:block;color:var(--mute);font-weight:400;font-size:.74rem}
+.bat .res{font-size:.75rem;font-weight:800;letter-spacing:.05em;white-space:nowrap}
+.bat .x{background:none;color:var(--mute);padding:4px 8px}
+.rkrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-top:1px dashed var(--dash)}
+.rkrow:first-child{border-top:0}
+.rkrow select{width:auto;min-width:130px}
+
 /* chat */
 #chat-wrap{display:flex;flex-direction:column;height:100%}
 #msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:10px}
@@ -264,14 +295,50 @@ main.full{padding:0;max-width:none}
 
     <!-- Estratégia -->
     <div id="tab-str" class="hidden">
-      <div id="str-view" class="strat empty only-member">Nenhuma estratégia definida ainda.</div>
-      <div class="card only-leader">
-        <h3>Mensagem de estratégia</h3>
-        <textarea id="str-in" maxlength="600" placeholder="Ex.: Atacar 4 prédios apenas"></textarea>
-        <button id="str-save">Salvar estratégia</button>
-        <div class="help" style="margin:0">Todos os membros veem esta mensagem. Só líderes podem mudar. Deixe vazio e salve para limpar.</div>
+      <div class="stabs">
+        <button data-stab="main" class="on">🎯 Estratégia</button>
+        <button data-stab="ideas">💡 Sugestões</button>
+        <button data-stab="bat">⚔️ Batalhas</button>
       </div>
-      <div id="str-when"></div>
+
+      <div id="str-main">
+        <div id="str-view" class="strat empty only-member">Nenhuma estratégia definida ainda.</div>
+        <div class="card only-leader">
+          <h3>Mensagem de estratégia</h3>
+          <textarea id="str-in" maxlength="600" placeholder="Ex.: Atacar 4 prédios apenas"></textarea>
+          <button id="str-save">Salvar estratégia</button>
+          <div class="help" style="margin:0">Todos os membros veem esta mensagem. Só líderes podem mudar. Deixe vazio e salve para limpar.</div>
+        </div>
+        <div id="str-when"></div>
+      </div>
+
+      <div id="str-ideas" class="hidden">
+        <div class="card">
+          <h3>Sugestões e avisos</h3>
+          <div class="seg">
+            <button data-ikind="sug" class="on">💡 Sugestão</button>
+            <button data-ikind="trip">✈️ Aviso de viagem</button>
+          </div>
+          <textarea id="idea-in" maxlength="300" placeholder="Ex.: Atacar primeiro o prédio 3"></textarea>
+          <button id="idea-send">Enviar</button>
+          <div class="help" style="margin:0">Todos veem, com o seu nome. Você pode apagar o que enviou.</div>
+        </div>
+        <div id="idea-list"></div>
+      </div>
+
+      <div id="str-bat" class="hidden">
+        <div class="card only-leader">
+          <h3>Nova batalha</h3>
+          <input id="bat-gang" maxlength="24" placeholder="Nome da gangue adversária" autocomplete="off">
+          <div class="seg" style="margin-top:10px">
+            <button data-bres="win" class="on">🏆 Vitória</button>
+            <button data-bres="loss">💀 Derrota</button>
+          </div>
+          <button id="bat-add">Adicionar batalha</button>
+        </div>
+        <div class="card bsum" id="bat-sum">Nenhuma batalha registrada.</div>
+        <div id="bat-list"></div>
+      </div>
     </div>
 
     <!-- Carros (sites externos dentro do app: Navimoe + Calculadora de peças) -->
@@ -307,6 +374,11 @@ main.full{padding:0;max-width:none}
           <button data-theme-opt="light" aria-pressed="false"><span class="sw"></span>⚪ Branco</button>
         </div>
         <div class="help" style="margin:0">A escolha fica salva neste aparelho.</div>
+      </div>
+      <div class="card only-leader">
+        <h3>Patentes dos membros</h3>
+        <div id="rk-list"></div>
+        <div class="help" style="margin:0">A patente aparece ao lado do nome no chat e nas sugestões, em mensagens novas.</div>
       </div>
       <div class="credits">Desenvolvido por <b>NITRO ZEUS</b></div>
     </div>
@@ -402,7 +474,7 @@ async function doLogin(code, pass){
   await timeout(db.ref('sessions/' + auth.currentUser.uid).set(sess));
   const snap = await timeout(db.ref('users/' + code).once('value'));
   const u = snap.val(); if (!u) throw { code: 'permission' };
-  me = { code, name: u.name, role: u.role };
+  me = { code, name: u.name, role: u.role, rank: u.rank || '' };
   localStorage.setItem('cats_login', JSON.stringify({ code, pass: pass || '' }));
   enter();
 }
@@ -468,7 +540,7 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
   $('main').classList.toggle('full', curTab === 'cars');
   if (curTab === 'cars') showSub(curSub);
   if (curTab === 'chat') { $('msgs').scrollTop = 1e9; }
-  if (curTab === 'str') markStrSeen();
+  if (curTab === 'str' && curStr === 'main') markStrSeen();
 });
 
 /* ---------- Calculadora (líder edita, todos veem ao vivo) ---------- */
@@ -761,7 +833,7 @@ function applyStrategy(v){
   const view = $('str-view'); view.textContent = txt || 'Nenhuma estratégia definida ainda.'; view.classList.toggle('empty', !txt);
   $('str-when').textContent = v && v.ts && txt ? 'Atualizado às ' + new Date(v.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
   if (isLeader() && document.activeElement !== $('str-in')) $('str-in').value = txt;
-  if (curTab === 'str') markStrSeen();
+  if (curTab === 'str' && curStr === 'main') markStrSeen();
   else $('str-dot').classList.toggle('hidden', !(txt && v.ts > (+localStorage.getItem('cats_str_seen') || 0)));
 }
 $('str-save').onclick = async () => {
@@ -775,14 +847,27 @@ $('str-save').onclick = async () => {
 };
 
 /* ---------- Chat ---------- */
+/* patentes (da menor para a maior) */
+const RANKS = [['recruta','Recruta'],['soldado','Soldado'],['cabo','Cabo'],['sargento','Sargento'],['subtenente','Subtenente'],['tenente','Tenente'],['capitao','Capitão'],['major','Major'],['coronel','Coronel'],['general','General']];
+const rankTag = r => { const i = RANKS.findIndex(x => x[0] === r); return i < 0 ? '' : `<span class="rk" data-t="${Math.min(3, Math.floor(i / 3))}">${RANKS[i][1]}</span>`; };
+const devTag = d => d ? '<span class="devtag">DEV</span>' : '';
+let isDev = false;   // vira true se o login for o definido em config/dev no Firebase
+
 const crownSvg = c => `<svg class="crown" viewBox="0 0 24 24" aria-hidden="true"><path fill="${c}" stroke="rgba(0,0,0,.35)" stroke-width="1" stroke-linejoin="round" d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>`;
 const roleCrown = r => r === 'leader' ? crownSvg('#ffc83d') : r === 'mod' ? crownSvg('#c8d0dc') : '';
+const nameTag = m => roleCrown(m.role) + esc(m.user) + devTag(m.dev) + rankTag(m.rank);
+const postMeta = () => {                                // campos de cargo/patente/dev que acompanham cada mensagem
+  const o = { role: me.role };
+  if (me.rank) o.rank = me.rank;
+  if (isDev) o.dev = true;
+  return o;
+};
 function addMsg(m, box){
   box = box || $('msgs');
   const mine = !!auth.currentUser && m.uid === auth.currentUser.uid;
   const el = document.createElement('div'); el.className = 'msg' + (mine ? ' me' : '');
   const t = new Date(m.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  const s = document.createElement('small'); s.innerHTML = roleCrown(m.role) + esc(m.user) + ' · ' + t;
+  const s = document.createElement('small'); s.innerHTML = nameTag(m) + ' · ' + t;
   el.appendChild(s); el.appendChild(document.createTextNode(m.text));
   const bottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   box.appendChild(el); if (bottom || mine) box.scrollTop = 1e9;
@@ -790,9 +875,105 @@ function addMsg(m, box){
 $('chat-form').onsubmit = e => {
   e.preventDefault();
   const text = $('chat-in').value.trim(); if (!text || !db || !me) return;
-  db.ref('chat').push({ user: me.name, text, ts: firebase.database.ServerValue.TIMESTAMP, uid: auth.currentUser.uid, role: me.role }).catch(console.error);
+  db.ref('chat').push(Object.assign({ user: me.name, text, ts: firebase.database.ServerValue.TIMESTAMP, uid: auth.currentUser.uid }, postMeta())).catch(console.error);
   $('chat-in').value = '';
 };
+
+
+/* ---------- Estratégia: sub-abas (Estratégia / Sugestões / Batalhas) ---------- */
+let curStr = 'main';
+function showStr(k){
+  curStr = k;
+  document.querySelectorAll('[data-stab]').forEach(b => b.classList.toggle('on', b.dataset.stab === k));
+  ['main', 'ideas', 'bat'].forEach(x => $('str-' + x).classList.toggle('hidden', x !== k));
+  if (k === 'main') markStrSeen();
+}
+document.querySelectorAll('[data-stab]').forEach(b => b.onclick = () => showStr(b.dataset.stab));
+
+/* ---------- Sugestões e avisos de viagem (todos enviam, todos leem) ---------- */
+let ideaKind = 'sug';
+const ideaEls = {};
+const IDEA_HINT = { sug: 'Ex.: Atacar primeiro o prédio 3', trip: 'Ex.: Vou viajar de 20/11 a 25/11 e não vou conseguir jogar' };
+document.querySelectorAll('[data-ikind]').forEach(b => b.onclick = () => {
+  ideaKind = b.dataset.ikind;
+  document.querySelectorAll('[data-ikind]').forEach(x => x.classList.toggle('on', x === b));
+  $('idea-in').placeholder = IDEA_HINT[ideaKind];
+});
+$('idea-send').onclick = async () => {
+  const text = $('idea-in').value.trim().slice(0, 300); if (!text || !db || !me) return;
+  const btn = $('idea-send'); btn.disabled = true;
+  try {
+    await timeout(db.ref('ideas').push(Object.assign({ user: me.name, text, kind: ideaKind, ts: firebase.database.ServerValue.TIMESTAMP, uid: auth.currentUser.uid }, postMeta())));
+    $('idea-in').value = ''; btn.textContent = 'Enviado ✓';
+  } catch (e) { btn.textContent = 'Erro, tente de novo'; }
+  setTimeout(() => { btn.textContent = 'Enviar'; btn.disabled = false; }, 1600);
+};
+function addIdea(key, m){
+  const el = document.createElement('div'); el.className = 'idea' + (m.kind === 'trip' ? ' trip' : '');
+  const when = new Date(m.ts).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  const head = document.createElement('small');
+  head.innerHTML = (m.kind === 'trip' ? '✈️ Aviso de viagem' : '💡 Sugestão') + ' · ' + nameTag(m) + ' · ' + when;
+  const body = document.createElement('div'); body.textContent = m.text;
+  el.appendChild(head); el.appendChild(body);
+  if (isLeader() || (auth.currentUser && m.uid === auth.currentUser.uid)) {
+    const x = document.createElement('button'); x.className = 'x'; x.textContent = '🗑'; x.setAttribute('aria-label', 'Apagar');
+    x.onclick = () => { if (confirm('Apagar esta mensagem?')) db.ref('ideas/' + key).remove().catch(console.error); };
+    el.appendChild(x);
+  }
+  ideaEls[key] = el; $('idea-list').prepend(el);          // mais nova em cima
+}
+
+/* ---------- Batalhas (líder registra, todos veem) ---------- */
+let batRes = 'win', batData = {};
+document.querySelectorAll('[data-bres]').forEach(b => b.onclick = () => {
+  batRes = b.dataset.bres;
+  document.querySelectorAll('[data-bres]').forEach(x => x.classList.toggle('on', x === b));
+});
+$('bat-add').onclick = async () => {
+  const gang = $('bat-gang').value.trim().slice(0, 24); if (!gang || !isLeader()) return;
+  const btn = $('bat-add'); btn.disabled = true;
+  try {
+    await timeout(db.ref('battles').push({ gang, win: batRes === 'win', ts: firebase.database.ServerValue.TIMESTAMP, by: me.name }));
+    $('bat-gang').value = ''; btn.textContent = 'Adicionada ✓';
+  } catch (e) { btn.textContent = 'Erro, tente de novo'; }
+  setTimeout(() => { btn.textContent = 'Adicionar batalha'; btn.disabled = false; }, 1600);
+};
+function renderBat(){
+  const list = Object.entries(batData).sort((a, b) => (b[1].ts || 0) - (a[1].ts || 0));
+  const w = list.filter(([, x]) => x.win).length, l = list.length - w;
+  $('bat-sum').innerHTML = list.length
+    ? `<span><b>${list.length}</b> batalhas</span><span class="win"><b>${w}</b> vitórias</span><span class="loss"><b>${l}</b> derrotas</span><span><b>${Math.round(w * 100 / list.length)}%</b> de vitória</span>`
+    : 'Nenhuma batalha registrada.';
+  const box = $('bat-list'); box.innerHTML = '';
+  list.forEach(([key, x]) => {
+    const d = document.createElement('div'); d.className = 'bat ' + (x.win ? 'w' : 'l');
+    const when = x.ts ? new Date(x.ts).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+    d.innerHTML = `<div class="g">${esc(x.gang)}<small>${when}</small></div><span class="res ${x.win ? 'win' : 'loss'}">${x.win ? '🏆 VITÓRIA' : '💀 DERROTA'}</span>`;
+    if (isLeader()) {
+      const del = document.createElement('button'); del.className = 'x'; del.textContent = '🗑'; del.setAttribute('aria-label', 'Apagar batalha');
+      del.onclick = () => { if (confirm('Apagar a batalha contra ' + x.gang + '?')) db.ref('battles/' + key).remove().catch(console.error); };
+      d.appendChild(del);
+    }
+    box.appendChild(d);
+  });
+}
+
+/* ---------- Patentes (só líder, em Configuração) ---------- */
+function renderRanks(){
+  if (!isLeader()) return;
+  const box = $('rk-list'); if (box.contains(document.activeElement)) return;     // não fecha o seletor aberto
+  box.innerHTML = '';
+  Object.entries(usersData).sort((a, b) => String(a[1].name).localeCompare(String(b[1].name))).forEach(([code, u]) => {
+    const row = document.createElement('div'); row.className = 'rkrow';
+    row.innerHTML = `<div>${esc(u.name)} ${roleBadge(u.role)}</div>`;
+    const sel = document.createElement('select'); sel.setAttribute('aria-label', 'Patente de ' + u.name);
+    sel.innerHTML = '<option value="">— sem patente —</option>' + RANKS.map(r => `<option value="${r[0]}">${r[1]}</option>`).join('');
+    sel.value = u.rank || '';
+    sel.onchange = () => { const v = sel.value; (v ? db.ref('users/' + code + '/rank').set(v) : db.ref('users/' + code + '/rank').remove()).catch(console.error); };
+    row.appendChild(sel); box.appendChild(row);
+  });
+  if (!box.children.length) box.textContent = 'Nenhum acesso cadastrado.';
+}
 
 /* ---------- Membros (só líder) ---------- */
 const genPass = () => Array.from({ length: 6 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join('');
@@ -868,7 +1049,7 @@ async function saveEdit(oldCode){
   if (login.length < 4) { err.textContent = LOGIN_MSG; return; }
   if (login !== oldCode && usersData[login]) { err.textContent = 'Esse login já está em uso.'; return; }
   if (role !== 'member' && !pass && !confirm('Sem senha: quem descobrir o login ganha o poder de ' + roleName(role) + '. Salvar mesmo assim?')) return;
-  const rec = { name, role }; if (pass) rec.pass = pass;
+  const rec = { name, role }; if (pass) rec.pass = pass; if (u.rank) rec.rank = u.rank;   // mantém a patente
   const up = {};
   if (name !== u.name) Object.keys(atkData).forEach(i => { if (sameName(atkData[i] && atkData[i].name, u.name)) up['attacks/' + i + '/name'] = name; });
   const btn = $('e-save'); btn.disabled = true;
@@ -904,7 +1085,7 @@ function renderUsers(){
     }
     if (editing === code) { buildEditRow(d, code, u); $('m-list').appendChild(d); return; }
     const inList = Object.values(atkData).some(x => x && sameName(x.name, u.name));
-    d.innerHTML = `<div><div class="nm">${esc(u.name)} ${roleBadge(u.role)}${code === me.code ? '<span class="ex">(você)</span>' : ''}</div>
+    d.innerHTML = `<div><div class="nm">${esc(u.name)} ${roleBadge(u.role)}${rankTag(u.rank)}${code === me.code ? '<span class="ex">(você)</span>' : ''}</div>
       <div class="ex"><code>${esc(code)}</code> · ${u.pass ? '🔒 senha: ' + esc(u.pass) : 'sem senha'}${u.role === 'member' ? (inList ? ' · ✓ na lista de ataque' : ' · ⚠ fora da lista de ataque') : ''}</div></div>
       <div class="acts"><button data-a="inv" aria-label="Copiar convite" title="Copiar convite">📋</button><button data-a="ed" aria-label="Editar" title="Editar nome, login e senha">✏️</button>${code === me.code ? '' : '<button data-a="del" aria-label="Remover" title="Remover acesso">🗑</button>'}</div>`;
     d.querySelector('[data-a=inv]').onclick = async e => { if (await copyText(inviteText(code, u.pass))) { e.target.textContent = '✓'; setTimeout(() => e.target.textContent = '📋', 1500); } };
@@ -931,12 +1112,16 @@ function startSync(){
     const v = s.val();
     if (!v) { if (!selfMoving) forceLogout('Seu acesso foi alterado ou removido. Entre de novo com o login que o líder te passou.'); return; }
     if (v.role !== me.role) { location.reload(); return; }
-    me.name = v.name; $('me').textContent = v.name; renderAtk();
+    me.name = v.name; me.rank = v.rank || ''; $('me').textContent = v.name; renderAtk();
   }, denied);
   db.ref('chat').limitToLast(100).on('child_added', s => addMsg(s.val()), denied);
   const quiet = () => {};                                  // se as regras ainda não permitem, não desloga o moderador
-  if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); }, denied);
+  if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); renderRanks(); }, denied);
   else if (isMod()) db.ref('users').orderByChild('role').equalTo('member').on('value', s => { usersData = s.val() || {}; renderUsers(); }, quiet);   // moderador só enxerga membros
+  db.ref('config/dev').once('value').then(s => { isDev = s.val() === me.code; }).catch(() => {});                  // quem é o DEV (definido no Firebase)
+  db.ref('ideas').limitToLast(100).on('child_added', s => addIdea(s.key, s.val()), quiet);
+  db.ref('ideas').on('child_removed', s => { const el = ideaEls[s.key]; if (el) { el.remove(); delete ideaEls[s.key]; } }, quiet);
+  db.ref('battles').on('value', s => { batData = s.val() || {}; renderBat(); }, quiet);
 
 }
 

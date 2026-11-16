@@ -24,6 +24,7 @@ html,body{height:100%}
 body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
 .hidden{display:none!important}
 body.member .only-leader{display:none!important}
+body:not(.staff) .only-staff{display:none!important}
 input,select,button{font-size:1rem;color:var(--text)}
 input,select{background:var(--inp);border:1px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;min-width:0}
 input:focus,select:focus{border-color:var(--blue)}
@@ -49,6 +50,8 @@ header b{font-size:1.1rem}
 header .who{color:var(--mute);font-size:.9rem;display:flex;align-items:center;gap:8px}
 .badge{font-size:.65rem;font-weight:800;letter-spacing:.08em;padding:3px 7px;border-radius:99px;background:var(--badge);color:var(--mute)}
 .badge.lead{background:var(--gold);color:#2b2100}
+.badge.mod{background:#c4ccd9;color:#1a2233}
+.crown{display:inline-block;width:13px;height:13px;vertical-align:-2px;margin-right:4px}
 header button{background:none;color:var(--mute);padding:6px 10px;border:1px solid var(--line)}
 main{flex:1;overflow-y:auto;padding:16px;max-width:560px;width:100%;margin:0 auto}
 nav{display:flex;overflow-x:auto;scrollbar-width:none;border-top:1px solid var(--line);background:var(--panel);padding-bottom:env(safe-area-inset-bottom)}
@@ -309,13 +312,13 @@ main.full{padding:0;max-width:none}
     </div>
 
     <!-- Membros (só líder) -->
-    <div id="tab-mem" class="hidden only-leader">
+    <div id="tab-mem" class="hidden only-staff">
       <div class="card">
         <h3>Cadastrar acesso</h3>
         <input id="m-name" placeholder="Nome do jogador" maxlength="24" autocomplete="off">
         <input id="m-login" placeholder="Login de acesso (vazio = gerar automático)" maxlength="20" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false">
         <div class="two">
-          <select id="m-role" aria-label="Tipo de acesso"><option value="member">Membro</option><option value="leader">Líder</option></select>
+          <select id="m-role" class="only-leader" aria-label="Tipo de acesso"><option value="member">Membro</option><option value="mod">Moderador</option><option value="leader">Líder</option></select>
           <label class="chk"><input id="m-pass-on" type="checkbox"> Exigir senha</label>
         </div>
         <input id="m-pass" class="hidden" placeholder="Senha (vazio = gerar uma)" maxlength="30" autocomplete="off">
@@ -335,7 +338,7 @@ main.full{padding:0;max-width:none}
     <button data-tab="str"><span class="ic">🎯</span><span>Estratégia<span id="str-dot" class="dot hidden"></span></span></button>
     <button data-tab="cars"><span class="ic">🚗</span>Carros</button>
     <button data-tab="chat"><span class="ic">💬</span>Chat</button>
-    <button data-tab="mem" class="only-leader"><span class="ic">👥</span>Membros</button>
+    <button data-tab="mem" class="only-staff"><span class="ic">👥</span>Membros</button>
     <button data-tab="cfg"><span class="ic">⚙️</span>Configuração</button>
   </nav>
 </div>
@@ -371,6 +374,9 @@ if (online) { firebase.initializeApp(FIREBASE_CONFIG); db = firebase.database();
 let me = null, selfMoving = false;   // me = {code,name,role}
 let atkData = {}, usersData = {};
 const isLeader = () => !!me && me.role === 'leader';
+const isMod = () => !!me && me.role === 'mod';
+const roleName = r => r === 'leader' ? 'líder' : r === 'mod' ? 'moderador' : 'membro';
+const roleBadge = r => `<span class="badge ${r === 'leader' ? 'lead' : r === 'mod' ? 'mod' : ''}">${r === 'leader' ? 'LÍDER' : r === 'mod' ? 'MOD' : 'MEMBRO'}</span>`;
 const clean = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
 const timeout = (p, ms = 12000) => Promise.race([p, new Promise((_, r) => setTimeout(() => r(new Error('timeout')), ms))]);
 
@@ -418,8 +424,10 @@ function forceLogout(msg){
 function enter(){
   $('boot').classList.add('hidden'); $('login').classList.add('hidden'); $('app').classList.remove('hidden');
   document.body.classList.add(isLeader() ? 'leader' : 'member');
+  if (isLeader() || isMod()) document.body.classList.add('staff');
+  if (isMod()) document.body.classList.add('mod');
   $('me').textContent = me.name;
-  const rb = $('role'); rb.textContent = isLeader() ? 'LÍDER' : 'MEMBRO'; rb.classList.toggle('lead', isLeader());
+  const rb = $('role'); rb.textContent = isLeader() ? 'LÍDER' : isMod() ? 'MOD' : 'MEMBRO'; rb.classList.toggle('lead', isLeader()); rb.classList.toggle('mod', isMod());
   if (!isLeader()) {
     ['bp','bs','rp','rs','tot'].forEach(id => { $(id).readOnly = true; $(id).classList.add('lk'); });
   }
@@ -767,19 +775,22 @@ $('str-save').onclick = async () => {
 };
 
 /* ---------- Chat ---------- */
-function addMsg(m){
+const crownSvg = c => `<svg class="crown" viewBox="0 0 24 24" aria-hidden="true"><path fill="${c}" stroke="rgba(0,0,0,.35)" stroke-width="1" stroke-linejoin="round" d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>`;
+const roleCrown = r => r === 'leader' ? crownSvg('#ffc83d') : r === 'mod' ? crownSvg('#c8d0dc') : '';
+function addMsg(m, box){
+  box = box || $('msgs');
   const mine = !!auth.currentUser && m.uid === auth.currentUser.uid;
   const el = document.createElement('div'); el.className = 'msg' + (mine ? ' me' : '');
   const t = new Date(m.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  const s = document.createElement('small'); s.textContent = m.user + ' · ' + t;
+  const s = document.createElement('small'); s.innerHTML = roleCrown(m.role) + esc(m.user) + ' · ' + t;
   el.appendChild(s); el.appendChild(document.createTextNode(m.text));
-  const box = $('msgs'), bottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  const bottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   box.appendChild(el); if (bottom || mine) box.scrollTop = 1e9;
 }
 $('chat-form').onsubmit = e => {
   e.preventDefault();
   const text = $('chat-in').value.trim(); if (!text || !db || !me) return;
-  db.ref('chat').push({ user: me.name, text, ts: firebase.database.ServerValue.TIMESTAMP, uid: auth.currentUser.uid }).catch(console.error);
+  db.ref('chat').push({ user: me.name, text, ts: firebase.database.ServerValue.TIMESTAMP, uid: auth.currentUser.uid, role: me.role }).catch(console.error);
   $('chat-in').value = '';
 };
 
@@ -802,17 +813,17 @@ function showCard(msg, code, pass, hint){
   $('m-copy').onclick = async () => { if (await copyText(inviteText(code, pass))) $('m-copy').textContent = 'Copiado ✓'; };
 }
 $('m-pass-on').onchange = () => $('m-pass').classList.toggle('hidden', !$('m-pass-on').checked);
-$('m-role').onchange = () => {            // líder: já sugere senha
-  if ($('m-role').value === 'leader') { $('m-pass-on').checked = true; $('m-pass-on').onchange(); }
+$('m-role').onchange = () => {            // líder/moderador: já sugere senha
+  if ($('m-role').value !== 'member') { $('m-pass-on').checked = true; $('m-pass-on').onchange(); }
 };
 $('m-add').onclick = async () => {
   const err = $('m-err'); err.textContent = '';
   const name = $('m-name').value.trim().slice(0, 24);
   if (!name) { err.textContent = 'Digite o nome do jogador.'; return; }
-  const role = $('m-role').value, wantPass = $('m-pass-on').checked;
+  const role = isLeader() ? $('m-role').value : 'member', wantPass = $('m-pass-on').checked;   // moderador só cria membros
   let pass = $('m-pass').value.trim().slice(0, 30);
   if (wantPass && !pass) pass = genPass();
-  if (role === 'leader' && !wantPass && !confirm('Líder sem senha: quem descobrir o login vira líder. Cadastrar mesmo assim?')) return;
+  if (role !== 'member' && !wantPass && !confirm('Sem senha: quem descobrir o login ganha o poder de ' + roleName(role) + '. Cadastrar mesmo assim?')) return;
   let code = clean($('m-login').value);
   if (code) {
     if (code.length < 4) { err.textContent = LOGIN_MSG; return; }
@@ -826,7 +837,7 @@ $('m-add').onclick = async () => {
   catch(e){ err.textContent = 'Não foi possível cadastrar. Tente de novo.'; return; }
   $('m-name').value = ''; $('m-login').value = ''; $('m-pass').value = ''; $('m-pass-on').checked = false; $('m-pass-on').onchange(); $('m-role').value = 'member';
   const inList = Object.values(atkData).some(x => x && sameName(x.name, name));
-  showCard('<b>' + esc(name) + '</b> cadastrado como ' + (role === 'leader' ? 'líder' : 'membro') + '.', code, wantPass ? pass : '',
+  showCard('<b>' + esc(name) + '</b> cadastrado como ' + roleName(role) + '.', code, wantPass ? pass : '',
     role === 'member' && !inList ? `<div style="color:var(--gold);font-size:.85rem">Falta colocar “${esc(name)}” na aba Ataques para ele poder marcar.</div>` : '');
 };
 
@@ -839,7 +850,7 @@ function buildEditRow(d, code, u){
     <label>Nome<input id="e-name" maxlength="24" value="${esc(v.name)}" autocomplete="off"></label>
     <label>Login<input id="e-login" maxlength="20" value="${esc(v.login)}" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false"></label>
     <label>Senha (vazio = sem senha)<input id="e-pass" maxlength="30" value="${esc(v.pass)}" autocomplete="off"></label>
-    <label>Tipo<select id="e-role"${own ? ' disabled' : ''}><option value="member">Membro</option><option value="leader">Líder</option></select></label>
+    <label class="only-leader">Tipo<select id="e-role"${own ? ' disabled' : ''}><option value="member">Membro</option><option value="mod">Moderador</option><option value="leader">Líder</option></select></label>
     <div class="ex" style="color:var(--mute);font-size:.8rem">Mudar o nome também troca o nome dele na lista de ataque.${own ? ' Se mudar o seu login, o app recarrega.' : ' Se mudar login ou senha, avise a pessoa.'}</div>
     <div class="two"><button id="e-save">Salvar</button><button id="e-cancel" class="ghost">Cancelar</button></div>
     <div id="e-err" role="alert"></div></div>`;
@@ -851,11 +862,12 @@ async function saveEdit(oldCode){
   const u = usersData[oldCode], err = $('e-err'); err.textContent = '';
   if (!u) { editing = null; draft = null; return renderUsers(); }
   const name = $('e-name').value.trim().slice(0, 24), login = clean($('e-login').value), pass = $('e-pass').value.trim().slice(0, 30);
-  const own = oldCode === me.code, role = own ? u.role : $('e-role').value;
+  if (isMod() && u.role !== 'member') { editing = null; draft = null; return renderUsers(); }   // moderador só mexe em membros
+  const own = oldCode === me.code, role = own ? u.role : (isLeader() ? $('e-role').value : 'member');
   if (!name) { err.textContent = 'Digite o nome.'; return; }
   if (login.length < 4) { err.textContent = LOGIN_MSG; return; }
   if (login !== oldCode && usersData[login]) { err.textContent = 'Esse login já está em uso.'; return; }
-  if (role === 'leader' && !pass && !confirm('Líder sem senha: quem descobrir o login vira líder. Salvar mesmo assim?')) return;
+  if (role !== 'member' && !pass && !confirm('Sem senha: quem descobrir o login ganha o poder de ' + roleName(role) + '. Salvar mesmo assim?')) return;
   const rec = { name, role }; if (pass) rec.pass = pass;
   const up = {};
   if (name !== u.name) Object.keys(atkData).forEach(i => { if (sameName(atkData[i] && atkData[i].name, u.name)) up['attacks/' + i + '/name'] = name; });
@@ -886,9 +898,13 @@ function renderUsers(){
   $('m-list').innerHTML = '';
   list.forEach(([code, u]) => {
     const d = document.createElement('div'); d.className = 'u';
+    if (isMod() && u.role !== 'member') {            // moderador não vê login nem mexe em líderes/moderadores
+      d.innerHTML = `<div><div class="nm">${esc(u.name)} ${roleBadge(u.role)}${code === me.code ? '<span class="ex">(você)</span>' : ''}</div></div>`;
+      $('m-list').appendChild(d); return;
+    }
     if (editing === code) { buildEditRow(d, code, u); $('m-list').appendChild(d); return; }
     const inList = Object.values(atkData).some(x => x && sameName(x.name, u.name));
-    d.innerHTML = `<div><div class="nm">${esc(u.name)} <span class="badge ${u.role === 'leader' ? 'lead' : ''}">${u.role === 'leader' ? 'LÍDER' : 'MEMBRO'}</span>${code === me.code ? '<span class="ex">(você)</span>' : ''}</div>
+    d.innerHTML = `<div><div class="nm">${esc(u.name)} ${roleBadge(u.role)}${code === me.code ? '<span class="ex">(você)</span>' : ''}</div>
       <div class="ex"><code>${esc(code)}</code> · ${u.pass ? '🔒 senha: ' + esc(u.pass) : 'sem senha'}${u.role === 'member' ? (inList ? ' · ✓ na lista de ataque' : ' · ⚠ fora da lista de ataque') : ''}</div></div>
       <div class="acts"><button data-a="inv" aria-label="Copiar convite" title="Copiar convite">📋</button><button data-a="ed" aria-label="Editar" title="Editar nome, login e senha">✏️</button>${code === me.code ? '' : '<button data-a="del" aria-label="Remover" title="Remover acesso">🗑</button>'}</div>`;
     d.querySelector('[data-a=inv]').onclick = async e => { if (await copyText(inviteText(code, u.pass))) { e.target.textContent = '✓'; setTimeout(() => e.target.textContent = '📋', 1500); } };
@@ -918,7 +934,10 @@ function startSync(){
     me.name = v.name; $('me').textContent = v.name; renderAtk();
   }, denied);
   db.ref('chat').limitToLast(100).on('child_added', s => addMsg(s.val()), denied);
+  const quiet = () => {};                                  // se as regras ainda não permitem, não desloga o moderador
   if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); }, denied);
+  else if (isMod()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); }, quiet);
+
 }
 
 /* ---------- Início: tenta entrar sozinho com o último acesso ---------- */

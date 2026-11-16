@@ -221,6 +221,9 @@ main.full{padding:0;max-width:none}
 .msg.me{align-self:flex-end;background:var(--meb)}
 #chat-form{display:flex;gap:8px;padding-top:8px}
 #chat-in{flex:1}
+#typing{min-height:1.3em;color:var(--mute);font-size:.8rem;padding:2px 4px}
+#atk-prio{background:var(--panel);border:1px solid var(--gold);color:var(--gold);padding:8px 12px}
+#atk-prio-msg{color:var(--gold);margin:0 0 8px;min-height:0}
 .nmc{font-weight:700}
 .tg{display:inline-block;margin:0 5px 0 1px;padding:0 5px;border-radius:4px;font-size:.62rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#fff;vertical-align:1px}
 .msg.big .mt{font-size:2rem;line-height:1.2}
@@ -326,7 +329,8 @@ main.full{padding:0;max-width:none}
     <!-- Ataques -->
     <div id="tab-atk" class="hidden">
       <div class="btabs" id="btabs"></div>
-      <div class="bar"><span class="count" id="atk-count">0 de 0 atacaram</span><span class="barbtns only-leader"><button id="atk-clear">Zerar prédio</button><button id="atk-clear-all">Zerar tudo</button></span></div>
+      <div class="bar"><span class="count" id="atk-count">0 de 0 atacaram</span><button id="atk-prio" class="only-staff" type="button">⭐ Prioridade</button><span class="barbtns only-leader"><button id="atk-clear">Zerar prédio</button><button id="atk-clear-all">Zerar tudo</button></span></div>
+      <p class="help" id="atk-prio-msg"></p>
       <div id="atk-list"></div>
       <p class="help" id="atk-empty"></p>
       <p class="help" id="atk-help"></p>
@@ -400,6 +404,7 @@ main.full{padding:0;max-width:none}
     <div id="tab-chat" class="hidden" style="height:100%">
       <div id="chat-wrap">
         <div id="msgs"></div>
+        <div id="typing" aria-live="polite"></div>
         <div id="emo" class="hidden"></div><form id="chat-form"><button type="button" id="emo-btn" aria-label="Emotes">😊</button><input id="chat-in" placeholder="Mensagem" autocomplete="off" maxlength="500"><button>Enviar</button></form>
       </div>
     </div>
@@ -783,7 +788,7 @@ const NB = 6;                                   // prédios (N = 25 vagas por pr
 const keyOf = (b, s) => b * 100 + s;
 const rows = [];                                // rows[prédio][vaga]
 const bBtns = [];
-let curB = 0;
+let curB = 0, prioData = {};
 const sameName = (a, b) => !!a && !!b && String(a).toLowerCase() === String(b).toLowerCase();
 const canMark = k => !!me;                       // qualquer pessoa com acesso ao app marca
 
@@ -856,12 +861,24 @@ function renderAtk(){
     allNamed += named; allDone += done;
     if (b === curB) { curNamed = named; curDone = done; }
     bBtns[b].classList.toggle('on', b === curB);
+    bBtns[b].firstChild.textContent = (prioData[b] ? '⭐ ' : '') + 'Prédio ' + (b + 1);
     bBtns[b].querySelector('small').textContent = named ? done + '/' + named : 'vazio';
     rows[b][0].d.parentNode.classList.toggle('hidden', b !== curB);
   }
   $('atk-count').textContent = 'Prédio ' + (curB + 1) + ': ' + curDone + ' de ' + curNamed + ' atacaram' + (allNamed > curNamed ? ' · geral ' + allDone + '/' + allNamed : '');
   $('atk-empty').textContent = '';
+  const pk = Object.keys(prioData).sort().map(k => 'Prédio ' + (+k + 1));
+  $('atk-prio-msg').textContent = pk.length ? '⭐ Atacar primeiro: ' + pk.join(' e ') : '';
+  $('atk-prio').textContent = prioData[curB] ? '⭐ Tirar prioridade' : '⭐ Prioridade';
 }
+$('atk-prio').onclick = () => {
+  let l = Object.keys(prioData).map(Number).sort();
+  if (l.includes(curB)) l = l.filter(x => x !== curB);
+  else if (l.length >= 2) { alert('Só 2 prédios podem ser prioridade. Tire um antes.'); return; }
+  else l.push(curB);
+  const o = {}; l.forEach((x, i) => { o['p' + (i + 1)] = x; });
+  (l.length ? db.ref('priority').set(o) : db.ref('priority').remove()).catch(console.error);
+};
 function clearMarks(list){
   const up = {};
   list.forEach(b => rows[b].forEach((r, i) => {
@@ -997,8 +1014,24 @@ $('chat-form').onsubmit = e => {
   e.preventDefault();
   const text = $('chat-in').value.trim(); if (!text || !db || !me) return;
   db.ref('chat').push(Object.assign({ user: me.name, text, ts: firebase.database.ServerValue.TIMESTAMP, uid: auth.currentUser.uid }, postMeta())).catch(console.error);
-  $('chat-in').value = '';
+  $('chat-in').value = ''; stopTyping();
 };
+let typers = {}, srvOff = 0, typTimer = null, typSent = 0;
+function renderTyping(){
+  if (!me) return;
+  const now = Date.now() + srvOff;
+  const n = Object.entries(typers).filter(([c, t]) => c !== me.code && t && now - (t.ts || 0) < 7000).map(x => x[1].name);
+  $('typing').textContent = !n.length ? '' : n.length === 1 ? n[0] + ' está digitando…' : n.length === 2 ? n.join(' e ') + ' estão digitando…' : 'Várias pessoas estão digitando…';
+}
+setInterval(renderTyping, 2000);
+function stopTyping(){ clearTimeout(typTimer); typSent = 0; if (db && me) db.ref('typing/' + me.code).remove().catch(() => {}); }
+$('chat-in').addEventListener('input', () => {
+  if (!db || !me) return;
+  if (!$('chat-in').value.trim()) return stopTyping();
+  const t = Date.now();
+  if (t - typSent > 3000) { typSent = t; const r = db.ref('typing/' + me.code); r.onDisconnect().remove(); r.set({ name: me.name, ts: firebase.database.ServerValue.TIMESTAMP }).catch(() => {}); }
+  clearTimeout(typTimer); typTimer = setTimeout(stopTyping, 4000);
+});
 
 
 /* ---------- Estratégia: sub-abas (Estratégia / Sugestões / Batalhas) ---------- */
@@ -1266,6 +1299,9 @@ function startSync(){
   db.ref('config/dev').once('value').then(s => { isDev = s.val() === me.code; }).catch(() => {});                  // quem é o DEV (definido no Firebase)
   db.ref('ideas').limitToLast(100).on('child_added', s => addIdea(s.key, s.val()), quiet);
   db.ref('ideas').on('child_removed', s => { const el = ideaEls[s.key]; if (el) { el.remove(); delete ideaEls[s.key]; } }, quiet);
+  db.ref('priority').on('value', s => { const v = s.val() || {}; prioData = {}; [v.p1, v.p2].forEach(x => { if (typeof x === 'number') prioData[x] = true; }); renderAtk(); }, quiet);
+  db.ref('typing').on('value', s => { typers = s.val() || {}; renderTyping(); }, quiet);
+  db.ref('.info/serverTimeOffset').on('value', s => { srvOff = s.val() || 0; });
   db.ref('battles').on('value', s => { batData = s.val() || {}; renderBat(); }, quiet);
 
 }

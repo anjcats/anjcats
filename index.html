@@ -834,7 +834,7 @@ $('m-add').onclick = async () => {
   }
   const u = { name, role }; if (wantPass) u.pass = pass;
   try { await db.ref('users/' + code).set(u); }
-  catch(e){ err.textContent = 'Não foi possível cadastrar. Tente de novo.'; return; }
+  catch(e){ err.textContent = isMod() ? 'Não foi possível cadastrar. Esse login pode já estar em uso, tente outro.' : 'Não foi possível cadastrar. Tente de novo.'; return; }
   $('m-name').value = ''; $('m-login').value = ''; $('m-pass').value = ''; $('m-pass-on').checked = false; $('m-pass-on').onchange(); $('m-role').value = 'member';
   const inList = Object.values(atkData).some(x => x && sameName(x.name, name));
   showCard('<b>' + esc(name) + '</b> cadastrado como ' + roleName(role) + '.', code, wantPass ? pass : '',
@@ -936,7 +936,7 @@ function startSync(){
   db.ref('chat').limitToLast(100).on('child_added', s => addMsg(s.val()), denied);
   const quiet = () => {};                                  // se as regras ainda não permitem, não desloga o moderador
   if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); }, denied);
-  else if (isMod()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); }, quiet);
+  else if (isMod()) db.ref('users').orderByChild('role').equalTo('member').on('value', s => { usersData = s.val() || {}; renderUsers(); }, quiet);   // moderador só enxerga membros
 
 }
 

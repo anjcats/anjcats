@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap">
 <style>
 :root{color-scheme:dark;--bg:#0a0f1a;--panel:#131b2c;--line:#23304a;--text:#eaf0fb;--mute:#8896b3;--blue:#3d8bff;--red:#ff4d5e;--gold:#ffc83d;--ok:#2fd27a;
   --inp:#0a1120;--deep:#050a14;--tb:#0e2342;--tr:#3a1220;--newbg:#0e2a1d;--donebg:#134a2e;--unbg:#4d141c;--meb:#16407a;--badge:#1d2a45;
@@ -222,57 +222,89 @@ main.full{padding:0;max-width:none}
 .msg.me{align-self:flex-end;background:var(--meb)}
 #chat-form{display:flex;gap:8px;padding-top:8px}
 #chat-in{flex:1}
-/* ===== Treino: Reis da Cidade ===== */
-:root{--gf:'Lilita One','Arial Black',Impact,system-ui,sans-serif}
-.ghud *,#g-map *,#g-scr *,.gside .pl *{font-family:var(--gf);letter-spacing:.02em}
-/* placar */
-.ghud{display:grid;grid-template-columns:1fr auto 1fr;align-items:start;margin-bottom:8px;filter:drop-shadow(0 3px 0 rgba(0,0,0,.4))}
-.ghud .tp{position:relative;padding:7px 14px 11px;color:#fff;display:grid;gap:1px;min-width:0;overflow:hidden}
-.ghud .tp.a{background:linear-gradient(#6da2ff,#2d62d6);clip-path:polygon(0 0,100% 0,calc(100% - 12px) 100%,0 100%);border-radius:10px 0 0 10px}
-.ghud .tp.b{background:linear-gradient(#ff8a82,#d63d38);clip-path:polygon(12px 0,100% 0,100% 100%,0 100%);border-radius:0 10px 10px 0;text-align:right}
-.ghud .nm{font-size:.74rem;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 0 rgba(0,0,0,.4)}
-.ghud .sc{font-size:1.9rem;line-height:1;text-shadow:0 2px 0 rgba(0,0,0,.4),0 0 6px rgba(0,0,0,.3)}
-.ghud .at{font-size:.7rem;opacity:.92}
-.ghud .pg{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.35)}
-.ghud .pg b{display:block;height:100%;width:0;background:#fff;transition:width .6s}
-.ghud .tp.b .pg b{margin-left:auto}
-.ghud .you{display:none;position:absolute;bottom:8px;font-style:normal;font-size:.55rem;background:#fff;color:#223;padding:0 6px;border-radius:8px;box-shadow:0 1px 0 rgba(0,0,0,.3)}
-.ghud .tp.a .you{right:18px}.ghud .tp.b .you{left:18px}.ghud .you.on{display:block}
-.ghud .mid{background:linear-gradient(#566384,#2a324b);color:#fff;text-align:center;padding:5px 14px 8px;min-width:104px;border-radius:0 0 14px 14px;margin:0 -2px;position:relative;z-index:1;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25)}
-.ghud .tm{font-size:1.5rem;line-height:1.1;text-shadow:0 2px 0 rgba(0,0,0,.4)}
-.ghud .gl{font-size:.58rem;opacity:.92;text-transform:uppercase;line-height:1.15}
-.ghud .gl.fim{color:#ffd54a;font-size:.68rem;opacity:1}
-.gside{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;margin:0 0 8px;color:var(--mute);font-size:.8rem}
+/* ===== Treino: Reis da Cidade (réplica do jogo) ===== */
+:root{--gf:'Oswald','Fjalla One','Pathway Gothic One','Arial Narrow','Roboto Condensed',sans-serif-condensed,Impact,system-ui,sans-serif;--gnavy:#2b3556;--gblue:#4a79dc;--gred:#e5524b}
+.gmap *,#g-scr *,.gside .pl *,.gside .gatk{font-family:var(--gf);letter-spacing:.01em}
+.gside{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;margin:0 0 8px;padding:0 16px;color:var(--mute);font-size:.8rem}
 .gside .pl{display:flex;gap:6px}
-.gside button{padding:6px 14px;border-radius:20px;border:2px solid transparent;background:var(--panel);color:var(--mute);font-size:.85rem;font-weight:400}
-.gside button[data-s=A].on{background:#2d62d6;color:#fff;border-color:#9bbcff}
-.gside button[data-s=B].on{background:#d63d38;color:#fff;border-color:#ffb0aa}
-/* mapa */
-.gmapw{max-width:980px;margin:0 auto;border-radius:16px;overflow:hidden;border:3px solid #2a1f48;box-shadow:0 5px 0 rgba(0,0,0,.35)}
-.gmap{position:relative;width:100%;aspect-ratio:2.1/1;background:linear-gradient(#4f3590 0%,#a05cb6 38%,#ee8fa6 66%,#ffb784 84%);overflow:hidden;user-select:none;-webkit-user-select:none}
-@media (max-aspect-ratio:1/1){.gmap{aspect-ratio:3/4}}
-.g-sun{position:absolute;left:64%;top:46%;width:36%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#fff6cf 0,#ffd98e 20%,rgba(255,170,120,.5) 46%,transparent 70%)}
+.gside button{padding:6px 14px;border-radius:20px;border:2px solid transparent;background:var(--panel);color:var(--mute);font-size:.85rem;font-weight:500}
+.gside button[data-s=A].on{background:#3f6bd0;color:#fff;border-color:#9bbcff}
+.gside button[data-s=B].on{background:#d9423d;color:#fff;border-color:#ffb0aa}
+.gside .gatk{margin-left:auto;font-size:.8rem}
+/* mapa (tudo medido em "pixels do print" = 1/20 de 1% da largura) */
+.gmapw{max-width:1100px;margin:0 auto;border-top:3px solid #1c2054;border-bottom:3px solid #1c2054;background:#000}
+.gmap{--u:1cqw;--h:1cqw;--p:calc(var(--u) / 20);--q:calc(var(--h) / 20);position:relative;container-type:inline-size;width:100%;aspect-ratio:2340/1080;overflow:hidden;user-select:none;-webkit-user-select:none;font-weight:500;background:linear-gradient(#6b5f55 0%,#8f7457 30%,#c08a56 60%,#96623c 100%)}
+@media (max-aspect-ratio:1/1){.gmap{aspect-ratio:3/4;--u:2.3cqw;--h:1.75cqw}}
+.g-sun{position:absolute;left:54%;top:56%;width:56%;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,216,150,.6) 0,rgba(255,172,90,.28) 34%,transparent 68%)}
 .g-ly{position:absolute;left:0;right:0;bottom:10%;pointer-events:none}
 .g-ly svg{display:block;width:100%;height:100%}
-.g-ly.l1{height:48%}.g-ly.l2{height:38%}.g-ly.l3{height:27%}
-.g-lm{position:absolute;left:50%;bottom:10%;height:66%;transform:translateX(-50%);pointer-events:none;filter:drop-shadow(0 0 10px rgba(255,200,140,.4))}
-.g-ground{position:absolute;left:0;right:0;bottom:0;height:10%;background:linear-gradient(#2b3072,#141845)}
-.g-ground::before{content:"";position:absolute;left:0;right:0;top:-9px;height:10px;background:repeating-linear-gradient(45deg,#ffd23f 0 9px,#2a2540 9px 18px);opacity:.9}
-.g-ground::after{content:"";position:absolute;left:0;right:0;top:50%;height:3px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0 22px,transparent 22px 44px)}
-.g-title{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:linear-gradient(#7a42a8,#4f2578);color:#fff;padding:5px 18px 6px;text-align:center;border-radius:6px;border:2px solid rgba(255,255,255,.55);box-shadow:0 4px 0 rgba(0,0,0,.35);z-index:2;white-space:nowrap}
-.g-title small{display:block;font-size:.62rem;opacity:.85;text-transform:uppercase}.g-title b{font-size:1.35rem;font-weight:400;text-shadow:0 2px 0 rgba(0,0,0,.4)}
-@media (max-aspect-ratio:1/1){.g-title{top:11%}}
+.g-ly.l1{height:56%}.g-ly.l2{height:46%}.g-ly.l3{height:32%}
+.g-lm{position:absolute;left:53%;bottom:10%;height:70%;transform:translateX(-50%);pointer-events:none;filter:drop-shadow(0 0 14px rgba(255,205,140,.5))}
+.g-dim{position:absolute;inset:0;background:rgba(74,62,48,.3);pointer-events:none}
+.g-ground{position:absolute;left:0;right:0;bottom:0;height:10.8%;background:linear-gradient(#2a2f72,#191c4f)}
+.g-wire{position:absolute;left:0;right:0;bottom:7%;height:calc(70*var(--p));pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='70' viewBox='0 0 150 70'%3E%3Cpath d='M0 38Q37 -6 75 38T150 38' fill='none' stroke='%231d2156' stroke-width='6'/%3E%3Cpath d='M0 38Q37 82 75 38T150 38' fill='none' stroke='%231d2156' stroke-width='6'/%3E%3Cpath d='M58 22l34 32M92 22L58 54' stroke='%231d2156' stroke-width='6'/%3E%3C/svg%3E") repeat-x left bottom/calc(150*var(--p)) calc(70*var(--p));opacity:.96}
+.g-tabs span{position:absolute;top:2.8%;font-size:calc(48*var(--q));line-height:1;text-transform:uppercase;white-space:nowrap;color:rgba(236,226,204,.5);font-weight:600;pointer-events:none}
+.g-tabs span.on{color:#fff}
+@media (max-aspect-ratio:1/1){.g-tabs,.g-handle,.g-troph{display:none}}
+.g-handle{position:absolute;left:0;top:28%;width:8.15%;height:56.3%;background:repeating-linear-gradient(135deg,#8ba8ee 0 calc(30*var(--p)),#9db7f4 calc(30*var(--p)) calc(60*var(--p)));border-right:calc(6*var(--p)) solid #6a8fe8;pointer-events:none}
+.g-handle::after{content:"";position:absolute;right:calc(14*var(--p));top:50%;transform:translateY(-50%);border:calc(24*var(--p)) solid transparent;border-left:calc(36*var(--p)) solid #3b66d4;border-right:0}
+.g-troph{position:absolute;right:0;top:10.6%;width:7.75%;height:17.8%;background:linear-gradient(#b4352d,#962a24);clip-path:polygon(24% 0,100% 0,100% 100%,24% 100%,0 50%);display:grid;place-items:center;padding-left:calc(30*var(--p));pointer-events:none}
+.g-troph svg{width:62%}
+.g-title{position:absolute;left:54.6%;top:62%;transform:translate(-50%,-50%);text-align:center;color:#fff;line-height:1;white-space:nowrap;z-index:2;pointer-events:none;text-shadow:0 calc(3*var(--p)) 0 rgba(0,0,0,.18)}
+.g-title small{display:block;font-size:calc(38*var(--p));text-transform:uppercase;font-weight:600;letter-spacing:.02em}
+.g-title b{display:block;font-size:calc(104*var(--p));font-weight:600;text-transform:uppercase;opacity:.9;margin-top:calc(-4*var(--p))}
+@media (max-aspect-ratio:1/1){.g-title{left:50%;top:94.6%}.g-title small{font-size:calc(26*var(--p))}.g-title b{font-size:calc(58*var(--p));margin-top:calc(-2*var(--p))}}
+/* placar */
+.gh{position:absolute;left:23.8%;top:10%;width:calc(1113*var(--q));height:calc(163*var(--q));z-index:5;pointer-events:none;color:var(--gnavy)}
+@media (max-aspect-ratio:1/1){.gh{left:50%;transform:translateX(-50%);top:3.5%;width:calc(1044*var(--q))}.gh-i{display:none}}
+.gh-i{position:absolute;left:0;top:0;width:calc(56*var(--q));height:calc(51*var(--q));background:#c8352c;box-shadow:calc(5*var(--q)) 0 0 #e8863c;display:grid;place-items:center;color:#fff;font-size:calc(40*var(--q));font-weight:700;line-height:1}
+.gh-pan{position:absolute;left:calc(69*var(--q));top:0;width:calc(1044*var(--q));height:100%;background:#fff;box-shadow:0 calc(4*var(--q)) calc(10*var(--q)) rgba(0,0,0,.3);display:grid;grid-template-columns:360fr 323fr 361fr}
+@media (max-aspect-ratio:1/1){.gh-pan{left:0}}
+.gh-pan::before{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;background:radial-gradient(circle,#e7ebf4 0 calc(2.4*var(--q)),transparent calc(3*var(--q))) 0 0/calc(16*var(--q)) calc(16*var(--q));pointer-events:none}
+.gh-l,.gh-r,.gh-m{position:relative}
+.gh-n{font-size:calc(46*var(--q));text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1;font-weight:600;color:var(--gnavy);min-width:0}
+.gh-l .r1,.gh-r .r1{position:absolute;top:calc(22*var(--q));display:flex;align-items:center;gap:calc(12*var(--q));max-width:calc(340*var(--q))}
+.gh-l .r1{right:calc(16*var(--q))}.gh-r .r1{left:calc(18*var(--q))}
+.gh-em{width:calc(46*var(--q));height:calc(46*var(--q));flex:none}
+.gh-l .r2,.gh-r .r2{position:absolute;top:calc(88*var(--q));display:flex;align-items:center;gap:calc(10*var(--q))}
+.gh-l .r2{right:calc(16*var(--q));flex-direction:row-reverse}.gh-r .r2{left:calc(18*var(--q))}
+.gh-s{font-size:calc(68*var(--q));line-height:1;font-weight:600;letter-spacing:0}
+.gh-l .gh-s{color:var(--gblue)}.gh-r .gh-s{color:var(--gred)}
+.gh-t{display:grid;place-items:center;height:calc(60*var(--q));min-width:calc(92*var(--q));padding:0 calc(14*var(--q)) 0 calc(10*var(--q));font-size:calc(46*var(--q));line-height:1;color:#fff;font-weight:600;background:linear-gradient(#5a86e6,#3f6bd0)}
+.gh-l .gh-t{clip-path:polygon(0 0,calc(100% - 12*var(--q)) 0,100% 50%,calc(100% - 12*var(--q)) 100%,0 100%)}
+.gh-r .gh-t{background:linear-gradient(#f0675f,#d9423d);padding:0 calc(10*var(--q)) 0 calc(14*var(--q));clip-path:polygon(12px 0,100% 0,100% 100%,12px 100%,0 50%)}
+.gh-r .gh-t{clip-path:polygon(calc(12*var(--q)) 0,100% 0,100% 100%,calc(12*var(--q)) 100%,0 50%)}
+.gh-fl{position:absolute;top:calc(-32*var(--q));display:grid;place-items:center;height:calc(60*var(--q));min-width:calc(86*var(--q));padding:0 calc(12*var(--q));font-size:calc(46*var(--q));color:#fff;font-weight:600;line-height:1;opacity:0;transform:translateY(calc(10*var(--q)));transition:opacity .35s,transform .35s;box-shadow:0 calc(3*var(--q)) 0 rgba(0,0,0,.25)}
+.gh-l .gh-fl{right:calc(40*var(--q));background:linear-gradient(#5a86e6,#3f6bd0)}.gh-r .gh-fl{left:calc(40*var(--q));background:linear-gradient(#f0675f,#d9423d)}
+.gh-fl.on{opacity:1;transform:none}
+.gh-m{background:#94a5c4;text-align:center;color:#fff}
+.gh-tw{position:absolute;left:calc(42*var(--q));top:calc(16*var(--q));width:calc(155*var(--q));height:calc(47*var(--q));background:#75879f;display:flex;align-items:center;justify-content:center;font-size:calc(40*var(--q));line-height:1;font-weight:600;white-space:nowrap}
+.gh-ck{position:absolute;left:calc(219*var(--q));top:calc(7*var(--q));width:calc(68*var(--q));height:calc(68*var(--q))}
+.gh-m .gl{position:absolute;left:0;right:0;top:calc(80*var(--q));font-size:calc(28*var(--q));line-height:1;color:#d3dbec;text-transform:uppercase;font-weight:600;white-space:nowrap}
+.gh-m .gl.fim{color:#ffd54a}
+.gh-m .gv{position:absolute;left:0;right:0;top:calc(106*var(--q));font-size:calc(48*var(--q));line-height:1;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 calc(8*var(--q))}
+.gh-lupa{position:absolute;right:calc(12*var(--q));top:calc(18*var(--q));width:calc(56*var(--q));height:calc(56*var(--q));background:#93a4c3;display:grid;place-items:center}
+.gh-lupa svg{width:70%}
 /* prédios no mapa */
-.g-b{position:absolute;left:var(--lx);top:var(--ly);transform:translate(-50%,-50%);cursor:pointer;display:grid;justify-items:center;z-index:3;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.g-b{position:absolute;left:var(--lx);top:var(--ly);width:calc(242*var(--p));transform:translate(-50%,-50%);cursor:pointer;z-index:3;-webkit-tap-highlight-color:transparent}
 @media (max-aspect-ratio:1/1){.g-b{left:var(--px);top:var(--py)}}
-.g-b:active{transform:translate(-50%,-50%) scale(.95)}
-.g-b.own-a{--oc:#4f8cff}.g-b.own-b{--oc:#ff5c55}.g-b.own-n{--oc:#a49ec2}
-.g-ic{width:clamp(36px,6.2vw,56px);height:auto;margin-bottom:-7px;filter:drop-shadow(0 3px 0 rgba(0,0,0,.35));position:relative;z-index:1}
-.g-lab{position:relative;width:clamp(126px,15vw,150px);background:#fff;color:#2b2f55;padding:4px 8px 7px;border-radius:6px;border-top:4px solid var(--oc);box-shadow:0 3px 0 rgba(0,0,0,.35)}
-.g-lab .r1{display:flex;align-items:center;justify-content:space-between;gap:4px}
-.g-nm{font-size:.82rem;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.g-cnt{font-size:.74rem;color:#6b7194;flex:none}
-.g-inc{position:absolute;right:-6px;top:-17px;background:var(--oc);color:#fff;font-size:.72rem;padding:1px 8px;border-radius:9px;box-shadow:0 2px 0 rgba(0,0,0,.3);text-shadow:0 1px 0 rgba(0,0,0,.35);z-index:2}
+.g-b:active .g-lab{transform:scale(.97)}
+.g-ic{position:absolute;left:50%;bottom:calc(100% - 8*var(--p));width:calc(220*var(--p));transform:translateX(-50%);pointer-events:none;filter:drop-shadow(0 calc(4*var(--p)) 0 rgba(0,0,0,.22))}
+.g-ic svg{display:block;width:100%;height:auto}
+.g-lab{position:relative;height:calc(88*var(--p));background:#fff;color:var(--gnavy);box-shadow:0 calc(4*var(--p)) calc(9*var(--p)) rgba(0,0,0,.3);transition:transform .12s}
+.g-inc{position:absolute;right:calc(100% - 6*var(--p));top:0;width:calc(88*var(--p));height:100%;display:grid;place-items:center;padding-right:calc(8*var(--p));font-size:calc(52*var(--p));line-height:1;color:#fff;font-weight:600;background:linear-gradient(#5a86e6,#3d68cf);clip-path:polygon(0 0,calc(100% - 9*var(--p)) 0,100% 50%,calc(100% - 9*var(--p)) 100%,0 100%);z-index:1}
+.own-b .g-inc{background:linear-gradient(#f0675f,#d9423d)}
+.g-x{position:absolute;left:calc(-76*var(--p));top:calc(66*var(--p));width:calc(64*var(--p));height:calc(52*var(--p));display:grid;place-items:center;font-size:calc(44*var(--p));line-height:1;font-weight:700;color:#2a2308;background:linear-gradient(#ecc24a,#d9a52c);transform:rotate(-2deg);clip-path:polygon(0 0,100% 0,100% 84%,88% 100%,74% 86%,60% 100%,46% 86%,32% 100%,18% 86%,6% 100%,0 86%);z-index:2;padding-bottom:calc(5*var(--p))}
+.g-r1{position:absolute;left:calc(17*var(--p));right:calc(18*var(--p));top:calc(11*var(--p));height:calc(34*var(--p));display:flex;align-items:center;gap:calc(8*var(--p))}
+.g-nm{font-size:calc(28*var(--p));line-height:1;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#2f3a5e;font-weight:500;min-width:0}
+.own-a .g-nm{color:#8ba4dc}.own-b .g-nm{color:#e58985}
+.g-chain{width:calc(38*var(--p));height:calc(20*var(--p));flex:none}
+.g-trk{margin-left:auto;display:flex;align-items:center;gap:calc(10*var(--p));flex:none}
+.g-trk svg{width:calc(34*var(--p));height:calc(22*var(--p))}
+.g-cnt{font-size:calc(37*var(--p));line-height:1;color:var(--gnavy);font-weight:600}
+.gl-bar{position:absolute;left:calc(17*var(--p));right:calc(15*var(--p));top:calc(51*var(--p));height:calc(24*var(--p));background:#5c6786;display:flex;overflow:hidden}
+.gl-bar s{display:block;height:100%;background:#93b2ea;text-decoration:none}
+.gl-bar u{display:block;height:100%;background:#ee6b66;margin-left:auto;text-decoration:none}
 .g-bar{display:flex;width:100%;height:7px;background:#c5c9dd;border-radius:4px;overflow:hidden;margin-top:4px}
 .g-bar s,.g-bar u{display:block;height:100%;text-decoration:none}
 .g-bar s{background:linear-gradient(#8fb8ff,#3f72dc)}.g-bar u{background:linear-gradient(#ff9a93,#e0443e);margin-left:auto}
@@ -332,16 +364,24 @@ main.full{padding:0;max-width:none}
 .g-redbtn{position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom) + 14px);z-index:51;background:linear-gradient(#e8505a,#a8212a);border:3px solid #fff;color:#fff;width:56px;height:46px;font-size:1.3rem;border-radius:8px;box-shadow:0 4px 0 rgba(0,0,0,.35);cursor:pointer}
 /* celular deitado / telas baixas: tudo mais compacto */
 @media (max-height:480px){
-  .ghud .sc{font-size:1.4rem}.ghud .tp{padding:4px 12px 9px}.ghud .at{display:none}.ghud .tm{font-size:1.2rem}.ghud .you{bottom:7px}
   .g-hdr{margin-top:10px;padding:12px 10px 5px}.g-cnts{display:none}.g-hdr .g-bar{height:8px;margin-top:3px}.g-vs{font-size:.95rem}
   .gbody{margin-top:8px}.g-side{gap:5px;padding:8px 8px 64px;overflow-y:auto;max-height:100%}.g-sel{min-height:46px}.g-sel svg{width:104px}.g-ttl{font-size:.9rem}
   .g-act{font-size:1.05rem;padding:5px 18px}.g-bat{font-size:.75rem;padding:3px 10px}
   .g-ctl small{display:none}.g-sel svg{width:92px}.g-ctl{gap:5px}.g-nav button{padding:2px 10px}
   .g-side{padding-bottom:10px}.g-redbtn{left:auto;right:12px;width:50px;height:42px}
 }
+/* cabeçalho da tela do prédio (igual ao jogo) */
+.g-bar{background:#5c6786}.g-bar s{background:linear-gradient(#a3c0f2,#7fa3e6)}.g-bar u{background:linear-gradient(#f58a85,#e8625d)}
+.g-hdr{margin:22px auto 0;width:min(100%,640px);padding:20px 14px 10px;border-radius:0;position:relative}
+.g-loc{left:50%;transform:translateX(-50%);top:-17px;border-radius:0;background:#8fa2c2;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 100%,0 100%);padding:3px 24px 3px 16px;font-weight:600;white-space:nowrap;box-shadow:none}
+.g-vs{font-size:1.35rem;font-weight:600;gap:10px}.g-vs .a,.g-vs .b{color:#2b3556;display:inline-flex;align-items:center;gap:7px}.g-vs i{color:#2b3556}
+.g-vs .gh-em{width:1.45em;height:1.45em}
+.g-cnts{color:#5f688a;font-weight:500}
+.g-tm2{position:absolute;right:-8px;bottom:-30px;display:flex;align-items:center;background:#8a9bb8;color:#fff;padding:3px 4px 3px 14px;font-size:1.15rem;font-weight:600;line-height:1}
+.g-tm2 .gh-ck{position:static;width:36px;height:36px;margin-left:8px}
 /* configuração do treino (líder / moderador) */
-.gcfg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}.gcfg label{display:grid;font-size:.72rem;color:var(--mute);gap:2px}
-.gbr{display:grid;grid-template-columns:1.4fr 1fr .8fr .8fr;gap:4px;margin-bottom:4px}.gbr input{min-width:0;padding:6px}
+.gcfg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}.gcfg label{min-width:0}.gcfg label:nth-child(2){grid-column:1/-1}.gcfg input{width:100%}.gcfg label{display:grid;font-size:.72rem;color:var(--mute);gap:2px}
+.gbr{display:grid;grid-template-columns:1.5fr .8fr .8fr .8fr 1fr .7fr;gap:4px;margin-bottom:4px}.gbr input{min-width:0;padding:6px}
 .gbr.gbh{font-size:.68rem;color:var(--mute);margin-top:6px}
 #typing{min-height:1.3em;color:var(--mute);font-size:.8rem;padding:2px 4px}
 #atk-prio{background:var(--panel);border:1px solid var(--gold);color:var(--gold);padding:8px 12px}
@@ -542,14 +582,13 @@ main.full{padding:0;max-width:none}
 
     <!-- Treino: Reis da Cidade -->
     <div id="tab-game" class="hidden">
-      <div class="ghud" id="g-hud"></div>
-      <div class="gside">Você joga pela: <span class="pl"><button data-s="A">Equipe A</button><button data-s="B">Equipe B</button></span></div>
+      <div class="gside">Você joga pela: <span class="pl"><button data-s="A">Equipe A</button><button data-s="B">Equipe B</button></span><span class="gatk" id="g-atk"></span></div>
       <div class="gmapw" id="g-wrap"><div class="gmap" id="g-map"></div></div>
-      <div class="card only-staff" id="g-cfg" style="margin-top:10px">
+      <div class="card only-staff" id="g-cfg" style="margin:10px 16px 16px">
         <h3>Configurar treino</h3>
         <div class="gcfg">
           <label>Pontos para vencer<input id="g-goal-i" type="number" min="1"></label>
-          <label>Pontos por prédio/min<input id="g-ppm" type="number" min="0"></label>
+          <label>Pontos/min em todos os prédios<span style="display:flex;gap:4px"><input id="g-ppm" type="number" min="0" style="flex:1;min-width:0"><button type="button" id="g-ppm-ap" style="padding:6px 10px;font-size:.75rem">Aplicar</button></span></label>
           <label>Tempo restante (h)<input id="g-h" type="number" min="0" placeholder="manter"></label>
           <label>Tempo restante (min)<input id="g-m" type="number" min="0" placeholder="manter"></label>
           <label>Nome da equipe A<input id="g-nm-a" maxlength="20"></label>
@@ -559,15 +598,14 @@ main.full{padding:0;max-width:none}
           <label>Carros que A já atacou<input id="g-at-a" type="number" min="0"></label>
           <label>Carros que B já atacou<input id="g-at-b" type="number" min="0"></label>
         </div>
-        <div class="help" style="margin:0 0 4px">Cada prédio tem a sua quantidade: nome · vagas · carros de A · carros de B (o resto são bots). As quantidades de carros valem depois de tocar em Reiniciar mapa.</div>
+        <div class="help" style="margin:0 0 4px">Cada prédio tem os seus próprios números: nome · vagas · carros de A · carros de B (o resto são bots) · pontos por minuto · bônus (1 = nenhum, 2 = X2). A equipe que domina o prédio ganha os pontos/min dele × o bônus. As quantidades de carros valem depois de tocar em Reiniciar mapa.</div>
         <div id="g-bcfg"></div>
         <button id="g-save" type="button">Salvar</button> <button id="g-reset" type="button">Reiniciar mapa</button>
       </div>
 
       <div id="g-scr" class="hidden">
-        <div class="ghud" id="g-hud2"></div>
         <div class="g-hdr">
-          <div class="g-loc">📍 <span id="g-bt"></span></div>
+          <div class="g-loc">📍 <span id="g-bt"></span></div><div class="g-tm2" id="g-tmw"></div>
           <div class="g-vs"><span class="a" id="g-v-a"></span><i>x</i><span class="b" id="g-v-b"></span></div>
           <div class="g-bar" id="g-mb"></div>
           <div class="g-cnts" id="g-cnts"></div>
@@ -788,7 +826,7 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
   curTab = b.dataset.tab;
   document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
   ['calc','atk','str','cars','chat','mem','game','cfg'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== curTab));
-  $('main').classList.toggle('full', curTab === 'cars');
+  $('main').classList.toggle('full', curTab === 'cars' || curTab === 'game');
   if (curTab === 'cars') showSub(curSub);
   if (curTab === 'chat') { $('msgs').scrollTop = 1e9; }
   if (curTab === 'str' && curStr === 'main') markStrSeen();
@@ -1564,22 +1602,30 @@ function renderRec(){
 }
 
 /* ---------- Treino: Reis da Cidade (tempo real) ---------- */
-const GPOS = [[30,42],[20,66],[40,82],[60,82],[80,66],[70,42]];     // posições com o celular deitado
-const GPOSP = [[27,30],[27,54],[27,78],[73,78],[73,54],[73,30]];    // posições com o celular em pé
+const GPOS = [[36.3,47.7],[32.6,69.9],[49.2,82.8],[67.8,85.9],[81.6,70.2],[80.6,45.3]];  // celular deitado (% do mapa, centro da etiqueta)
+const GPOSP = [[27,30],[27,54],[27,78],[71,78],[71,54],[71,30]];                          // celular em pé
 const GN0 = ['Terraço','Arena','Fonte','Porto 1','Feira','Porto 2'];
-const GDEF = { goal: 3000, ppm: 21, endAt: 0, nameA: 'EQUIPE A', nameB: 'EQUIPE B', city: 'MIAUSCOU', district: 'DISTRITO 1', bn: GN0.map(n => ({ name: n, cap: 21, a: 0, b: 0 })) };
+const GPPM0 = 21;   // pontos/min padrão de cada prédio (cada um pode ter o seu)
+const GDEF = { goal: 3000, endAt: 0, nameA: 'EQUIPE A', nameB: 'EQUIPE B', city: 'MIAUSCOU', district: 'DISTRITO 1', bn: GN0.map(n => ({ name: n, cap: 21, a: 0, b: 0, p: GPPM0, x: 1 })) };
 let GC = JSON.parse(JSON.stringify(GDEF)), GP = null, gSide = 'A', gOpen = -1, gMode = '', gSel = -1, gRev = false, gPop = -1;
 const gNow = () => Date.now() + srvOff, gCnt = (s, c) => (s.match(new RegExp(c, 'g')) || []).length;
+/* pontos por minuto de UM prédio = base (p) × bônus (x) */
+const gPpm = b => Math.max(0, +b.p || 0) * Math.max(1, +b.x || 1);
+const gOwn = s => { const n = s.length || 1, h = Math.floor(n / 2) + 1; return gCnt(s, 'A') >= h ? 'a' : gCnt(s, 'B') >= h ? 'b' : 'n'; };
 function gBuild(){
   const b = {}; GC.bn.forEach((x, i) => { const na = Math.min(x.a, x.cap), nb = Math.min(x.b, x.cap - na); b[i] = 'A'.repeat(na) + 'B'.repeat(nb) + 'x'.repeat(x.cap - na - nb); });
   return { b, sc: { A: 0, B: 0, t: gNow() }, atk: { A: 0, B: 0 } };
 }
 const gP = () => (GP && GP.b) ? GP : gBuild();
-function gScores(p, t){
+/* pontos por minuto de cada equipe = soma dos prédios que ela domina */
+function gRates(p){
   let a = 0, b = 0;
-  GC.bn.forEach((_, i) => { const s = p.b[i] || '', h = Math.floor(s.length / 2) + 1; if (gCnt(s, 'A') >= h) a++; else if (gCnt(s, 'B') >= h) b++; });
-  const m = Math.max(0, (Math.min(t, GC.endAt || t) - p.sc.t) / 60000);
-  return { A: p.sc.A + m * GC.ppm * a, B: p.sc.B + m * GC.ppm * b };
+  GC.bn.forEach((x, i) => { const o = gOwn(p.b[i] || ''); if (o === 'a') a += gPpm(x); else if (o === 'b') b += gPpm(x); });
+  return { A: a, B: b };
+}
+function gScores(p, t){
+  const r = gRates(p), m = Math.max(0, (Math.min(t, GC.endAt || t) - p.sc.t) / 60000);
+  return { A: p.sc.A + m * r.A, B: p.sc.B + m * r.B };
 }
 const gOver = (p, t) => { const x = gScores(p, t); return (GC.endAt && t >= GC.endAt) || x.A >= GC.goal || x.B >= GC.goal; };
 /* troca um carro de lugar no mapa (atacar = vira seu; retirar = volta a ser bot) */
@@ -1598,65 +1644,76 @@ function gMut(i, k, ch, ok, bump){
 const gTake = (i, k) => { const side = gSide; gMut(i, k, side, c => c !== side, side); };
 const gDrop = (i, k) => { const side = gSide; gMut(i, k, 'x', c => c === side, ''); };
 
-/* ---- cenário ---- */
+/* ---- cenário (cidade ao entardecer, tons quentes) ---- */
 function gSky(n, seed, h0, h1, fill, op, blur, lights){
   let r = seed, o = ''; const bw = 1000 / n;
   for (let k = 0; k < n; k++) {
     r = (r * 9301 + 49297) % 233280; const h = h0 + (r / 233280) * (h1 - h0), x = k * bw;
     o += `<rect x="${x}" y="${200 - h}" width="${bw - 3}" height="${h}" fill="${fill}"/>`;
     if (r % 4 === 0) o += `<rect x="${x + bw / 2 - 2}" y="${200 - h - 14}" width="3" height="14" fill="${fill}"/>`;
-    if (lights) for (let y = 200 - h + 8; y < 194; y += 12) if ((r + y) % 3) o += `<rect x="${x + 4}" y="${y}" width="${bw - 11}" height="4" fill="#ffe9a8" opacity=".55"/>`;
+    if (lights) for (let y = 200 - h + 8; y < 194; y += 12) if ((r + y) % 3) o += `<rect x="${x + 4}" y="${y}" width="${bw - 11}" height="4" fill="#ffb347" opacity=".7"/>`;
   }
-  return `<svg viewBox="0 0 1000 200" preserveAspectRatio="none" style="opacity:${op};${blur ? 'filter:blur(1.5px)' : ''}">${o}</svg>`;
+  return `<svg viewBox="0 0 1000 200" preserveAspectRatio="none" style="opacity:${op};${blur ? 'filter:blur(1.6px)' : ''}">${o}</svg>`;
 }
-const GSCENE = `<div class="g-sun"></div><div class="g-ly l1">${gSky(30, 7, 50, 150, '#c9a7e0', .75, 1, 0)}</div><div class="g-ly l2">${gSky(22, 3, 40, 130, '#9a6bb6', .9, 0, 1)}</div>
-<svg class="g-lm" viewBox="0 0 200 260"><polygon points="62,260 62,120 80,120 80,64 94,64 94,24 100,0 106,24 106,64 120,64 120,120 138,120 138,260" fill="url(#gTw)" stroke="#3b2358" stroke-width="2"/><polygon points="20,260 20,170 50,170 50,140 62,140 62,260" fill="#7d4f9f"/><polygon points="138,260 138,150 160,150 160,180 182,180 182,260" fill="#7d4f9f"/><g fill="#ffe9a8" opacity=".7"><rect x="72" y="140" width="6" height="8"/><rect x="86" y="140" width="6" height="8"/><rect x="100" y="140" width="6" height="8"/><rect x="114" y="140" width="6" height="8"/><rect x="72" y="170" width="6" height="8"/><rect x="100" y="170" width="6" height="8"/><rect x="114" y="170" width="6" height="8"/><rect x="98" y="80" width="4" height="8"/></g></svg>
-<div class="g-ly l3">${gSky(16, 11, 30, 90, '#6a4286', 1, 0, 1)}</div><div class="g-ground"></div>
+const GSCENE = `<div class="g-sun"></div><div class="g-ly l1">${gSky(30, 7, 60, 170, '#a58b6e', .8, 1, 0)}</div><div class="g-ly l2">${gSky(24, 3, 50, 150, '#6f5443', .92, 0, 1)}</div>
+<svg class="g-lm" viewBox="0 0 220 260"><defs><linearGradient id="gGold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e2ab62"/><stop offset=".5" stop-color="#ffd995"/><stop offset="1" stop-color="#d9a05a"/></linearGradient></defs><path d="M62 260V110Q62 22 112 8Q162 22 162 110V260Z" fill="url(#gGold)"/><path d="M62 110H162M64 150H160M66 190H158M70 230H154" stroke="#c98f4a" stroke-width="2" opacity=".6" fill="none"/><path d="M86 30V260M112 8V260M138 30V260" stroke="#fff3d0" stroke-width="2" opacity=".35" fill="none"/><rect x="8" y="150" width="46" height="110" fill="#f0c27c"/><rect x="170" y="130" width="46" height="130" fill="#e8b46c"/><g fill="#9a6a38" opacity=".55"><rect x="16" y="162" width="8" height="10"/><rect x="32" y="162" width="8" height="10"/><rect x="16" y="188" width="8" height="10"/><rect x="32" y="188" width="8" height="10"/><rect x="180" y="146" width="8" height="10"/><rect x="198" y="146" width="8" height="10"/><rect x="180" y="174" width="8" height="10"/><rect x="198" y="174" width="8" height="10"/></g></svg>
+<div class="g-ly l3">${gSky(18, 11, 30, 100, '#3f302d', 1, 0, 1)}</div><div class="g-dim"></div><div class="g-ground"></div><div class="g-wire"></div>
+<div class="g-tabs" aria-hidden="true"><span class="on" style="left:20.4%">Reis da cidade</span><span style="left:36.8%">Bate-papo</span><span style="left:49.3%">Minha gangue</span><span style="left:63.4%">Lutas de gangue</span><span style="left:79.6%">Amigos</span></div>
+<div class="g-handle" aria-hidden="true"></div>
+<div class="g-troph" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M14 6H50V22Q50 38 32 42Q14 38 14 22Z" fill="#fff"/><path d="M14 10H4Q4 26 16 30M50 10H60Q60 26 48 30" fill="none" stroke="#fff" stroke-width="5"/><rect x="28" y="40" width="8" height="10" fill="#fff"/><rect x="18" y="50" width="28" height="8" rx="2" fill="#fff"/></svg></div>
+<div class="gh" id="g-hud"></div>
 <div class="g-title" id="g-title"></div><div id="g-bl"></div>`;
 $('g-map').innerHTML = GSCENE;
 
-/* ---- ícone do prédio (a bandeira usa a cor de quem domina) ---- */
-function gIcon(i){
-  const fl = '<rect x="29" y="1" width="2" height="13" fill="#2b2f55"/><path d="M31 2 H45 L41 7 L45 12 H31 Z" style="fill:var(--oc);stroke:#1c1840;stroke-width:1.5;stroke-linejoin:round"/>';
-  const O = 'stroke="#1c1840" stroke-width="2.5" stroke-linejoin="round"';
-  let b = '';
-  if (i % 3 === 0) {
-    b = `<rect x="16" y="16" width="28" height="38" rx="3" fill="#6b57a8" ${O}/><rect x="16" y="16" width="28" height="7" style="fill:var(--oc)"/>`;
-    for (let y = 27; y < 50; y += 8) for (let x = 21; x < 40; x += 9) b += `<rect x="${x}" y="${y}" width="5" height="5" fill="#ffe9a8"/>`;
-  } else if (i % 3 === 1) {
-    b = `<path d="M6 54 V36 Q6 14 30 14 Q54 14 54 36 V54 Z" fill="#6b57a8" ${O}/><path d="M6 36 H54" style="stroke:var(--oc)" stroke-width="6"/><rect x="23" y="40" width="14" height="14" rx="7" fill="#1c1840"/>`;
-  } else {
-    b = `<rect x="8" y="40" width="20" height="14" fill="#e8a23a" ${O}/><rect x="28" y="40" width="20" height="14" fill="#4a86c8" ${O}/><rect x="16" y="26" width="20" height="14" style="fill:var(--oc)" ${O}/><path d="M50 54 V16 H20" stroke="#2b2f55" stroke-width="4" fill="none" stroke-linecap="round"/>`;
-  }
-  return `<svg class="g-ic" viewBox="0 0 60 56">${b}${i % 3 === 2 ? '' : fl}</svg>`;
-}
+/* ---- ícone de cada prédio (desenhos próprios) ---- */
+const GICONS = [
+  /* Terraço */ '<svg viewBox="0 0 200 130"><ellipse cx="100" cy="124" rx="74" ry="6" fill="#000" opacity=".18"/><rect x="97" y="34" width="6" height="86" fill="#7b5a43"/><path d="M26 48Q100 -26 174 48Z" fill="#d83f56"/><path d="M26 48Q60 14 100 4V48Z" fill="#ef7a8b"/><path d="M100 4Q140 14 174 48H100Z" fill="#c2324a"/><rect x="52" y="96" width="96" height="9" rx="2" fill="#f1e3d0"/><rect x="62" y="105" width="6" height="18" fill="#7b5a43"/><rect x="132" y="105" width="6" height="18" fill="#7b5a43"/><rect x="22" y="100" width="26" height="20" rx="3" fill="#f2c230"/><rect x="152" y="100" width="26" height="20" rx="3" fill="#f2c230"/><rect x="78" y="86" width="12" height="10" rx="2" fill="#8bd070"/><rect x="108" y="88" width="10" height="8" rx="2" fill="#f4f0e6"/></svg>',
+  /* Arena */ '<svg viewBox="0 0 200 130"><path d="M16 126V94Q16 34 100 34Q184 34 184 94V126Z" fill="#5d4a1f"/><path d="M16 94Q16 34 100 34Q184 34 184 94Z" fill="#46371a"/><g fill="#ffd36a"><circle cx="48" cy="72" r="3"/><circle cx="66" cy="56" r="3"/><circle cx="86" cy="46" r="3"/><circle cx="114" cy="46" r="3"/><circle cx="134" cy="56" r="3"/><circle cx="152" cy="72" r="3"/><circle cx="100" cy="42" r="3"/></g><rect x="12" y="98" width="176" height="28" fill="#c9a24e"/><g fill="#7b5d1e"><rect x="26" y="104" width="10" height="16"/><rect x="50" y="104" width="10" height="16"/><rect x="74" y="104" width="10" height="16"/><rect x="116" y="104" width="10" height="16"/><rect x="140" y="104" width="10" height="16"/><rect x="164" y="104" width="10" height="16"/></g><path d="M88 126V108Q100 96 112 108V126Z" fill="#33270f"/></svg>',
+  /* Fonte */ '<svg viewBox="0 0 200 130"><path d="M8 126L38 66L58 96L82 48L100 126Z" fill="#d0743f"/><path d="M102 126L122 58L144 94L162 64L194 126Z" fill="#b95a2e"/><ellipse cx="100" cy="116" rx="64" ry="12" fill="#5fa9c9"/><ellipse cx="100" cy="112" rx="58" ry="9" fill="#c4edf8"/><path d="M100 110V56M100 110Q72 38 54 100M100 110Q128 38 146 100" stroke="#eafcff" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="100" cy="108" rx="22" ry="5" fill="#8fd2e8"/></svg>',
+  /* Porto 1 */ null,
+  /* Feira */ '<svg viewBox="0 0 200 130"><path d="M18 126V70Q18 14 100 14Q182 14 182 70V126Z" fill="#f6d9a6"/><path d="M40 126V76Q40 38 100 38Q160 38 160 76V126Z" fill="#6b5aa0"/><circle cx="100" cy="64" r="15" fill="#e08a3c" stroke="#2f2a58" stroke-width="3"/><path d="M93 58H107V70Q100 76 93 70Z" fill="#3f6fb8"/><rect x="82" y="92" width="36" height="22" rx="3" fill="#7fc4d0"/><path d="M76 86H124M86 92L90 80H110L114 92" stroke="#2f2a58" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="22" y="104" width="34" height="22" fill="#2f5a73"/><ellipse cx="160" cy="116" rx="26" ry="9" fill="#3f6fb8"/></svg>',
+  /* Porto 2 */ null
+];
+GICONS[3] = GICONS[5] = '<svg viewBox="0 0 200 130"><path d="M22 126Q34 70 70 42" stroke="#8a4b2d" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M70 42Q40 20 10 38Q44 30 70 42M70 42Q98 12 130 26Q100 28 70 42M70 42Q56 8 34 6Q58 14 70 42M70 42Q94 26 112 52Q90 40 70 42" fill="#c0532f"/><path d="M14 112L30 126M20 124L36 108" stroke="#c0532f" stroke-width="5"/><rect x="118" y="30" width="44" height="92" fill="#2f5a73"/><path d="M122 36L158 118M158 36L122 118M122 70H158" stroke="#7fb4cf" stroke-width="3" fill="none"/><path d="M112 30H168L160 12H120Z" fill="#a58bc4"/><rect x="134" y="2" width="12" height="12" fill="#a58bc4"/><path d="M140 2V-6" stroke="#a58bc4" stroke-width="3"/><path d="M168 36Q190 60 196 100M112 36Q92 70 70 108" stroke="#7b5ba6" stroke-width="3" fill="none"/><rect x="40" y="108" width="22" height="16" fill="#e8a23a"/><rect x="64" y="108" width="22" height="16" fill="#8e6bbf"/><rect x="52" y="94" width="22" height="14" fill="#d94f4f"/></svg>';
+const gIcon = i => GICONS[i % GICONS.length];
+const G_TRUCK = '<svg viewBox="0 0 34 22"><path d="M1 17V9Q1 7 4 7H12L16 2H26Q28 2 29 4L33 10V17Z" fill="currentColor"/><circle cx="9" cy="18" r="4" fill="currentColor" stroke="#fff" stroke-width="1.5"/><circle cx="25" cy="18" r="4" fill="currentColor" stroke="#fff" stroke-width="1.5"/></svg>';
+const G_CHAIN = '<svg class="g-chain" viewBox="0 0 42 22"><g fill="none" stroke="#d9a52c" stroke-width="4.2"><rect x="3" y="4" width="22" height="14" rx="7"/><rect x="17" y="4" width="22" height="14" rx="7"/></g></svg>';
+const G_SWORD = '<svg class="gh-em" viewBox="0 0 46 46"><rect x="1" y="1" width="44" height="44" rx="7" fill="#f2b440"/><path d="M11 11L35 35M35 11L11 35" stroke="#b5321f" stroke-width="7" stroke-linecap="round"/><path d="M11 11L35 35M35 11L11 35" stroke="#e5604a" stroke-width="2.5" stroke-linecap="round"/></svg>';
+const G_EYES = '<svg class="gh-em" viewBox="0 0 46 46"><rect x="1" y="1" width="44" height="44" rx="8" fill="#1d1844"/><path d="M7 19Q14 13 21 20Q21 31 14 31Q7 31 7 19Z" fill="#fff"/><path d="M39 19Q32 13 25 20Q25 31 32 31Q39 31 39 19Z" fill="#fff"/><circle cx="15" cy="25" r="3.2" fill="#1d1844"/><circle cx="31" cy="25" r="3.2" fill="#1d1844"/></svg>';
+const G_CLOCK = '<svg class="gh-ck" viewBox="0 0 68 68"><circle cx="34" cy="34" r="33" fill="#cfe0ff"/><circle cx="34" cy="34" r="28" fill="#3a63cf"/><circle cx="34" cy="34" r="21" fill="none" stroke="#9ec0ff" stroke-width="4" stroke-dasharray="100 32" transform="rotate(-80 34 34)"/><circle cx="34" cy="34" r="6" fill="#fff"/><path d="M34 34H20" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>';
+const G_LUPA = '<svg viewBox="0 0 40 40"><circle cx="17" cy="17" r="11" fill="none" stroke="#fff" stroke-width="5"/><path d="M26 26L36 36" stroke="#fff" stroke-width="6" stroke-linecap="round"/></svg>';
 function gHudHTML(){
-  return `<div class="tp a"><em class="you ya">VOCÊ</em><span class="nm na"></span><span class="sc sa">0</span><span class="at aa"></span><i class="pg"><b class="pa"></b></i></div>
-<div class="mid"><div class="tm tt">—</div><div class="gl gg"></div></div>
-<div class="tp b"><em class="you yb">VOCÊ</em><span class="nm nb"></span><span class="sc sb">0</span><span class="at ab"></span><i class="pg"><b class="pb"></b></i></div>`;
+  return `<div class="gh-i" aria-hidden="true">i</div><div class="gh-pan">
+<div class="gh-l"><span class="gh-fl fa">+0</span><div class="r1"><span class="gh-n na"></span>${G_SWORD}</div><div class="r2"><span class="gh-s sa">0</span><span class="gh-t ta">+0</span></div></div>
+<div class="gh-m"><div class="gh-tw tt">—</div>${G_CLOCK}<div class="gl gg">Para vitória instantânea</div><div class="gv gv">3000</div></div>
+<div class="gh-r"><span class="gh-fl fb">+0</span><div class="r1">${G_EYES}<span class="gh-n nb"></span></div><div class="r2"><span class="gh-s sb">0</span><span class="gh-t tb">+0</span></div><div class="gh-lupa">${G_LUPA}</div></div></div>`;
 }
-$('g-hud').innerHTML = gHudHTML(); $('g-hud2').innerHTML = gHudHTML();
+$('g-hud').innerHTML = gHudHTML(); $('g-tmw').innerHTML = '<span id="g-tm2">—</span>' + G_CLOCK;
 
 function gHead(){
   if (!me) return;
-  const t = gNow(), p = gP(), x = gScores(p, t), left = GC.endAt ? Math.max(0, GC.endAt - t) : 0, over = gOver(p, t);
+  const t = gNow(), p = gP(), x = gScores(p, t), r = gRates(p), left = GC.endAt ? Math.max(0, GC.endAt - t) : 0, over = gOver(p, t);
   const tm = GC.endAt ? Math.floor(left / 3600000) + 'h ' + String(Math.floor(left / 60000) % 60).padStart(2, '0') + 'm' : '—';
-  const set = (sel, fn) => document.querySelectorAll('.ghud ' + sel).forEach(fn);
+  const set = (sel, fn) => document.querySelectorAll(sel).forEach(fn);
   const txt = (sel, v) => set(sel, e => { e.textContent = v; });
-  txt('.na', GC.nameA); txt('.nb', GC.nameB);
-  txt('.sa', Math.floor(x.A)); txt('.sb', Math.floor(x.B));
-  txt('.aa', '⚔ ' + ((p.atk && p.atk.A) || 0)); txt('.ab', '⚔ ' + ((p.atk && p.atk.B) || 0));
-  txt('.tt', tm);
-  set('.gg', e => { e.classList.toggle('fim', over); e.textContent = over ? '🏁 FIM · ' + (x.A === x.B ? 'EMPATE' : (x.A > x.B ? GC.nameA : GC.nameB) + ' VENCEU') : 'Vitória instantânea · ' + GC.goal; });
-  set('.pa', e => { e.style.width = Math.min(100, x.A / GC.goal * 100) + '%'; }); set('.pb', e => { e.style.width = Math.min(100, x.B / GC.goal * 100) + '%'; });
-  set('.ya', e => e.classList.toggle('on', gSide === 'A')); set('.yb', e => e.classList.toggle('on', gSide === 'B'));
+  const pop = (t / 1000) % 60 < 3;            // o "+N" flutuante aparece a cada minuto, quando os pontos entram
+  txt('#g-hud .na', GC.nameA); txt('#g-hud .nb', GC.nameB);
+  txt('#g-hud .sa', Math.floor(x.A)); txt('#g-hud .sb', Math.floor(x.B));
+  txt('#g-hud .ta', '+' + Math.round(r.A)); txt('#g-hud .tb', '+' + Math.round(r.B));
+  set('#g-hud .ta', e => { e.style.display = r.A > 0 ? '' : 'none'; }); set('#g-hud .tb', e => { e.style.display = r.B > 0 ? '' : 'none'; });
+  txt('#g-hud .fa', '+' + Math.round(r.A)); txt('#g-hud .fb', '+' + Math.round(r.B));
+  set('#g-hud .fa', e => e.classList.toggle('on', pop && !over && r.A > 0)); set('#g-hud .fb', e => e.classList.toggle('on', pop && !over && r.B > 0));
+  txt('#g-hud .tt', tm); txt('#g-tm2', tm);
+  set('#g-hud .gg', e => { e.classList.toggle('fim', over); e.textContent = over ? '🏁 Fim de jogo' : 'Para vitória instantânea'; });
+  txt('#g-hud .gv', over ? (x.A === x.B ? 'EMPATE' : (x.A > x.B ? GC.nameA : GC.nameB) + ' venceu') : GC.goal);
+  txt('#g-atk', '⚔ ' + GC.nameA + ' ' + ((p.atk && p.atk.A) || 0) + ' · ' + GC.nameB + ' ' + ((p.atk && p.atk.B) || 0));
 }
 function gRender(){
   if (!me) return; const p = gP();
   $('g-title').innerHTML = `<small>${esc(GC.city)}</small><b>${esc(GC.district)}</b>`;
   $('g-bl').innerHTML = GC.bn.map((b, i) => {
-    const s = p.b[i] || '', n = s.length || 1, na = gCnt(s, 'A'), nb = gCnt(s, 'B'), h = Math.floor(n / 2) + 1, own = na >= h ? 'a' : nb >= h ? 'b' : 'n';
-    return `<div class="g-b own-${own}" data-i="${i}" style="--lx:${GPOS[i][0]}%;--ly:${GPOS[i][1]}%;--px:${GPOSP[i][0]}%;--py:${GPOSP[i][1]}%">${gIcon(i)}<div class="g-lab">${own !== 'n' ? `<span class="g-inc">+${GC.ppm}</span>` : ''}<div class="r1"><span class="g-nm">${esc(b.name)}</span><span class="g-cnt">🚚 ${n}</span></div><i class="g-bar"><s style="width:${na / n * 100}%"></s><u style="width:${nb / n * 100}%"></u></i></div></div>`;
+    const s = p.b[i] || '', n = s.length || 1, na = gCnt(s, 'A'), nb = gCnt(s, 'B'), own = gOwn(s), lk = (+b.x || 1) > 1;
+    return `<div class="g-b own-${own}" data-i="${i}" style="--lx:${GPOS[i][0]}%;--ly:${GPOS[i][1]}%;--px:${GPOSP[i][0]}%;--py:${GPOSP[i][1]}%"><div class="g-ic">${gIcon(i)}</div><div class="g-lab">${own !== 'n' ? `<span class="g-inc">+${Math.round(gPpm(b))}</span>${lk ? `<span class="g-x">X${+b.x}</span>` : ''}` : ''}<div class="g-r1"><span class="g-nm">${esc(b.name)}</span>${lk ? G_CHAIN : ''}<span class="g-trk">${G_TRUCK}<span class="g-cnt">${n}</span></span></div><i class="gl-bar"><s style="width:${na / n * 100}%"></s><u style="width:${nb / n * 100}%"></u></i></div></div>`;
   }).join('');
   $('g-bl').querySelectorAll('.g-b').forEach(el => { el.onclick = () => gOpenB(+el.dataset.i); });
   document.querySelectorAll('.gside [data-s]').forEach(b => { b.classList.toggle('on', b.dataset.s === gSide); b.textContent = b.dataset.s === 'A' ? GC.nameA : GC.nameB; });
@@ -1685,7 +1742,7 @@ const gVar = (i, k) => (k * 7 + i * 3) % 4;
 function gFight(){
   if (gOpen < 0) return;
   const i = gOpen, s = gP().b[i] || '', n = s.length || 1, na = gCnt(s, 'A'), nb = gCnt(s, 'B'), mine = gCnt(s, gSide);
-  $('g-bt').textContent = GC.bn[i].name; $('g-v-a').textContent = GC.nameA; $('g-v-b').textContent = GC.nameB;
+  $('g-bt').textContent = GC.bn[i].name; $('g-v-a').innerHTML = esc(GC.nameA) + G_SWORD; $('g-v-b').innerHTML = G_EYES + esc(GC.nameB);
   $('g-mb').innerHTML = `<s style="width:${na / n * 100}%"></s><u style="width:${nb / n * 100}%"></u>`;
   $('g-cnts').textContent = GC.nameA + ' ' + na + ' · ' + GC.nameB + ' ' + nb + ' · Bots ' + (n - na - nb);
   if (!gMode) return;
@@ -1731,22 +1788,23 @@ document.querySelectorAll('.gside [data-s]').forEach(b => { b.onclick = () => { 
 
 /* ---- configuração (líder / moderador) ---- */
 function gCfgBuild(){
-  $('g-bcfg').innerHTML = '<div class="gbr gbh"><span>Prédio</span><span>Vagas</span><span>Carros A</span><span>Carros B</span></div>' + GC.bn.map((b, i) => `<div class="gbr"><input id="g-n${i}" maxlength="14" aria-label="Nome ${i + 1}"><input id="g-c${i}" type="number" min="1" max="40" aria-label="Vagas"><input id="g-a${i}" type="number" min="0" aria-label="Carros A"><input id="g-b${i}" type="number" min="0" aria-label="Carros B"></div>`).join('');
+  $('g-bcfg').innerHTML = '<div class="gbr gbh"><span>Prédio</span><span>Vagas</span><span>Carros A</span><span>Carros B</span><span>Pts/min</span><span>Bônus ×</span></div>' + GC.bn.map((b, i) => `<div class="gbr"><input id="g-n${i}" maxlength="14" aria-label="Nome ${i + 1}"><input id="g-c${i}" type="number" min="1" max="40" aria-label="Vagas"><input id="g-a${i}" type="number" min="0" aria-label="Carros A"><input id="g-b${i}" type="number" min="0" aria-label="Carros B"><input id="g-p${i}" type="number" min="0" inputmode="decimal" aria-label="Pontos por minuto"><input id="g-x${i}" type="number" min="1" max="10" aria-label="Bônus"></div>`).join('');
 }
 function gFillCfg(){
   if ($('g-cfg').contains(document.activeElement)) return;
-  const f = { 'g-goal-i': GC.goal, 'g-ppm': GC.ppm, 'g-nm-a': GC.nameA, 'g-nm-b': GC.nameB, 'g-city': GC.city, 'g-dist': GC.district, 'g-at-a': GP && GP.atk ? GP.atk.A || 0 : 0, 'g-at-b': GP && GP.atk ? GP.atk.B || 0 : 0 };
-  GC.bn.forEach((b, i) => { f['g-n' + i] = b.name; f['g-c' + i] = b.cap; f['g-a' + i] = b.a; f['g-b' + i] = b.b; });
+  const f = { 'g-goal-i': GC.goal, 'g-nm-a': GC.nameA, 'g-nm-b': GC.nameB, 'g-city': GC.city, 'g-dist': GC.district, 'g-at-a': GP && GP.atk ? GP.atk.A || 0 : 0, 'g-at-b': GP && GP.atk ? GP.atk.B || 0 : 0 };
+  GC.bn.forEach((b, i) => { f['g-n' + i] = b.name; f['g-c' + i] = b.cap; f['g-a' + i] = b.a; f['g-b' + i] = b.b; f['g-p' + i] = b.p; f['g-x' + i] = b.x; });
   Object.keys(f).forEach(k => { if ($(k)) $(k).value = f[k]; });
 }
 gCfgBuild();
 $('g-save').onclick = () => {
   const n = id => Math.max(0, +$(id).value || 0), mins = n('g-h') * 60 + n('g-m'), bn = {};
-  GC.bn.forEach((_, i) => { bn[i] = { name: $('g-n' + i).value.trim().slice(0, 14) || GN0[i], cap: Math.min(40, Math.max(1, n('g-c' + i) || 21)), a: n('g-a' + i), b: n('g-b' + i) }; });
+  GC.bn.forEach((_, i) => { bn[i] = { name: $('g-n' + i).value.trim().slice(0, 14) || GN0[i], cap: Math.min(40, Math.max(1, n('g-c' + i) || 21)), a: n('g-a' + i), b: n('g-b' + i), p: n('g-p' + i), x: Math.min(10, Math.max(1, Math.round(+$('g-x' + i).value || 1))) }; });
   const tx = id => $(id).value.trim().slice(0, 20);
-  db.ref('game/cfg').set({ goal: n('g-goal-i') || 3000, ppm: n('g-ppm'), nameA: tx('g-nm-a') || 'EQUIPE A', nameB: tx('g-nm-b') || 'EQUIPE B', city: tx('g-city') || 'MIAUSCOU', district: tx('g-dist') || 'DISTRITO 1', endAt: mins ? gNow() + mins * 60000 : (GC.endAt || 0), bn }).catch(console.error);
+  db.ref('game/cfg').set({ goal: n('g-goal-i') || 3000, nameA: tx('g-nm-a') || 'EQUIPE A', nameB: tx('g-nm-b') || 'EQUIPE B', city: tx('g-city') || 'MIAUSCOU', district: tx('g-dist') || 'DISTRITO 1', endAt: mins ? gNow() + mins * 60000 : (GC.endAt || 0), bn }).catch(console.error);
   db.ref('game/play/atk').set({ A: n('g-at-a'), B: n('g-at-b') }).catch(console.error);
 };
+$('g-ppm-ap').onclick = () => { const v = Math.max(0, +$('g-ppm').value || 0); GC.bn.forEach((_, i) => { $('g-p' + i).value = v; }); };
 $('g-reset').onclick = () => { if (confirm('Reiniciar o mapa e zerar os pontos?')) db.ref('game/play').set(gBuild()).catch(console.error); };
 let gIniting = false;
 function gInit(){
@@ -1754,7 +1812,7 @@ function gInit(){
   db.ref('game/play').transaction(p => (p && p.b) ? undefined : gBuild()).catch(() => {}).then(() => { gIniting = false; });
 }
 function gStart(){
-  db.ref('game/cfg').on('value', s => { const v = s.val() || {}; GC = Object.assign(JSON.parse(JSON.stringify(GDEF)), v); GC.bn = GDEF.bn.map((d, i) => Object.assign({}, d, (v.bn || {})[i])); gFillCfg(); gRender(); }, () => {});
+  db.ref('game/cfg').on('value', s => { const v = s.val() || {}; GC = Object.assign(JSON.parse(JSON.stringify(GDEF)), v); GC.bn = GDEF.bn.map((d, i) => Object.assign({}, d, v.ppm != null ? { p: +v.ppm } : {}, (v.bn || {})[i])); gFillCfg(); gRender(); }, () => {});
   db.ref('game/play').on('value', s => { GP = s.val(); if (!GP || !GP.b) gInit(); gFillCfg(); gRender(); }, () => {});
   setInterval(gHead, 1000);
 }

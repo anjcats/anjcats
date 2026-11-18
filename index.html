@@ -243,8 +243,11 @@ main.full{padding:0;max-width:none}
 .g-dim{position:absolute;inset:0;background:rgba(74,62,48,.3);pointer-events:none}
 .g-ground{position:absolute;left:0;right:0;bottom:0;height:10.8%;background:linear-gradient(#2a2f72,#191c4f)}
 .g-wire{position:absolute;left:0;right:0;bottom:7%;height:calc(70*var(--p));pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='70' viewBox='0 0 150 70'%3E%3Cpath d='M0 38Q37 -6 75 38T150 38' fill='none' stroke='%231d2156' stroke-width='6'/%3E%3Cpath d='M0 38Q37 82 75 38T150 38' fill='none' stroke='%231d2156' stroke-width='6'/%3E%3Cpath d='M58 22l34 32M92 22L58 54' stroke='%231d2156' stroke-width='6'/%3E%3C/svg%3E") repeat-x left bottom/calc(150*var(--p)) calc(70*var(--p));opacity:.96}
-.g-tabs span{position:absolute;top:2.8%;font-size:calc(48*var(--q));line-height:1;text-transform:uppercase;white-space:nowrap;color:rgba(236,226,204,.5);font-weight:600;pointer-events:none}
-.g-tabs span.on{color:#fff}
+.g-tabs{position:absolute;left:20.4%;top:1.2%;display:flex;align-items:center;gap:calc(26*var(--q));z-index:8}
+.g-tabs span,.g-tabs button{font-family:var(--gf);font-size:calc(48*var(--q));line-height:1;text-transform:uppercase;white-space:nowrap;color:rgba(236,226,204,.5);font-weight:600;letter-spacing:.01em;padding:calc(16*var(--q)) calc(14*var(--q));background:none;border:0;border-radius:0;pointer-events:none}
+.g-tabs button{pointer-events:auto;cursor:pointer;color:rgba(255,255,255,.82);-webkit-tap-highlight-color:transparent}
+.g-tabs button:active{color:#fff;background:rgba(255,255,255,.18)}
+.g-tabs .on{color:#fff}
 .g-handle{position:absolute;left:0;top:28%;width:8.15%;height:56.3%;background:repeating-linear-gradient(135deg,#8ba8ee 0 calc(30*var(--p)),#9db7f4 calc(30*var(--p)) calc(60*var(--p)));border-right:calc(6*var(--p)) solid #6a8fe8;pointer-events:none}
 .g-handle::after{content:"";position:absolute;right:calc(14*var(--p));top:50%;transform:translateY(-50%);border:calc(24*var(--p)) solid transparent;border-left:calc(36*var(--p)) solid #3b66d4;border-right:0}
 .g-troph{position:absolute;right:0;top:10.6%;width:7.75%;height:17.8%;background:linear-gradient(#b4352d,#962a24);clip-path:polygon(24% 0,100% 0,100% 100%,24% 100%,0 50%);display:grid;place-items:center;padding-left:calc(30*var(--p));pointer-events:none}
@@ -410,6 +413,70 @@ main.full{padding:0;max-width:none}
 .cols button.on{border-color:var(--text)}
 .on-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ok);margin-right:6px}
 #on-list div{padding:4px 0}
+
+/* ===== Treino estilo jogo: Bate-papo / Minha gangue (mesmo visual do jogo) ===== */
+.gtop{display:flex;justify-content:center;align-items:flex-end;gap:clamp(8px,3vw,36px);height:54px;padding:0 10px 9px;background-color:#86a9e8;background-image:radial-gradient(rgba(255,255,255,.55) 1.2px,transparent 1.7px);background-size:88px 30px;position:relative;z-index:30;overflow-x:auto;scrollbar-width:none}
+.gtop::-webkit-scrollbar{display:none}
+.gtop button,.gtop span{flex:0 0 auto;background:none;border:0;border-radius:0;box-shadow:none;font-family:var(--gf);font-weight:600;font-size:clamp(.82rem,2.2vw,1.4rem);line-height:1;letter-spacing:0;text-transform:uppercase;color:rgba(255,255,255,.62);padding:2px 4px;cursor:pointer}
+.gtop span{pointer-events:none}
+.gtop button.on{color:#fff;font-size:clamp(1rem,2.9vw,1.8rem)}
+.gpane{position:relative;display:flex;flex-direction:column;height:calc(100dvh - 190px);min-height:380px;overflow:hidden;background:#212b63 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='48'%3E%3Crect width='160' height='48' fill='%23212b63'/%3E%3Crect x='2' y='2' width='76' height='20' fill='%23283370'/%3E%3Crect x='82' y='2' width='76' height='20' fill='%23242f68'/%3E%3Crect x='-38' y='26' width='76' height='20' fill='%23242f68'/%3E%3Crect x='42' y='26' width='76' height='20' fill='%232b3677'/%3E%3Crect x='122' y='26' width='76' height='20' fill='%23283370'/%3E%3C/svg%3E");font-family:var(--gf)}
+.gpane::before{content:"";position:absolute;left:0;right:0;top:0;height:40px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='40' viewBox='0 0 150 40'%3E%3Cpath d='M0 24Q37 2 75 24T150 24' fill='none' stroke='%23b9c3e3' stroke-width='4'/%3E%3Cpath d='M0 24Q37 46 75 24T150 24' fill='none' stroke='%237f8cc0' stroke-width='3'/%3E%3Cpath d='M30 8l12 12M42 8L30 20M110 28l12 12M122 28l-12 12' stroke='%23161b4a' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E") 0 0/150px 40px repeat-x;z-index:1;pointer-events:none}
+.gbn{position:relative;z-index:3;flex:0 0 auto;width:min(100% - 28px,900px);margin:12px auto 0;height:62px;background:linear-gradient(#9b79bd,#8967af);display:flex;align-items:center;gap:12px;padding:0 14px;color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.28)}
+.gbn::before,.gbn::after{content:"";position:absolute;top:-10px;width:34px;height:calc(100% + 0px);background:#76589c;z-index:-1}
+.gbn::before{left:-24px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,34% 50%)}
+.gbn::after{right:-24px;clip-path:polygon(0 0,100% 0,66% 50%,100% 100%,0 100%)}
+.gbn .gem{width:46px;height:46px;flex:0 0 auto;border-radius:8px;background:linear-gradient(#ffc15a,#f08b1f);border:3px solid #fff;display:grid;place-items:center;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.gbn .gem svg{width:30px;height:30px}
+.gbn b{font-weight:600;font-size:clamp(1.1rem,3vw,1.6rem);text-transform:uppercase;letter-spacing:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gbn .gri{margin-left:auto;display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.gbn .gri small{font-size:clamp(.85rem,2vw,1.05rem);font-weight:600;opacity:.95;text-transform:uppercase}
+.gbn .gri svg.chest{width:42px;height:42px}
+.gbn .ggear{width:44px;height:44px;padding:0;border:0;border-radius:0;background:linear-gradient(#ee4a4a,#c52c2c);display:grid;place-items:center;box-shadow:0 2px 0 rgba(0,0,0,.25);clip-path:polygon(0 0,82% 0,100% 18%,100% 100%,0 100%);cursor:pointer}
+.gbn .ggear svg{width:26px;height:26px}
+.gscroll{position:relative;z-index:2;flex:1;min-height:0;overflow-y:auto;padding:12px 0 92px;scrollbar-width:thin}
+.gcol{width:min(100% - 28px,860px);margin:0 auto}
+.gmsg{position:relative;background:#dce4f6;margin:0 0 10px;padding:7px 14px 9px;color:#1d2a4a;box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.gmsg::before{content:"";position:absolute;left:-11px;top:12px;border:10px solid transparent;border-left:0;border-right-color:#dce4f6}
+.gmsg .mh{display:flex;align-items:baseline;gap:12px}
+.gmsg .mn{font-size:1.2rem;font-weight:600;color:#5b73a6;text-transform:uppercase;line-height:1.2}
+.gmsg .mr{font-size:.8rem;font-weight:500;color:#9aaacb;text-transform:uppercase}
+.gmsg .mr.l{color:#e3902a}
+.gmsg .mtime{margin-left:auto;font-size:.85rem;font-weight:600;color:#2c3a62;white-space:nowrap}
+.gmsg .mx{font-size:1.12rem;line-height:1.35;word-break:break-word;color:#1d2a4a;font-weight:500}
+.gmsg.me .mn{color:#2f9d4f}
+.gmsg.big .mx{font-size:1.8rem}
+.gempty{color:#8f9cc8;text-align:center;padding:28px 0;font-size:1.1rem;text-transform:uppercase}
+.gbk,.gcb{position:absolute;z-index:6;bottom:14px;width:60px;height:60px;padding:0;border:0;border-radius:0;background:linear-gradient(#e84840,#c32a25);display:grid;place-items:center;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.35)}
+.gbk{left:16px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%);}
+.gcb{right:16px}
+.gbk::before,.gcb::before{content:"";position:absolute;left:0;top:0;border-top:13px solid #fff;border-right:13px solid transparent}
+.gbk svg,.gcb svg{width:34px;height:34px}
+.gcomp{position:absolute;z-index:6;bottom:16px;left:90px;right:90px;display:flex;gap:6px}
+.gcomp input{flex:1;min-width:0;background:#eef2fb;color:#1d2a4a;border:2px solid #7d8fc0;border-radius:0;padding:10px 12px;font-family:var(--gf);font-size:1.05rem}
+.gcomp button{background:#e0443e;color:#fff;border:0;border-radius:0;padding:10px 16px;font-family:var(--gf);font-weight:600;font-size:1.05rem;text-transform:uppercase}
+.gml{background:#fff;box-shadow:0 3px 0 rgba(0,0,0,.3)}
+.gr{display:flex;align-items:center;gap:10px;padding:0 14px;min-height:46px;background:#fff;border-bottom:2px solid #dfe2ea;color:#1d2a4a}
+.gr.me{background:#cfd0d6}
+.gr .gi{width:24px;text-align:right;font-size:1.25rem;font-weight:600;color:#1d2a4a}
+.gr .gn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:1.3rem;font-weight:600;text-transform:uppercase;color:#1d2a4a}
+.gr .gn i{font-style:normal;font-size:.82rem;font-weight:500;margin-left:8px;color:#9aa4bf}
+.gr .gn i.l{color:#e3902a}
+.gr.cap .gn,.gr.me .gn{color:#2f9d4f}
+.gr.empty .gn{color:#b3bad0;font-weight:500}
+.gr.done .gn{opacity:.55}
+.gr .gcar{min-width:30px;height:30px;border-radius:15px;background:#e9ebf1;color:#4a5578;display:grid;place-items:center;font-size:1rem;font-weight:600;padding:0 6px}
+.gr .gc{color:#c3c8d8;font-size:1.5rem;line-height:1;font-weight:600}
+.gtools{margin-top:14px;padding:12px;background:rgba(18,24,66,.92);box-shadow:0 3px 0 rgba(0,0,0,.3)}
+.gimpm{display:grid;gap:8px;margin-top:10px}
+.gimpm button{padding:11px 14px;border-radius:6px;font-weight:600;background:#e0443e;color:#fff;font-family:var(--gf);letter-spacing:.02em}
+.gimpm button:disabled{opacity:.6}
+.gimpm #gm-copy{background:#3f6bd0}.gimpm #gm-ok{background:#1f9d5a}.gimpm #gm-no{background:#56628c}
+.gimpm .gmrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gimpm label{color:#c8d2f2;font-size:.8rem;display:flex;gap:6px;align-items:center}
+#gm-ta{width:100%;background:#eef2fb;color:#1d2a4a;border:1px solid #7d8fc0;border-radius:6px;padding:8px;font-family:var(--gf);font-size:.95rem;line-height:1.5;text-transform:uppercase}
+#gm-imp-msg{margin:0}
+.gpad{color:#c8d2f2;font-size:.78rem;text-align:center;margin:0 0 4px}
 </style>
 <script>try{if(localStorage.getItem('cats_theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
 </head>
@@ -590,6 +657,8 @@ main.full{padding:0;max-width:none}
 
     <!-- Treino: Reis da Cidade -->
     <div id="tab-game" class="hidden">
+      <div class="gtop hidden" id="gp-top"><button data-gp="map" class="on">Reis da cidade</button><button data-gp="chat">Bate-papo</button><button data-gp="gang">Minha gangue</button><span>Lutas de gangue</span><span>Amigos</span></div>
+      <div id="gp-map" style="display:contents">
       <div class="gside">Você joga pela: <span class="pl"><button data-s="A">Equipe A</button><button data-s="B">Equipe B</button></span><button type="button" id="g-fs2" class="gfs2">⛶ Tela cheia</button><span class="gatk" id="g-atk"></span></div>
       <div class="g-fsh">Dica: toque em <b>⛶ Tela cheia</b> para ver o mapa igual ao jogo (ele gira sozinho com o celular em pé).</div>
       <div class="gmapw" id="g-wrap"><div class="gmap" id="g-map"></div></div>
@@ -648,6 +717,35 @@ main.full{padding:0;max-width:none}
           <div id="g-gridw"><div id="g-grid"></div></div>
         </div>
         <button id="g-back" class="g-redbtn" type="button" aria-label="Voltar">◀</button>
+      </div>
+      </div>
+
+      <div id="gp-chat" class="gpane hidden">
+        <div class="gbn"><span class="gem"><svg viewBox="0 0 40 40"><path d="M7 9l26 22M33 9L7 31" stroke="#7a1d12" stroke-width="9" stroke-linecap="round"/><path d="M7 9l26 22M33 9L7 31" stroke="#e8402c" stroke-width="5.5" stroke-linecap="round"/></svg></span><b class="gp-gname"></b><div class="gri"><svg class="chest" viewBox="0 0 48 48"><rect x="5" y="14" width="38" height="28" rx="4" fill="#a8521f" stroke="#5a2a0e" stroke-width="3"/><path d="M5 22h38" stroke="#5a2a0e" stroke-width="3"/><rect x="5" y="14" width="38" height="8" rx="3" fill="#c96a2b"/><rect x="20" y="20" width="8" height="10" rx="2" fill="#ffd34d" stroke="#5a2a0e" stroke-width="2"/></svg></div></div>
+        <div class="gscroll" id="gp-msgs"><div class="gcol" id="gp-msgs-in"></div></div>
+        <form class="gcomp hidden" id="gp-form"><input id="gp-in" placeholder="Mensagem" autocomplete="off" maxlength="500"><button>Enviar</button></form>
+        <button type="button" class="gbk" data-gpgo="map" aria-label="Voltar"><svg viewBox="0 0 40 40"><path d="M27 6v28L9 20z" fill="#fff"/></svg></button>
+        <button type="button" class="gcb" id="gp-cb" aria-label="Escrever mensagem"><svg viewBox="0 0 40 40"><path d="M5 8h30a2 2 0 0 1 2 2v17a2 2 0 0 1-2 2H18l-8 7v-7H5a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z" fill="#fff"/><circle cx="12" cy="18.5" r="2.6" fill="#c32a25"/><circle cx="20" cy="18.5" r="2.6" fill="#c32a25"/><circle cx="28" cy="18.5" r="2.6" fill="#c32a25"/></svg></button>
+      </div>
+      <div id="gp-gang" class="gpane hidden">
+        <div class="gbn"><span class="gem"><svg viewBox="0 0 40 40"><path d="M7 9l26 22M33 9L7 31" stroke="#7a1d12" stroke-width="9" stroke-linecap="round"/><path d="M7 9l26 22M33 9L7 31" stroke="#e8402c" stroke-width="5.5" stroke-linecap="round"/></svg></span><b class="gp-gname"></b><div class="gri"><small id="gp-cnt">MEMBROS 0/25</small><button type="button" class="ggear only-staff" id="gp-gear" aria-label="Importar membros"><svg viewBox="0 0 40 40"><path fill="#fff" d="M17 4h6l1 5 3 1.4 4.3-3 4.2 4.2-3 4.3L36 19l5 1v6l-5 1-1.4 3 3 4.3-4.2 4.2-4.3-3L24 38l-1 5h-6l-1-5-3-1.4-4.3 3-4.2-4.2 3-4.3L4 27l-5-1v-6l5-1 1.4-3-3-4.3 4.2-4.2 4.3 3L16 9z" transform="translate(-0.5 -2) scale(.95)"/><circle cx="20" cy="20" r="6" fill="#c52c2c"/></svg></button></div></div>
+        <div class="gscroll"><div class="gcol">
+          <div class="gml" id="gp-list"></div>
+          <div class="gtools only-staff hidden" id="gp-tools">
+            <div class="gpad">Toque em um slot para colocar ou trocar o nome do membro (vale também para a aba Ataques).</div>
+            <div class="gimpm">
+              <div class="gmrow"><button type="button" id="gm-imp">📷 Importar membros por print</button><button type="button" id="gm-copy">📋 Copiar nomes</button></div>
+              <input type="file" id="gm-imp-f" accept="image/*" multiple class="hidden">
+              <div class="gpad" id="gm-imp-msg" role="status">Envie um ou mais prints da lista “Minha gangue” (se a lista for grande, tire um print de cada parte rolando a tela).</div>
+              <div id="gm-rev" class="hidden" style="display:grid;gap:8px">
+                <textarea id="gm-ta" rows="10" spellcheck="false" autocapitalize="characters"></textarea>
+                <label><input type="checkbox" id="gm-clr"> Liberar as vagas que não estão nesta lista</label>
+                <div class="gmrow"><button type="button" id="gm-ok">✔ Aplicar nos slots</button><button type="button" id="gm-no">Cancelar</button></div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+        <button type="button" class="gbk" data-gpgo="map" aria-label="Voltar"><svg viewBox="0 0 40 40"><path d="M27 6v28L9 20z" fill="#fff"/></svg></button>
       </div>
     </div>
 
@@ -847,6 +945,7 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
   $('main').classList.toggle('full', curTab === 'cars' || curTab === 'game');
   if (curTab !== 'game' && typeof gFs === 'function') gFs(false);
   if (curTab === 'cars') showSub(curSub);
+  if (curTab === 'game' && typeof gpMapChat === 'function') gpMapChat();
   if (curTab === 'chat') { $('msgs').scrollTop = 1e9; }
   if (curTab === 'str' && curStr === 'main') markStrSeen();
 });
@@ -1677,7 +1776,7 @@ function gSky(n, seed, h0, h1, fill, op, blur, lights){
 const GSCENE = `<div class="g-sun"></div><div class="g-ly l1">${gSky(30, 7, 60, 170, '#a58b6e', .8, 1, 0)}</div><div class="g-ly l2">${gSky(24, 3, 50, 150, '#6f5443', .92, 0, 1)}</div>
 <svg class="g-lm" viewBox="0 0 220 260"><defs><linearGradient id="gGold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e2ab62"/><stop offset=".5" stop-color="#ffd995"/><stop offset="1" stop-color="#d9a05a"/></linearGradient></defs><path d="M62 260V110Q62 22 112 8Q162 22 162 110V260Z" fill="url(#gGold)"/><path d="M62 110H162M64 150H160M66 190H158M70 230H154" stroke="#c98f4a" stroke-width="2" opacity=".6" fill="none"/><path d="M86 30V260M112 8V260M138 30V260" stroke="#fff3d0" stroke-width="2" opacity=".35" fill="none"/><rect x="8" y="150" width="46" height="110" fill="#f0c27c"/><rect x="170" y="130" width="46" height="130" fill="#e8b46c"/><g fill="#9a6a38" opacity=".55"><rect x="16" y="162" width="8" height="10"/><rect x="32" y="162" width="8" height="10"/><rect x="16" y="188" width="8" height="10"/><rect x="32" y="188" width="8" height="10"/><rect x="180" y="146" width="8" height="10"/><rect x="198" y="146" width="8" height="10"/><rect x="180" y="174" width="8" height="10"/><rect x="198" y="174" width="8" height="10"/></g></svg>
 <div class="g-ly l3">${gSky(18, 11, 30, 100, '#3f302d', 1, 0, 1)}</div><div class="g-dim"></div><div class="g-ground"></div><div class="g-wire"></div>
-<div class="g-tabs" aria-hidden="true"><span class="on" style="left:20.4%">Reis da cidade</span><span style="left:36.8%">Bate-papo</span><span style="left:49.3%">Minha gangue</span><span style="left:63.4%">Lutas de gangue</span><span style="left:79.6%">Amigos</span></div>
+<div class="g-tabs"><span class="on">Reis da cidade</span><button type="button" data-gpgo="chat">Bate-papo</button><button type="button" data-gpgo="gang">Minha gangue</button><span aria-hidden="true">Lutas de gangue</span><span aria-hidden="true">Amigos</span></div>
 <div class="g-handle" aria-hidden="true"></div>
 <div class="g-troph" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M14 6H50V22Q50 38 32 42Q14 38 14 22Z" fill="#fff"/><path d="M14 10H4Q4 26 16 30M50 10H60Q60 26 48 30" fill="none" stroke="#fff" stroke-width="5"/><rect x="28" y="40" width="8" height="10" fill="#fff"/><rect x="18" y="50" width="28" height="8" rx="2" fill="#fff"/></svg></div>
 <div class="gh" id="g-hud"></div>
@@ -2022,6 +2121,181 @@ function gStart(){
   db.ref('game/play').on('value', s => { GP = s.val(); if (!GP || !GP.b) gInit(); gFillCfg(); gRender(); }, () => {});
   setInterval(gHead, 1000);
 }
+
+
+/* ===== Treino estilo jogo: abas ===== */
+let gpCur = 'map', gpChatOn = false;
+function gpName(){ return (typeof GC !== 'undefined' && GC && GC.nameA) || 'MINHA GANGUE'; }
+function gpTab(t){
+  gpCur = t;
+  document.querySelectorAll('#gp-top [data-gp]').forEach(b => b.classList.toggle('on', b.dataset.gp === t));
+  $('gp-top').classList.toggle('hidden', t === 'map');
+  ['map','chat','gang'].forEach(k => $('gp-' + k).classList.toggle('hidden', k !== t));
+  if (t !== 'map' && typeof gFs === 'function') gFs(false);
+  document.querySelectorAll('.gp-gname').forEach(e => e.textContent = gpName());
+  if (t === 'map') gpMapChat();
+  if (t === 'chat') gpChatInit();
+  if (t === 'gang') gpGang();
+}
+function gpChatInit(){
+  if (!gpChatOn && db && me) {
+    gpChatOn = true;
+    db.ref('chat').limitToLast(100).on('child_added', s => { gpAddMsg(s.val()); }, () => {});
+  }
+  setTimeout(() => { $('gp-msgs').scrollTop = 1e9; }, 60);
+}
+/* bate-papo embaixo do mapa (aba Reis da cidade): é o mesmo chat do app */
+function gpMapChat(){
+  if (gpCur !== 'map') return;
+  document.querySelectorAll('.gp-gname').forEach(e => e.textContent = gpName());
+  gpChatInit();
+}
+function gpGang(){
+  if (gpCur !== 'gang' || !me) return;
+  const slots = [];
+  for (let i = 0; i < 25; i++) slots.push(atkData[i] || atkData[String(i)] || null);
+  const staff = isLeader() || isMod();
+  const full = slots.filter(x => x && x.name).length;
+  $('gp-cnt').textContent = 'MEMBROS ' + full + '/25';
+  const box = $('gp-list'); box.innerHTML = '';
+  slots.forEach((x, i) => {
+    const nm = x && x.name ? x.name : '';
+    const u = staff && nm ? Object.values(usersData).find(v => v && sameName(v.name, nm)) : null;
+    const lead = u && u.role === 'leader';
+    const d = document.createElement('div');
+    d.className = 'gr' + (!nm ? ' empty' : '') + (lead ? ' cap' : '') + (nm && me.name && sameName(nm, me.name) ? ' me' : '') + (x && x.done ? ' done' : '');
+    const tag = lead ? '<i class="l">LÍDER</i>' : u && u.role === 'mod' ? '<i class="l">MOD</i>' : x && x.done ? '<i>ATACOU</i>' : '';
+    d.innerHTML = `<span class="gi">${i + 1}</span><span class="gn">${nm ? esc(nm) : 'Vaga livre'}${tag}</span>${x && x.cars ? `<span class="gcar">${+x.cars}</span>` : ''}${staff ? '<span class="gc">›</span>' : ''}`;
+    if (staff) { d.style.cursor = 'pointer'; d.onclick = () => {
+      const v = prompt('Nome do membro no slot ' + (i + 1) + ' (deixe vazio para liberar):', nm);
+      if (v === null) return;
+      const n = v.trim().slice(0, 24);
+      const r = db.ref('attacks/' + i);
+      (n ? r.update({ name: n }) : r.remove()).catch(() => alert('Não foi possível salvar.'));
+    }; }
+    box.appendChild(d);
+  });
+}
+function gpAgo(ts){
+  const s = Math.max(0, (Date.now() - (+ts || Date.now())) / 1000);
+  return s < 60 ? 'agora' : s < 3600 ? 'há ' + Math.floor(s / 60) + 'm' : s < 86400 ? 'há ' + Math.floor(s / 3600) + 'h' : 'há ' + Math.floor(s / 86400) + 'd';
+}
+function gpAddMsg(m){
+  const box = $('gp-msgs'), col = $('gp-msgs-in'); if (!box || !col || !m) return;
+  const mine = !!auth.currentUser && m.uid === auth.currentUser.uid;
+  const big = /^[\p{Extended_Pictographic}\uFE0F\u200D\s]{1,16}$/u.test(m.text || '');
+  const lead = m.role === 'leader', mod = m.role === 'mod';
+  const el = document.createElement('div'); el.className = 'gmsg' + (mine ? ' me' : '') + (big ? ' big' : '');
+  el.innerHTML = `<div class="mh"><span class="mn">${esc(m.user || '')}</span><span class="mr${lead || mod ? ' l' : ''}">${lead ? 'Líder' : mod ? 'Mod' : 'Membro'}</span><span class="mtime" data-ts="${+m.ts || 0}">${gpAgo(m.ts)}</span></div><div class="mx"></div>`;
+  el.querySelector('.mx').textContent = m.text || '';
+  const bottom = box.scrollHeight - box.scrollTop - box.clientHeight < 120;
+  col.appendChild(el);
+  if (bottom || mine) box.scrollTop = 1e9;
+}
+setInterval(() => document.querySelectorAll('#gp-msgs .mtime').forEach(e => { e.textContent = gpAgo(e.dataset.ts); }), 30000);
+$('gp-cb').onclick = () => { const f = $('gp-form'); f.classList.toggle('hidden'); if (!f.classList.contains('hidden')) $('gp-in').focus(); };
+$('gp-gear').onclick = () => $('gp-tools').classList.toggle('hidden');
+document.querySelectorAll('#gp-top [data-gp]').forEach(b => b.onclick = () => gpTab(b.dataset.gp));
+document.querySelectorAll('[data-gpgo]').forEach(b => b.onclick = e => { e.stopPropagation(); gpTab(b.dataset.gpgo); });
+function gpSend(id){
+  const text = $(id).value.trim(); if (!text || !db || !me) return;
+  db.ref('chat').push(Object.assign({ user: me.name, text, ts: firebase.database.ServerValue.TIMESTAMP, uid: auth.currentUser.uid }, postMeta())).catch(console.error);
+  $(id).value = '';
+}
+$('gp-form').onsubmit = e => { e.preventDefault(); gpSend('gp-in'); };
+setInterval(() => { if (gpCur === 'gang') gpGang(); }, 1500);
+
+/* ---- importar membros por print (aba Minha gangue) ----
+   Acha o painel claro da lista, lê só a coluna do nome (OCR) e usa a posição de cada linha para saber o número da vaga. */
+const GM_WL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.- ';
+const GM_ROLE = /^(HOJE|ONTEM|AGORA|ONLINE|CAPIT[AÃ]O|CAPITAO|L[IÍ]DER|LIDER|H[AÁ])$/;
+async function gmReadPrint(file, wk){
+  const I = await gImg(file), w = I.w, h = I.h, d = I.d;
+  const lt = k => d[k] > 175 && d[k + 1] > 185 && d[k + 2] > 210;
+  const col = new Uint32Array(w);
+  for (let y = 0; y < h; y += 2) for (let x = 0; x < w; x++) if (lt((y * w + x) * 4)) col[x]++;
+  let x0 = -1, x1 = -1;
+  for (let x = 0; x < w; x++) if (col[x] > h * 0.075) { if (x0 < 0) x0 = x; x1 = x; }
+  if (x0 < 0 || x1 - x0 < w * 0.2) throw new Error('nopanel');
+  const row = new Uint32Array(h);
+  for (let y = 0; y < h; y++) for (let x = x0; x <= x1; x += 2) if (lt((y * w + x) * 4)) row[y]++;
+  let y0 = -1, y1 = -1;
+  for (let y = 0; y < h; y++) if (row[y] > (x1 - x0) / 2 * 0.5) { if (y0 < 0) y0 = y; y1 = y; }
+  if (y0 < 0 || y1 - y0 < 40) throw new Error('nopanel');
+  const cw = x1 - x0 + 1, ch = y1 - y0 + 1, sc = Math.max(1, Math.min(4, Math.round(1800 / ch)));
+  const cv = gInk(I, x0, y0, x1 + 1, y1 + 1, 'lt:150', sc);
+  if (!cv) throw new Error('nopanel');
+  await wk.setParameters({ tessedit_char_whitelist: GM_WL, tessedit_pageseg_mode: '6', preserve_interword_spaces: '1' });
+  const r = await wk.recognize(cv), rel = v => (v - 30) / (cw * sc);
+  const rows = [];
+  (r.data.lines || []).forEach(L => {
+    const ws = (L.words || []).filter(x => x.text && x.text.trim() && x.bbox && rel(x.bbox.x0) < 0.5);
+    if (!ws.length) return;
+    let rank = null, rest = ws;
+    if (/^\d{1,2}$/.test(ws[0].text.trim()) && rel(ws[0].bbox.x0) < 0.14 && ws.length > 1) { rank = +ws[0].text.trim(); rest = ws.slice(1); }
+    let tk = rest.map(x => x.text.trim().toUpperCase().replace(/[^A-Z0-9_.\-]/g, '')).filter(Boolean);
+    while (tk.length > 1 && GM_ROLE.test(tk[tk.length - 1])) tk.pop();
+    const name = tk.join(' ').slice(0, 24);
+    if (name.length < 2 && !/\d/.test(name)) return;
+    rows.push({ y: (L.bbox.y0 + L.bbox.y1) / 2, rank, name });
+  });
+  if (!rows.length) return [];
+  rows.sort((a, b) => a.y - b.y);
+  let pitch = 1;
+  if (rows.length > 1) {
+    const df = rows.slice(1).map((v, i) => v.y - rows[i].y).filter(v => v > 4), mn = Math.min(...df);
+    const ok = df.filter(v => v <= mn * 1.4).sort((a, b) => a - b); pitch = ok[(ok.length / 2) | 0] || mn || 1;
+  }
+  rows.forEach(v => { v.idx = Math.round((v.y - rows[0].y) / pitch); });
+  const vote = new Map();
+  rows.forEach(v => { if (v.rank != null) { const o = v.rank - v.idx; vote.set(o, (vote.get(o) || 0) + 1); } });
+  let off = 1, bv = 0; vote.forEach((c, o) => { if (c > bv) { bv = c; off = o; } });
+  return rows.map(v => ({ n: v.idx + off, name: v.name })).filter(v => v.n >= 1 && v.n <= 25);
+}
+async function gmImport(files){
+  const msg = (t, ok) => { const e = $('gm-imp-msg'); e.textContent = t; e.style.color = ok === false ? '#ff9c94' : ok ? '#8be0a9' : ''; };
+  const btn = $('gm-imp'); btn.disabled = true; let wk = null;
+  try {
+    msg('Carregando o leitor de texto (na primeira vez demora um pouco)…');
+    await gLoadTess(); wk = await Tesseract.createWorker('eng');
+    const got = new Map();
+    for (let i = 0; i < files.length; i++) {
+      msg('Lendo o print ' + (i + 1) + ' de ' + files.length + '…');
+      (await gmReadPrint(files[i], wk)).forEach(x => { if (!got.has(x.n)) got.set(x.n, x.name); });
+    }
+    if (!got.size) throw new Error('empty');
+    $('gm-ta').value = [...got.entries()].sort((a, b) => a[0] - b[0]).map(([n, t]) => n + ' ' + t).join('\n');
+    $('gm-rev').classList.remove('hidden');
+    msg('Li ' + got.size + ' nome(s). Confira abaixo (o leitor pode errar uma letra ou um número da vaga), corrija se precisar e toque em “Aplicar nos slots”.', true);
+  } catch (e) {
+    msg(e && e.message === 'ocr-load' ? 'Não consegui baixar o leitor de texto. Confira a internet e tente de novo.' : e && e.message === 'nopanel' ? 'Não achei a lista de membros nesse print. Use um print da aba “Minha gangue”.' : 'Não consegui ler nomes nesse print.', false);
+  } finally { if (wk) { try { await wk.terminate(); } catch (_) {} } btn.disabled = false; }
+}
+$('gm-imp').onclick = () => $('gm-imp-f').click();
+$('gm-imp-f').onchange = e => { const fs = [...e.target.files]; e.target.value = ''; if (fs.length) gmImport(fs); };
+$('gm-no').onclick = () => $('gm-rev').classList.add('hidden');
+$('gm-ok').onclick = () => {
+  if (!db || !me) return;
+  const map = new Map();
+  $('gm-ta').value.split('\n').forEach(l => { const m = /^\s*(\d{1,2})[.):]?\s+(.+?)\s*$/.exec(l); if (m && +m[1] >= 1 && +m[1] <= 25) map.set(+m[1] - 1, m[2].trim().slice(0, 24)); });
+  const el = $('gm-imp-msg');
+  if (!map.size) { el.textContent = 'Nenhuma linha válida. Use o formato: 1 NOME (número da vaga, espaço e o nome).'; el.style.color = '#ff9c94'; return; }
+  const clr = $('gm-clr').checked;
+  if (!confirm('Colocar ' + map.size + ' nome(s) nos slots' + (clr ? ' e liberar as outras vagas' : '') + '?')) return;
+  const up = {};
+  map.forEach((nm, i) => { up[i + '/name'] = nm; });
+  if (clr) for (let i = 0; i < 25; i++) if (!map.has(i)) up[String(i)] = null;
+  db.ref('attacks').update(up).then(() => {
+    $('gm-rev').classList.add('hidden'); el.textContent = 'Pronto: ' + map.size + ' nome(s) colocados nos slots ✓'; el.style.color = '#8be0a9'; gpGang();
+  }).catch(() => { el.textContent = 'Não foi possível salvar. Confira a conexão e as permissões.'; el.style.color = '#ff9c94'; });
+};
+$('gm-copy').onclick = () => {
+  const t = []; for (let i = 0; i < 25; i++) { const x = atkData[i] || atkData[String(i)]; if (x && x.name) t.push((i + 1) + ' ' + x.name); }
+  const el = $('gm-imp-msg'), done = ok => { el.textContent = ok ? 'Lista com ' + t.length + ' nome(s) copiada ✓' : 'Não consegui copiar.'; el.style.color = ok ? '#8be0a9' : '#ff9c94'; };
+  if (!t.length) { el.textContent = 'Não há nomes nos slots ainda.'; el.style.color = '#ff9c94'; return; }
+  const fb = () => { const a = document.createElement('textarea'); a.value = t.join('\n'); a.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(a); a.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (_) {} a.remove(); done(ok); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t.join('\n')).then(() => done(true), fb); else fb();
+};
 
 /* ---------- Início: tenta entrar sozinho com o último acesso ---------- */
 (async function boot(){

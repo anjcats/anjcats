@@ -230,7 +230,8 @@ main.full{padding:0;max-width:none}
 .gside button{padding:6px 14px;border-radius:20px;border:2px solid transparent;background:var(--panel);color:var(--mute);font-size:.85rem;font-weight:500}
 .gside button[data-s=A].on{background:#3f6bd0;color:#fff;border-color:#9bbcff}
 .gside button[data-s=B].on{background:#d9423d;color:#fff;border-color:#ffb0aa}
-.gside .gatk{margin-left:auto;font-size:.8rem}
+.gside .gatk{font-size:.8rem;flex-basis:100%}
+.gside button.gfs2{margin-left:auto;background:linear-gradient(#e8505a,#b4241f);color:#fff;border:2px solid #fff;border-radius:8px;font-size:.95rem;padding:7px 16px;font-weight:600}
 /* mapa (tudo medido em "pixels do print" = 1/20 de 1% da largura) */
 .gmapw{max-width:1100px;margin:0 auto;border-top:3px solid #1c2054;border-bottom:3px solid #1c2054;background:#000}
 .gmap{--u:1cqw;--h:1cqw;--p:calc(var(--u) / 20);--q:calc(var(--h) / 20);position:relative;container-type:inline-size;width:100%;aspect-ratio:2340/1080;overflow:hidden;user-select:none;-webkit-user-select:none;font-weight:500;background:linear-gradient(#6b5f55 0%,#8f7457 30%,#c08a56 60%,#96623c 100%)}
@@ -585,8 +586,8 @@ main.full{padding:0;max-width:none}
 
     <!-- Treino: Reis da Cidade -->
     <div id="tab-game" class="hidden">
-      <div class="gside">Você joga pela: <span class="pl"><button data-s="A">Equipe A</button><button data-s="B">Equipe B</button></span><span class="gatk" id="g-atk"></span></div>
-      <div class="g-fsh">Dica: toque no botão vermelho do canto do mapa para ver em <b>tela cheia</b> (ele gira sozinho com o celular em pé).</div>
+      <div class="gside">Você joga pela: <span class="pl"><button data-s="A">Equipe A</button><button data-s="B">Equipe B</button></span><button type="button" id="g-fs2" class="gfs2">⛶ Tela cheia</button><span class="gatk" id="g-atk"></span></div>
+      <div class="g-fsh">Dica: toque em <b>⛶ Tela cheia</b> para ver o mapa igual ao jogo (ele gira sozinho com o celular em pé).</div>
       <div class="gmapw" id="g-wrap"><div class="gmap" id="g-map"></div></div>
       <div class="card only-staff" id="g-cfg" style="margin:10px 16px 16px">
         <h3>Configurar treino</h3>
@@ -1700,6 +1701,7 @@ $('g-hud').innerHTML = gHudHTML(); $('g-tmw').innerHTML = '<span id="g-tm2">—<
 /* tela cheia do mapa (o botão vermelho do canto, como no jogo) */
 const G_FSO = '<svg viewBox="0 0 40 40"><path d="M6 15V6H15M25 6H34V15M34 25V34H25M15 34H6V25" fill="none" stroke="#f6e8a8" stroke-width="5" stroke-linejoin="round"/></svg>', G_FSB = '<svg viewBox="0 0 40 40"><path d="M28 6L10 20L28 34Z" fill="#f6e8a8"/></svg>';
 function gFs(on){ $('g-wrap').classList.toggle('fs', on); $('g-fs').innerHTML = on ? G_FSB : G_FSO; document.body.style.overflow = on ? 'hidden' : ''; }
+$('g-fs2').onclick = () => gFs(true);
 $('g-fs').onclick = e => { e.stopPropagation(); gFs(!$('g-wrap').classList.contains('fs')); };
 gFs(false);
 

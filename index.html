@@ -384,6 +384,10 @@ main.full{padding:0;max-width:none}
 .g-tm2{position:absolute;right:-8px;bottom:-30px;display:flex;align-items:center;background:#8a9bb8;color:#fff;padding:3px 4px 3px 14px;font-size:1.15rem;font-weight:600;line-height:1}
 .g-tm2 .gh-ck{position:static;width:36px;height:36px;margin-left:8px}
 /* configuração do treino (líder / moderador) */
+.gimp{display:grid;gap:6px;margin-bottom:10px}
+#g-imp{background:var(--panel);border:1px solid var(--gold);color:var(--gold)}
+#g-apply{background:var(--ok);color:#04230f;margin-bottom:6px;width:100%}
+#g-imp-msg{margin:0;min-height:1.2em;line-height:1.4}
 .gcfg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}.gcfg label{min-width:0}.gcfg label:nth-child(2){grid-column:1/-1}.gcfg input{width:100%}.gcfg label{display:grid;font-size:.72rem;color:var(--mute);gap:2px}
 .gbr{display:grid;grid-template-columns:1.5fr .8fr .8fr .8fr 1fr .7fr;gap:4px;margin-bottom:4px}.gbr input{min-width:0;padding:6px}
 .gbr.gbh{font-size:.68rem;color:var(--mute);margin-top:6px}
@@ -591,6 +595,11 @@ main.full{padding:0;max-width:none}
       <div class="gmapw" id="g-wrap"><div class="gmap" id="g-map"></div></div>
       <div class="card only-staff" id="g-cfg" style="margin:10px 16px 16px">
         <h3>Configurar treino</h3>
+        <div class="gimp">
+          <button type="button" id="g-imp">📷 Importar print da batalha</button>
+          <input type="file" id="g-imp-f" accept="image/*" class="hidden">
+          <div class="help" id="g-imp-msg" role="status">Envie um print da tela “Reis da cidade”: o app lê placar, tempo, prédios e barras de domínio e monta o mapa igual ao do print.</div>
+        </div>
         <div class="gcfg">
           <label>Pontos para vencer<input id="g-goal-i" type="number" min="1"></label>
           <label>Pontos/min em todos os prédios<span style="display:flex;gap:4px"><input id="g-ppm" type="number" min="0" style="flex:1;min-width:0"><button type="button" id="g-ppm-ap" style="padding:6px 10px;font-size:.75rem">Aplicar</button></span></label>
@@ -602,9 +611,12 @@ main.full{padding:0;max-width:none}
           <label>Distrito<input id="g-dist" maxlength="20"></label>
           <label>Carros que A já atacou<input id="g-at-a" type="number" min="0"></label>
           <label>Carros que B já atacou<input id="g-at-b" type="number" min="0"></label>
+          <label>Pontos agora · equipe A<input id="g-sc-a" type="number" min="0"></label>
+          <label>Pontos agora · equipe B<input id="g-sc-b" type="number" min="0"></label>
         </div>
         <div class="help" style="margin:0 0 4px">Cada prédio tem os seus próprios números: nome · vagas · carros de A · carros de B (o resto são bots) · pontos por minuto · bônus (1 = nenhum, 2 = X2). A equipe que domina o prédio ganha os pontos/min dele × o bônus. As quantidades de carros valem depois de tocar em Reiniciar mapa.</div>
         <div id="g-bcfg"></div>
+        <button id="g-apply" type="button">▶ Iniciar treino com estes dados</button>
         <button id="g-save" type="button">Salvar</button> <button id="g-reset" type="button">Reiniciar mapa</button>
         <div class="help" id="g-msg" role="status" style="min-height:1.2em"></div>
       </div>
@@ -1619,9 +1631,9 @@ const gNow = () => Date.now() + srvOff, gCnt = (s, c) => (s.match(new RegExp(c, 
 /* pontos por minuto de UM prédio = base (p) × bônus (x) */
 const gPpm = b => Math.max(0, +b.p || 0) * Math.max(1, +b.x || 1);
 const gOwn = s => { const n = s.length || 1, h = Math.floor(n / 2) + 1; return gCnt(s, 'A') >= h ? 'a' : gCnt(s, 'B') >= h ? 'b' : 'n'; };
-function gBuild(){
-  const b = {}; GC.bn.forEach((x, i) => { const na = Math.min(x.a, x.cap), nb = Math.min(x.b, x.cap - na); b[i] = 'A'.repeat(na) + 'B'.repeat(nb) + 'x'.repeat(x.cap - na - nb); });
-  return { b, sc: { A: 0, B: 0, t: gNow() }, atk: { A: 0, B: 0 } };
+function gBuild(bn, scA, scB){
+  const b = {}; (bn || GC.bn).forEach((x, i) => { const na = Math.min(x.a, x.cap), nb = Math.min(x.b, x.cap - na); b[i] = 'A'.repeat(na) + 'B'.repeat(nb) + 'x'.repeat(x.cap - na - nb); });
+  return { b, sc: { A: scA || 0, B: scB || 0, t: gNow() }, atk: { A: 0, B: 0 } };
 }
 const gP = () => (GP && GP.b) ? GP : gBuild();
 /* pontos por minuto de cada equipe = soma dos prédios que ela domina */
@@ -1805,24 +1817,201 @@ document.querySelectorAll('.gside [data-s]').forEach(b => { b.onclick = () => { 
 function gCfgBuild(){
   $('g-bcfg').innerHTML = '<div class="gbr gbh"><span>Prédio</span><span>Vagas</span><span>Carros A</span><span>Carros B</span><span>Pts/min</span><span>Bônus ×</span></div>' + GC.bn.map((b, i) => `<div class="gbr"><input id="g-n${i}" maxlength="14" aria-label="Nome ${i + 1}"><input id="g-c${i}" type="number" min="1" max="40" aria-label="Vagas"><input id="g-a${i}" type="number" min="0" aria-label="Carros A"><input id="g-b${i}" type="number" min="0" aria-label="Carros B"><input id="g-p${i}" type="number" min="0" inputmode="decimal" aria-label="Pontos por minuto"><input id="g-x${i}" type="number" min="1" max="10" aria-label="Bônus"></div>`).join('');
 }
+let gDirty = false;                       // true = o formulário tem dados do print ainda não aplicados
 function gFillCfg(){
-  if ($('g-cfg').contains(document.activeElement)) return;
+  if (gDirty || $('g-cfg').contains(document.activeElement)) return;
   const f = { 'g-goal-i': GC.goal, 'g-nm-a': GC.nameA, 'g-nm-b': GC.nameB, 'g-city': GC.city, 'g-dist': GC.district, 'g-at-a': GP && GP.atk ? GP.atk.A || 0 : 0, 'g-at-b': GP && GP.atk ? GP.atk.B || 0 : 0 };
+  if (GP && GP.b) { const sx = gScores(GP, gNow()); f['g-sc-a'] = Math.floor(sx.A); f['g-sc-b'] = Math.floor(sx.B); }
   GC.bn.forEach((b, i) => { f['g-n' + i] = b.name; f['g-c' + i] = b.cap; f['g-a' + i] = b.a; f['g-b' + i] = b.b; f['g-p' + i] = b.p; f['g-x' + i] = b.x; });
   Object.keys(f).forEach(k => { if ($(k)) $(k).value = f[k]; });
 }
 gCfgBuild();
-$('g-save').onclick = () => {
-  const n = id => Math.max(0, +$(id).value || 0), mins = n('g-h') * 60 + n('g-m'), bn = {};
-  GC.bn.forEach((_, i) => { bn[i] = { name: $('g-n' + i).value.trim().slice(0, 14) || GN0[i], cap: Math.min(40, Math.max(1, n('g-c' + i) || 21)), a: n('g-a' + i), b: n('g-b' + i), p: n('g-p' + i), x: Math.min(10, Math.max(1, Math.round(+$('g-x' + i).value || 1))) }; });
+function gReadCfg(){
+  const n = id => Math.max(0, +$(id).value || 0), mins = n('g-h') * 60 + n('g-m'), bn = {}, arr = [];
+  GC.bn.forEach((_, i) => { const o = { name: $('g-n' + i).value.trim().slice(0, 14) || GN0[i], cap: Math.min(40, Math.max(1, n('g-c' + i) || 21)), a: n('g-a' + i), b: n('g-b' + i), p: n('g-p' + i), x: Math.min(10, Math.max(1, Math.round(+$('g-x' + i).value || 1))) }; bn[i] = o; arr.push(o); });
   const tx = id => $(id).value.trim().slice(0, 20);
-  const msg = (s, ok) => { $('g-msg').textContent = s; $('g-msg').style.color = ok ? 'var(--ok)' : 'var(--red)'; };
-  msg('Salvando…', true);
-  db.ref('game/cfg').set({ goal: n('g-goal-i') || 3000, nameA: tx('g-nm-a') || 'EQUIPE A', nameB: tx('g-nm-b') || 'EQUIPE B', city: tx('g-city') || 'MIAUSCOU', district: tx('g-dist') || 'DISTRITO 1', endAt: mins ? gNow() + mins * 60000 : (GC.endAt || 0), bn }).then(() => msg('Salvo ✓ — todos já estão vendo.', true)).catch(e => { console.error(e); msg(/permission/i.test((e && (e.code || e.message)) || '') ? 'Não salvou: o Firebase recusou. Publique as regras novas (arquivo firebase-regras-minificado.json) e tente de novo.' : 'Não salvou: ' + ((e && e.message) || 'erro'), false); });
+  const cfg = { goal: n('g-goal-i') || 3000, nameA: tx('g-nm-a') || 'EQUIPE A', nameB: tx('g-nm-b') || 'EQUIPE B', city: tx('g-city') || 'MIAUSCOU', district: tx('g-dist') || 'DISTRITO 1', endAt: mins ? gNow() + mins * 60000 : (GC.endAt || 0), bn };
+  return { n, cfg, arr };
+}
+const gMsg = (s, ok) => { $('g-msg').textContent = s; $('g-msg').style.color = ok ? 'var(--ok)' : 'var(--red)'; };
+const gErr = e => { console.error(e); gMsg(/permission/i.test((e && (e.code || e.message)) || '') ? 'Não salvou: o Firebase recusou. Publique as regras novas (arquivo firebase-regras-minificado.json) e tente de novo.' : 'Não salvou: ' + ((e && e.message) || 'erro'), false); };
+$('g-save').onclick = () => {
+  const { n, cfg } = gReadCfg();
+  gMsg('Salvando…', true);
+  db.ref('game/cfg').set(cfg).then(() => { gDirty = false; gMsg('Salvo ✓ — todos já estão vendo.', true); }).catch(gErr);
   db.ref('game/play/atk').set({ A: n('g-at-a'), B: n('g-at-b') }).catch(console.error);
+};
+/* Iniciar treino: grava a configuração E recria o mapa com os carros e os pontos do formulário (vindos do print) */
+$('g-apply').onclick = () => {
+  if (!confirm('Iniciar o treino com estes dados? O mapa e os pontos atuais serão substituídos para todos.')) return;
+  const { n, cfg, arr } = gReadCfg(), play = gBuild(arr, n('g-sc-a'), n('g-sc-b'));
+  play.atk = { A: n('g-at-a'), B: n('g-at-b') };
+  gMsg('Iniciando…', true);
+  db.ref('game/cfg').set(cfg).then(() => db.ref('game/play').set(play)).then(() => { gDirty = false; gMsg('Treino iniciado ✓ — todos já estão vendo.', true); }).catch(gErr);
 };
 $('g-ppm-ap').onclick = () => { const v = Math.max(0, +$('g-ppm').value || 0); GC.bn.forEach((_, i) => { $('g-p' + i).value = v; }); };
 $('g-reset').onclick = () => { if (confirm('Reiniciar o mapa e zerar os pontos?')) db.ref('game/play').set(gBuild()).catch(console.error); };
+
+/* ---- importar print: lê o print da tela "Reis da cidade" e preenche o formulário ----
+   Layout medido em pixels de um print com 1080 de altura (escala = altura/1080), tudo relativo ao painel do placar.
+   Barras de domínio e selos: por cor de pixel. Números e nomes: OCR (Tesseract.js, carregado só quando usa). */
+const GIMP = { slots: [[86, 463], [-2, 700], [387, 843], [822, 859], [1146, 707], [1121, 437]] };  // [x da barra, topo da etiqueta], na ordem dos prédios do mapa
+const G_DIG = '0123456789', G_TXT = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.- ';
+function gLoadTess(){
+  if (window.Tesseract) return Promise.resolve();
+  return new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'; sc.onload = ok; sc.onerror = () => no(new Error('ocr-load')); document.head.appendChild(sc); });
+}
+function gImg(file){
+  return new Promise((ok, no) => {
+    const u = URL.createObjectURL(file), im = new Image();
+    im.onload = () => { const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight; const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0); URL.revokeObjectURL(u); ok({ w: c.width, h: c.height, d: x.getImageData(0, 0, c.width, c.height).data }); };
+    im.onerror = () => no(new Error('img')); im.src = u;
+  });
+}
+/* acha o painel do placar (o bloco cinza-azulado do meio) e as barras de cada prédio */
+function gGeo(I){
+  const { w, h, d } = I, s = h / 1080, at = (x, y) => (y * w + x) * 4, R = Math.round;
+  let H = null;
+  { const y = R(114 * s); let best = 0, bs = 0, i = 0;
+    while (i < w) { let j = i; while (j < w) { const k = at(j, y); if (Math.abs(d[k] - 148) < 30 && Math.abs(d[k + 1] - 165) < 30 && Math.abs(d[k + 2] - 196) < 30) j++; else break; } if (j - i > best) { best = j - i; bs = i; } i = j > i ? j : i + 1; }
+    if (best > 330 * s && best < 430 * s) H = bs - 422 * s; }
+  const found = H !== null; if (!found) H = w / 2 - 611 * s;
+  const slots = GIMP.slots.map(([ox, top]) => {
+    const x0 = R(H + ox * s), yc = R((top + 72) * s), cx = x0 + R(125 * s); let f = null;
+    for (let dy = 0; dy < 15 && !f; dy++) for (const sg of [1, -1]) {
+      const y = yc + dy * sg; if (y < 0 || y >= h || cx < 0 || cx >= w) continue;
+      const nw = x => { const k = at(x, y); return Math.min(d[k], d[k + 1], d[k + 2]) < 235; };
+      if (!nw(cx)) continue;
+      let l = cx, r = cx; while (l > 0 && nw(l - 1)) l--; while (r < w - 1 && nw(r + 1)) r++;
+      if (r - l > 200 * s) { f = { l, r, y }; break; }
+    }
+    if (!f) return null;
+    let nA = 0, nB = 0, n = 0;
+    for (let x = f.l; x <= f.r; x++) for (const dd of [-3, 0, 3]) { const k = at(x, f.y + dd), r_ = d[k], g_ = d[k + 1], b_ = d[k + 2]; n++; if (r_ > 200 && g_ < 160 && b_ < 160 && r_ - g_ > 60) nB++; else if (b_ > 195 && r_ < 200 && b_ - r_ > 35) nA++; }
+    const ratio = (xa, ya, xb, yb, fn) => { let c = 0, t = 0; for (let y = R(ya * s); y < R(yb * s); y++) for (let x = R(xa); x < R(xb); x++) { if (x < 0 || y < 0 || x >= w || y >= h) continue; const k = at(x, y); t++; if (fn(d[k], d[k + 1], d[k + 2])) c++; } return t ? c / t : 0; };
+    const bl = f.l, badge = Math.max(
+      ratio(bl - 112 * s, top + 68, bl - 16 * s, top + 80, (r, g, b) => b > 185 && r < 110 && g > 70 && g < 150),
+      ratio(bl - 112 * s, top + 68, bl - 16 * s, top + 80, (r, g, b) => r > 180 && g < 120 && b < 120)) > 0.3;
+    const xtag = ratio(bl - 104 * s, top + 86, bl - 34 * s, top + 118, (r, g, b) => r > 200 && g > 150 && g < 225 && b < 120) > 0.25;
+    return { l: f.l, top, fa: nA / n, fb: nB / n, badge, xtag };
+  });
+  return { H, s, found, slots };
+}
+/* recorte -> imagem preto-no-branco ampliada (é o que o OCR enxerga) */
+function gInk(I, x0, y0, x1, y1, mode, scale){
+  x0 = Math.max(0, Math.round(x0)); y0 = Math.max(0, Math.round(y0)); x1 = Math.min(I.w, Math.round(x1)); y1 = Math.min(I.h, Math.round(y1));
+  const w = x1 - x0, h = y1 - y0; if (w < 4 || h < 4) return null;
+  const v = new Uint8Array(w * h), d = I.d, mx = new Uint8Array(w * h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const k = ((y0 + y) * I.w + x0 + x) * 4, r = d[k], g = d[k + 1], b = d[k + 2], o = y * w + x;
+    mx[o] = Math.max(r, g, b);
+    v[o] = mode === 'g' ? g : mode === 'min' ? Math.min(r, g, b) : (0.299 * r + 0.587 * g + 0.114 * b) | 0;
+  }
+  let ink = new Uint8Array(w * h);
+  const m = /^(dark|lt):(\d+)$/.exec(mode);
+  if (m) { const t = +m[2]; for (let i = 0; i < ink.length; i++) ink[i] = (m[1] === 'dark' ? mx[i] : v[i]) < t ? 1 : 0; }
+  else {                                   // Otsu; o "texto" é sempre o lado minoritário
+    const hist = new Array(256).fill(0); for (let i = 0; i < v.length; i++) hist[v[i]]++;
+    let sm = 0; for (let t = 0; t < 256; t++) sm += t * hist[t];
+    let sb = 0, wb = 0, best = 0, th = 128;
+    for (let t = 0; t < 256; t++) { wb += hist[t]; if (!wb) continue; const wf = v.length - wb; if (!wf) break; sb += t * hist[t]; const vv = wb * wf * Math.pow(sb / wb - (sm - sb) / wf, 2); if (vv > best) { best = vv; th = t; } }
+    let c = 0; for (let i = 0; i < v.length; i++) { ink[i] = v[i] > th ? 1 : 0; c += ink[i]; }
+    if (c > v.length / 2) for (let i = 0; i < ink.length; i++) ink[i] ^= 1;
+  }
+  const sc = document.createElement('canvas'); sc.width = w; sc.height = h;
+  const sx = sc.getContext('2d'), im = sx.createImageData(w, h);
+  for (let i = 0; i < ink.length; i++) { const q = ink[i] ? 0 : 255; im.data[i * 4] = im.data[i * 4 + 1] = im.data[i * 4 + 2] = q; im.data[i * 4 + 3] = 255; }
+  sx.putImageData(im, 0, 0);
+  const bc = document.createElement('canvas'); bc.width = w * scale + 60; bc.height = h * scale + 60;
+  const bx = bc.getContext('2d'); bx.fillStyle = '#fff'; bx.fillRect(0, 0, bc.width, bc.height); bx.imageSmoothingEnabled = true; bx.imageSmoothingQuality = 'high';
+  bx.drawImage(sc, 30, 30, w * scale, h * scale);
+  return bc;
+}
+/* escolhe o tamanho certo + o ppm: o selo só vale se for múltiplo das vagas (o OCR erra 2→9, "+"→4 etc.) */
+function gReconcile(capV, badV){
+  let best = null;
+  capV.forEach((n, cap) => { let sc = n + 0.1 * String(cap).length; const ok = [...badV.keys()].filter(v => v >= cap && v <= cap * 10 && v % cap === 0); if (ok.length) sc += Math.max(...ok.map(v => badV.get(v))) * 1.5; if (!best || sc > best[0]) best = [sc, cap]; });
+  if (!best) return null;
+  const cap = best[1], ok = [...badV.entries()].filter(([v]) => v >= cap && v <= cap * 10 && v % cap === 0).sort((a, b) => b[1] - a[1] || b[0] - a[0]);
+  return { cap, ppm: ok.length ? ok[0][0] : cap };
+}
+async function gImport(file){
+  const msg = (t, ok) => { $('g-imp-msg').textContent = t; $('g-imp-msg').style.color = ok === false ? 'var(--red)' : ok ? 'var(--ok)' : ''; };
+  const btn = $('g-imp'); btn.disabled = true; let wk = null;
+  try {
+    msg('Lendo o print…');
+    const I = await gImg(file), G = gGeo(I), s = G.s, H = G.H, R = Math.round;
+    if (I.h < 700) throw new Error('small');
+    msg('Carregando o leitor de texto (na primeira vez demora um pouco)…');
+    await gLoadTess(); wk = await Tesseract.createWorker('eng');
+    const rec = async (cv, wl, psm) => { if (!cv) return ''; const key = wl + '|' + psm; if (key !== wk._k) { await wk.setParameters({ tessedit_char_whitelist: wl, tessedit_pageseg_mode: String(psm) }); wk._k = key; } const r = await wk.recognize(cv); return (r.data.text || '').trim(); };
+    const bx = (x0, y0, x1, y1) => [R(H + x0 * s), R(y0 * s), R(H + x1 * s), R(y1 * s)];
+    const ink = (b, mode, sc) => gInk(I, b[0], b[1], b[2], b[3], mode, sc);
+    const num = async (b, tries) => { for (const [mode, sc] of tries) { const t = (await rec(ink(b, mode, sc), G_DIG, 7)).replace(/\D/g, ''); if (t) return +t; } return null; };
+    const warn = [];
+    msg('Lendo placar e tempo…');
+    const scA = await num(bx(206, 212, 412, 282), [['lum', 3], ['lum', 4], ['dark:150', 3]]);
+    const scB = await num(bx(806, 212, 995, 282), [['lum', 3], ['lum', 4], ['dark:150', 3]]);
+    const goal = await num(bx(545, 237, 690, 292), [['lum', 3], ['lum', 4]]);
+    let hh = null, mm = null;
+    for (const [mode, sc] of [['lum', 3], ['lum', 4]]) {
+      const t = await rec(ink(bx(520, 133, 650, 180), mode, sc), G_DIG + 'hms ', 7), tk = t.match(/\d+/g) || [];
+      if (/h/i.test(t) && tk.length >= 2) { hh = +tk[0]; mm = +tk[1].slice(0, 2); break; }
+      if (!/h/i.test(t) && tk.length >= 2) { hh = +tk[0]; mm = +tk[1].slice(0, 2); break; }
+      if (tk.length === 1 && /m/i.test(t)) { hh = 0; mm = +tk[0].slice(0, 2); break; }
+      if (tk.length === 1 && /h/i.test(t)) { hh = +tk[0]; mm = 0; break; }
+    }
+    const nm = async (b, mode) => (await rec(ink(b, mode, 3), G_TXT, 7)).replace(/\s+/g, ' ').trim();
+    const nameA = await nm(bx(40, 128, 335, 192), 'lum'), nameB = await nm(bx(885, 128, 1090, 192), 'lum');
+    if (scA === null || scB === null) warn.push('pontos');
+    if (!goal) warn.push('pontos para vencer');
+    if (hh === null) warn.push('tempo restante');
+
+    const res = [];
+    for (let i = 0; i < 6; i++) {
+      msg('Lendo o prédio ' + (i + 1) + ' de 6…');
+      const g = G.slots[i], old = GC.bn[i];
+      if (!g) { res.push(null); warn.push('prédio ' + (i + 1)); continue; }
+      const bl = g.l, top = g.top, capV = new Map(), badV = new Map();
+      for (const t of [110, 150]) for (const sc of [3, 4]) for (const psm of [7, 8]) {
+        const t2 = (await rec(gInk(I, bl + 214 * s, (top + 14) * s, bl + 256 * s, (top + 52) * s, 'dark:' + t, sc), G_DIG, psm)).replace(/\D/g, '');
+        if (t2 && +t2 >= 3 && +t2 <= 40) capV.set(+t2, (capV.get(+t2) || 0) + 1);
+      }
+      if (g.badge) for (const mode of ['g', 'min']) for (const sc of [3, 4]) for (const psm of [7, 8]) {
+        const t2 = (await rec(gInk(I, bl - 108 * s, (top + 14) * s, bl - 18 * s, (top + 66) * s, mode, sc), G_DIG + '+', psm)).replace(/\D/g, '');
+        if (!t2) continue; badV.set(+t2, (badV.get(+t2) || 0) + 1);
+        if (t2.length > 1 && t2[0] === '4') badV.set(+t2.slice(1), (badV.get(+t2.slice(1)) || 0) + 1);   // "+" lido como 4
+      }
+      const rc = gReconcile(capV, badV);
+      if (!rc) warn.push('vagas do prédio ' + (i + 1));
+      const cap = rc ? rc.cap : old.cap, ppm = rc ? rc.ppm : old.cap;
+      let a = Math.round(g.fa * cap), b = Math.round(g.fb * cap); while (a + b > cap) { if (a > b) a--; else b--; }
+      let x = 1, p = ppm; if (g.xtag) { x = Math.min(10, Math.max(2, Math.round(ppm / cap) || 2)); p = Math.round(ppm / x); }
+      let rawName = (await rec(gInk(I, bl - 4 * s, (top + 14) * s, bl + 168 * s, (top + 54) * s, 'lt:205', 3), G_TXT, 7)).replace(/\s+/g, ' ').trim();
+      const tk = rawName.split(' '); while (tk.length >= 3 && tk[tk.length - 1].length <= 2) tk.pop();   // sobra do ícone de corrente
+      rawName = tk.join(' ');
+      res.push({ name: (rawName.length >= 2 ? rawName : old.name).slice(0, 14), cap, a, b, p, x });
+    }
+
+    /* preenche o formulário (ainda não grava: dá para corrigir antes de iniciar) */
+    const set = (id, v) => { if ($(id) && v !== null && v !== undefined) $(id).value = v; };
+    if (nameA.length >= 2) set('g-nm-a', nameA.slice(0, 20)); if (nameB.length >= 2) set('g-nm-b', nameB.slice(0, 20));
+    set('g-goal-i', goal); set('g-sc-a', scA); set('g-sc-b', scB);
+    if (hh !== null) { set('g-h', hh); set('g-m', mm); }
+    res.forEach((o, i) => { if (!o) return; set('g-n' + i, o.name); set('g-c' + i, o.cap); set('g-a' + i, o.a); set('g-b' + i, o.b); set('g-p' + i, o.p); set('g-x' + i, o.x); });
+    gDirty = true;
+    const ok = res.filter(Boolean).length;
+    msg((G.found ? '' : 'Não achei o painel do placar com certeza, usei a posição padrão. ') + 'Li ' + ok + ' de 6 prédios.' + (warn.length ? ' Não consegui ler: ' + warn.join(', ') + '. ' : ' ') + 'Confira os números abaixo (o OCR pode errar um dígito ou um nome) e toque em “▶ Iniciar treino com estes dados”.', warn.length ? undefined : true);
+    $('g-cfg').scrollIntoView({ block: 'nearest' });
+  } catch (e) {
+    console.error(e);
+    msg(e && e.message === 'ocr-load' ? 'Não consegui baixar o leitor de texto. Confira a internet e tente de novo.' : e && e.message === 'small' ? 'Essa imagem é pequena demais. Envie o print original da tela.' : 'Não consegui ler esse print. Use um print inteiro da tela “Reis da cidade”.', false);
+  }
+  try { if (wk) await wk.terminate(); } catch (e) {}
+  btn.disabled = false;
+}
+$('g-imp').onclick = () => $('g-imp-f').click();
+$('g-imp-f').onchange = e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) gImport(f); };
 let gIniting = false;
 function gInit(){
   if (gIniting || !db) return; gIniting = true;

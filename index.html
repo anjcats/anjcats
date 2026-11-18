@@ -221,6 +221,24 @@ main.full{padding:0;max-width:none}
 .msg.me{align-self:flex-end;background:var(--meb)}
 #chat-form{display:flex;gap:8px;padding-top:8px}
 #chat-in{flex:1}
+.gtop{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;background:var(--panel);border-radius:12px;padding:8px;margin-bottom:8px;text-align:center}
+.gtop b{display:block;font-size:.8rem}.gtop span{font-size:1.2rem;font-weight:800}
+#g-sa{color:#6f9bff}#g-sb{color:#ff7a74}.gctr strong{display:block}.gctr small{display:block;color:var(--mute);font-size:.65rem}
+.gside{display:flex;gap:6px;align-items:center;margin-bottom:8px;font-size:.85rem}.gside button{padding:4px 12px}.gside button.on,#g-bld button.on{background:var(--blue)}
+.gmapw{overflow-x:auto;border-radius:12px}
+.gmap{position:relative;width:680px;height:300px;background:linear-gradient(#5a4a6a,#c98a5a 58%,#3b3050);overflow:hidden}
+.gmap::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;background:#2a2f6a}
+.g-title{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);text-align:center;color:#fff9;font-weight:800;pointer-events:none}.g-title b{display:block;font-size:1.6rem;color:#fffd}
+.g-b{position:absolute;transform:translate(-50%,-50%);cursor:pointer}.g-deco{display:block;text-align:center;font-size:1.6rem}
+.g-lab{display:flex;align-items:center;gap:4px;background:#fff;color:#223;border-radius:4px;padding:2px 6px;font-size:.72rem;font-weight:800;flex-wrap:wrap;width:118px}
+.g-lab em{font-style:normal;color:#fff;padding:1px 5px;border-radius:3px}.g-lab em.a{background:#4a7bd8}.g-lab em.b{background:#e0564f}
+.g-bar{display:flex;width:100%;height:6px;background:#8a93a8;border-radius:3px;overflow:hidden}.g-bar s{background:#4a7bd8}.g-bar u{background:#e0564f;margin-left:auto}
+#g-bld{background:var(--panel);border-radius:12px;padding:10px;margin-top:8px}.gbh{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.gbh h3{margin:0;flex:1}
+#g-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+#g-grid button{aspect-ratio:1.5;border-radius:8px;border:1px solid #fff2;background:#2a3040;color:#fff3;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0}
+#g-grid .bot{background:#3d4a44;color:#fff}#g-grid .en{background:#5a2f33;color:#fff}#g-grid .me{background:#2c4478;color:#fff}
+.g-car{font-size:1.7rem}.g-hp{width:80%;height:5px;background:#0006;border-radius:3px;overflow:hidden}.g-hp b{display:block;height:100%;background:#59c24a}
+.gcfg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}.gcfg label{display:grid;font-size:.72rem;color:var(--mute);gap:2px}
 #typing{min-height:1.3em;color:var(--mute);font-size:.8rem;padding:2px 4px}
 #atk-prio{background:var(--panel);border:1px solid var(--gold);color:var(--gold);padding:8px 12px}
 #atk-prio-msg{color:var(--gold);margin:0 0 8px;min-height:0}
@@ -409,6 +427,36 @@ main.full{padding:0;max-width:none}
       </div>
     </div>
 
+    <!-- Treino: Reis da Cidade -->
+    <div id="tab-game" class="hidden">
+      <div class="gtop"><div><b id="g-na"></b><span id="g-sa">0</span></div><div class="gctr"><strong id="g-time">—</strong><small id="g-goal"></small></div><div><b id="g-nb"></b><span id="g-sb">0</span></div></div>
+      <div class="gside">Jogando pela: <button data-s="A">Equipe A</button><button data-s="B">Equipe B</button></div>
+      <div class="gmapw"><div class="gmap" id="g-map"></div></div>
+      <div id="g-bld" class="hidden">
+        <div class="gbh"><h3 id="g-bt"></h3><button data-m="def">🛡 Defesa</button><button data-m="atk">⚔ Ataque</button><button id="g-x" aria-label="Fechar">✕</button></div>
+        <div class="help" id="g-bi" style="margin:6px 0 0"></div>
+        <div id="g-grid"></div>
+      </div>
+      <div class="card only-staff" id="g-cfg" style="margin-top:10px">
+        <h3>Configurar treino</h3>
+        <div class="gcfg">
+          <label>Carros por prédio<input id="g-cap" type="number" min="3" max="40"></label>
+          <label>Pontos para vencer<input id="g-goal-i" type="number" min="1"></label>
+          <label>Pontos por prédio/min<input id="g-ppm" type="number" min="0"></label>
+          <label>Tempo restante (h)<input id="g-h" type="number" min="0" placeholder="manter"></label>
+          <label>Tempo restante (min)<input id="g-m" type="number" min="0" placeholder="manter"></label>
+          <label>Nome da equipe A<input id="g-nm-a" maxlength="16"></label>
+          <label>Nome da equipe B<input id="g-nm-b" maxlength="16"></label>
+          <label>Carros iniciais A<input id="g-st-a" type="number" min="0"></label>
+          <label>Carros iniciais B<input id="g-st-b" type="number" min="0"></label>
+          <label>Carros que A já atacou<input id="g-at-a" type="number" min="0"></label>
+          <label>Carros que B já atacou<input id="g-at-b" type="number" min="0"></label>
+        </div>
+        <button id="g-save" type="button">Salvar</button> <button id="g-reset" type="button">Reiniciar mapa</button>
+        <div class="help" style="margin:6px 0 0">“Reiniciar” zera pontos e recoloca os carros iniciais; os demais lugares ficam com bots.</div>
+      </div>
+    </div>
+
     <!-- Configuração -->
     <div id="tab-cfg" class="hidden">
       <div class="card">
@@ -475,6 +523,7 @@ main.full{padding:0;max-width:none}
     <button data-tab="cars"><span class="ic">🚗</span>Carros</button>
     <button data-tab="chat"><span class="ic">💬</span>Chat</button>
     <button data-tab="mem" class="only-staff"><span class="ic">👥</span><span>Membros<span id="rec-dot" class="dot hidden"></span></span></button>
+    <button data-tab="game"><span class="ic">🎮</span>Treino</button>
     <button data-tab="cfg"><span class="ic">⚙️</span>Configuração</button>
   </nav>
 </div>
@@ -600,7 +649,7 @@ let curTab = 'calc';
 document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
   curTab = b.dataset.tab;
   document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
-  ['calc','atk','str','cars','chat','mem','cfg'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== curTab));
+  ['calc','atk','str','cars','chat','mem','game','cfg'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== curTab));
   $('main').classList.toggle('full', curTab === 'cars');
   if (curTab === 'cars') showSub(curSub);
   if (curTab === 'chat') { $('msgs').scrollTop = 1e9; }
@@ -1293,6 +1342,7 @@ function startSync(){
   db.ref('reactions').limitToLast(200).on('child_removed', s => { delete rxData[s.key]; renderRx(s.key); }, () => {});
   db.ref('prefs/' + me.code + '/color').once('value').then(s => { myColor = colOk(s.val()) ? s.val() : ''; renderCols(); }).catch(() => {});
   startPresence();
+  gStart();
   const quiet = () => {};                                  // se as regras ainda não permitem, não desloga o moderador
   if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); renderRanks(); renderTags(); renderRec(); }, denied);
   else if (isMod()) db.ref('users').orderByChild('role').equalTo('member').on('value', s => { usersData = s.val() || {}; renderUsers(); }, quiet);   // moderador só enxerga membros
@@ -1373,6 +1423,91 @@ function renderRec(){
     box.appendChild(d);
   });
   if (!arr.length) box.textContent = 'Nenhum pedido.';
+}
+
+/* ---------- Treino: Reis da Cidade (tempo real) ---------- */
+const GB = [['Terraço',34,47,'⛱️'],['Arena',31,70,'🏟️'],['Fonte',49,81,'⛲'],['Porto 1',66,84,'⚓'],['Feira',81,70,'🎪'],['Porto 2',79,46,'🚢']];
+const GCARS = ['🚙','🛻','🏎️','🚜','🚓','🚐','🚛','🚌'], GDEF = { cap: 21, goal: 3000, ppm: 21, endAt: 0, startA: 0, startB: 0, nameA: 'EQUIPE A', nameB: 'EQUIPE B' };
+let GC = Object.assign({}, GDEF), GP = null, gSide = 'A', gOpen = -1, gMode = 'atk';
+const gNow = () => Date.now() + srvOff, gStaff = () => isLeader() || (me && me.role === 'mod');
+const gCnt = (s, c) => (s.match(new RegExp(c, 'g')) || []).length;
+function gBuild(){
+  const cap = GC.cap, na = Math.min(GC.startA, cap), nb = Math.min(GC.startB, cap - na), b = {};
+  GB.forEach((_, i) => { b[i] = 'A'.repeat(na) + 'B'.repeat(nb) + 'x'.repeat(cap - na - nb); });
+  return { b, sc: { A: 0, B: 0, t: gNow() }, atk: { A: 0, B: 0 } };
+}
+const gP = () => (GP && GP.b) ? GP : gBuild();
+function gScores(p, t){
+  let a = 0, b = 0;
+  GB.forEach((_, i) => { const s = p.b[i] || '', h = Math.floor(s.length / 2) + 1; if (gCnt(s, 'A') >= h) a++; else if (gCnt(s, 'B') >= h) b++; });
+  const m = Math.max(0, (Math.min(t, GC.endAt || t) - p.sc.t) / 60000);
+  return { A: p.sc.A + m * GC.ppm * a, B: p.sc.B + m * GC.ppm * b };
+}
+const gOver = (p, t) => { const x = gScores(p, t); return (GC.endAt && t >= GC.endAt) || x.A >= GC.goal || x.B >= GC.goal; };
+function gTake(i, k){
+  const t = gNow(), side = gSide;
+  db.ref('game/play').transaction(p => {
+    if (!p || !p.b) p = gBuild();
+    p.sc = p.sc || { A: 0, B: 0, t }; p.atk = p.atk || { A: 0, B: 0 };
+    const s = p.b[i]; if (!s || !s[k] || s[k] === side || gOver(p, t)) return;
+    const x = gScores(p, t); p.sc = { A: Math.round(x.A * 100) / 100, B: Math.round(x.B * 100) / 100, t };
+    p.b[i] = s.slice(0, k) + side + s.slice(k + 1); p.atk[side] = (p.atk[side] || 0) + 1;
+    return p;
+  }).catch(console.error);
+}
+function gHead(){
+  if (!me) return;
+  const t = gNow(), p = gP(), x = gScores(p, t), left = GC.endAt ? Math.max(0, GC.endAt - t) : 0;
+  $('g-na').textContent = GC.nameA + ' · atacou ' + ((p.atk && p.atk.A) || 0); $('g-nb').textContent = GC.nameB + ' · atacou ' + ((p.atk && p.atk.B) || 0);
+  $('g-sa').textContent = Math.floor(x.A); $('g-sb').textContent = Math.floor(x.B);
+  $('g-time').textContent = GC.endAt ? Math.floor(left / 3600000) + 'h ' + String(Math.floor(left / 60000) % 60).padStart(2, '0') + 'm' : '—';
+  $('g-goal').textContent = gOver(p, t) ? '🏁 FIM: ' + (x.A === x.B ? 'empate' : (x.A > x.B ? GC.nameA : GC.nameB) + ' venceu') : 'PARA VITÓRIA INSTANTÂNEA ' + GC.goal;
+}
+function gRender(){
+  if (!me) return; const p = gP();
+  $('g-map').innerHTML = '<div class="g-title">RONCELONA<b>DISTRITO 10</b></div>' + GB.map((b, i) => {
+    const s = p.b[i] || '', n = s.length || 1, na = gCnt(s, 'A'), nb = gCnt(s, 'B'), h = Math.floor(n / 2) + 1, own = na >= h ? 'a' : nb >= h ? 'b' : '';
+    return `<div class="g-b" data-i="${i}" style="left:${b[1]}%;top:${b[2]}%"><span class="g-deco">${b[3]}</span><div class="g-lab">${own ? `<em class="${own}">+${GC.ppm}</em>` : ''}<span>${b[0]}</span><small>🚗 ${n}</small><i class="g-bar"><s style="width:${na / n * 100}%"></s><u style="width:${nb / n * 100}%"></u></i></div></div>`;
+  }).join('');
+  $('g-map').querySelectorAll('.g-b').forEach(el => { el.onclick = () => { gOpen = +el.dataset.i; gMode = 'atk'; $('g-bld').classList.remove('hidden'); gRenderB(); $('g-bld').scrollIntoView({ block: 'nearest' }); }; });
+  document.querySelectorAll('.gside [data-s]').forEach(b => b.classList.toggle('on', b.dataset.s === gSide));
+  gHead(); gRenderB();
+}
+function gRenderB(){
+  if (gOpen < 0) return;
+  const i = gOpen, s = gP().b[i] || '', n = s.length, mine = gCnt(s, gSide), box = $('g-grid');
+  $('g-bt').textContent = GB[i][0];
+  $('g-bi').textContent = 'Seus carros: ' + mine + ' · Inimigos: ' + (n - mine) + ' · Pontua com ' + (Math.floor(n / 2) + 1);
+  document.querySelectorAll('#g-bld [data-m]').forEach(b => b.classList.toggle('on', b.dataset.m === gMode));
+  box.innerHTML = '';
+  [...s].forEach((o, k) => {
+    const isMine = o === gSide, show = gMode === 'atk' ? !isMine : isMine, d = document.createElement('button'); d.type = 'button';
+    d.className = show ? (o === 'x' ? 'bot' : isMine ? 'me' : 'en') : '';
+    d.innerHTML = show ? `<span class="g-car">${GCARS[(k * 3 + i) % GCARS.length]}</span><i class="g-hp"><b style="width:${60 + (k * 37 + i * 11) % 41}%"></b></i>` : 'P';
+    if (show && gMode === 'atk') d.onclick = () => gTake(i, k);
+    box.appendChild(d);
+  });
+}
+function gFillCfg(){
+  if ($('g-cfg').contains(document.activeElement)) return;
+  const f = { 'g-cap': GC.cap, 'g-goal-i': GC.goal, 'g-ppm': GC.ppm, 'g-nm-a': GC.nameA, 'g-nm-b': GC.nameB, 'g-st-a': GC.startA, 'g-st-b': GC.startB, 'g-at-a': GP && GP.atk ? GP.atk.A || 0 : 0, 'g-at-b': GP && GP.atk ? GP.atk.B || 0 : 0 };
+  Object.keys(f).forEach(k => { $(k).value = f[k]; });
+}
+document.querySelectorAll('.gside [data-s]').forEach(b => { b.onclick = () => { gSide = b.dataset.s; gRender(); }; });
+document.querySelectorAll('#g-bld [data-m]').forEach(b => { b.onclick = () => { gMode = b.dataset.m; gRenderB(); }; });
+$('g-x').onclick = () => { gOpen = -1; $('g-bld').classList.add('hidden'); };
+$('g-save').onclick = () => {
+  const n = id => Math.max(0, +$(id).value || 0), mins = n('g-h') * 60 + n('g-m');
+  const c = { cap: Math.min(40, Math.max(3, n('g-cap') || 21)), goal: n('g-goal-i') || 3000, ppm: n('g-ppm'), startA: n('g-st-a'), startB: n('g-st-b'),
+    nameA: $('g-nm-a').value.trim().slice(0, 16) || 'EQUIPE A', nameB: $('g-nm-b').value.trim().slice(0, 16) || 'EQUIPE B', endAt: mins ? gNow() + mins * 60000 : (GC.endAt || 0) };
+  db.ref('game/cfg').set(c).catch(console.error);
+  db.ref('game/play').transaction(p => { if (!p || !p.b) p = gBuild(); p.sc = p.sc || { A: 0, B: 0, t: gNow() }; p.atk = { A: n('g-at-a'), B: n('g-at-b') }; return p; }).catch(console.error);
+};
+$('g-reset').onclick = () => { if (confirm('Reiniciar o mapa e zerar os pontos?')) db.ref('game/play').set(gBuild()).catch(console.error); };
+function gStart(){
+  db.ref('game/cfg').on('value', s => { GC = Object.assign({}, GDEF, s.val() || {}); gFillCfg(); gRender(); }, () => {});
+  db.ref('game/play').on('value', s => { GP = s.val(); gFillCfg(); gRender(); }, () => {});
+  setInterval(gHead, 1000);
 }
 
 /* ---------- Início: tenta entrar sozinho com o último acesso ---------- */

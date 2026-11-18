@@ -221,24 +221,41 @@ main.full{padding:0;max-width:none}
 .msg.me{align-self:flex-end;background:var(--meb)}
 #chat-form{display:flex;gap:8px;padding-top:8px}
 #chat-in{flex:1}
-.gtop{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;background:var(--panel);border-radius:12px;padding:8px;margin-bottom:8px;text-align:center}
-.gtop b{display:block;font-size:.8rem}.gtop span{font-size:1.2rem;font-weight:800}
-#g-sa{color:#6f9bff}#g-sb{color:#ff7a74}.gctr strong{display:block}.gctr small{display:block;color:var(--mute);font-size:.65rem}
-.gside{display:flex;gap:6px;align-items:center;margin-bottom:8px;font-size:.85rem}.gside button{padding:4px 12px}.gside button.on,#g-bld button.on{background:var(--blue)}
-.gmapw{overflow-x:auto;border-radius:12px}
-.gmap{position:relative;width:680px;height:300px;background:linear-gradient(#5a4a6a,#c98a5a 58%,#3b3050);overflow:hidden}
-.gmap::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;background:#2a2f6a}
-.g-title{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);text-align:center;color:#fff9;font-weight:800;pointer-events:none}.g-title b{display:block;font-size:1.6rem;color:#fffd}
-.g-b{position:absolute;transform:translate(-50%,-50%);cursor:pointer}.g-deco{display:block;text-align:center;font-size:1.6rem}
-.g-lab{display:flex;align-items:center;gap:4px;background:#fff;color:#223;border-radius:4px;padding:2px 6px;font-size:.72rem;font-weight:800;flex-wrap:wrap;width:118px}
-.g-lab em{font-style:normal;color:#fff;padding:1px 5px;border-radius:3px}.g-lab em.a{background:#4a7bd8}.g-lab em.b{background:#e0564f}
-.g-bar{display:flex;width:100%;height:6px;background:#8a93a8;border-radius:3px;overflow:hidden}.g-bar s{background:#4a7bd8}.g-bar u{background:#e0564f;margin-left:auto}
-#g-bld{background:var(--panel);border-radius:12px;padding:10px;margin-top:8px}.gbh{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.gbh h3{margin:0;flex:1}
-#g-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
-#g-grid button{aspect-ratio:1.5;border-radius:8px;border:1px solid #fff2;background:#2a3040;color:#fff3;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0}
-#g-grid .bot{background:#3d4a44;color:#fff}#g-grid .en{background:#5a2f33;color:#fff}#g-grid .me{background:#2c4478;color:#fff}
-.g-car{font-size:1.7rem}.g-hp{width:80%;height:5px;background:#0006;border-radius:3px;overflow:hidden}.g-hp b{display:block;height:100%;background:#59c24a}
+.gtop{display:grid;grid-template-columns:1fr auto 1fr;background:#fff;color:#223;border-radius:10px;overflow:hidden;margin-bottom:8px;text-align:center;font-family:Impact,'Arial Narrow',sans-serif}
+.gtop>div{padding:6px 4px}.gtop b{display:block;font-size:.9rem;font-weight:400;text-transform:uppercase}.gtop span{font-size:1.4rem}
+#g-sa{color:#3a6fe0}#g-sb{color:#e0453f}.gtop .gm{background:#8fa0b8;color:#fff;min-width:120px}.gm small{display:block;font-size:.55rem;opacity:.85}
+.gside{display:flex;gap:6px;align-items:center;margin-bottom:8px;font-size:.85rem}.gside button{padding:4px 12px}.gside button.on{background:var(--blue)}
+.gmapw{overflow-x:auto;border-radius:12px;scrollbar-width:none}.gmapw::-webkit-scrollbar{display:none}
+.gmap{position:relative;width:780px;height:340px;background:linear-gradient(#b99ad8,#e8a8c8 45%,#f3c7a8 72%,#7a5a8a);overflow:hidden}
+.g-ly{position:absolute;top:0;bottom:40px;left:-240px;width:calc(100% + 240px);pointer-events:none}
+.g-ly svg{position:absolute;left:0;bottom:0;width:100%;height:55%}.g-ly.l2 svg{height:42%}.g-ly.l3 svg{height:30%}
+.g-lm{position:absolute;left:50%;bottom:40px;height:78%;transform:translateX(-50%)}
+.g-ground{position:absolute;left:0;right:0;bottom:0;height:40px;background:#1f2760}.g-ground::before{content:"";position:absolute;left:0;right:0;top:-12px;height:14px;background:repeating-linear-gradient(45deg,transparent 0 5px,#0c0f2e 5px 7px)}
+.g-title{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);background:#5b2f7d;color:#fff;padding:4px 16px;text-align:center;font-family:Impact,'Arial Narrow',sans-serif;box-shadow:0 3px 0 #3a1b55}.g-title small{display:block;font-size:.6rem;opacity:.8}.g-title b{font-size:1.5rem;font-weight:400}
+.g-b{position:absolute;transform:translate(-50%,-50%);cursor:pointer}.g-lab{display:flex;align-items:center;gap:5px;background:#fff;color:#334;padding:3px 7px 5px;font:.8rem Impact,'Arial Narrow',sans-serif;flex-wrap:wrap;width:122px;text-transform:uppercase;box-shadow:0 2px 0 #0003}
+.g-lab small{margin-left:auto}.g-lab em{font-style:normal;color:#fff;padding:0 5px}.g-lab em.a{background:#4a7bd8}.g-lab em.b{background:#e0564f}
+.g-bar{display:flex;width:100%;height:6px;background:#5d6882;overflow:hidden}.g-bar s{background:#8fb0f0}.g-bar u{background:#e8575a;margin-left:auto}
+#g-scr{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;background:#4b5b55 radial-gradient(#6a7a72,#3d4a45);overflow:auto;padding:10px 10px 70px}
+.g-hdr{background:#fff;color:#223;font-family:Impact,'Arial Narrow',sans-serif;text-align:center;padding:14px 10px 8px;position:relative;margin-top:14px}
+.g-loc{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#8fa0b8;color:#fff;padding:2px 14px;font-size:.85rem;text-transform:uppercase}
+.g-vs{font-size:1.15rem;text-transform:uppercase}.g-vs i{margin:0 8px;font-style:normal}.g-hdr .g-bar{width:140px;height:9px;margin:4px auto 0}.g-tm{position:absolute;right:6px;bottom:-14px;background:#8fa0b8;color:#fff;padding:1px 10px;font-size:.9rem}
+.g-pick{flex:1;display:flex;align-items:center;justify-content:center;gap:14px}.g-pick button{background:none;color:#fff;display:grid;justify-items:center;gap:8px;font:1.1rem Impact,'Arial Narrow',sans-serif;text-transform:uppercase}
+.g-pick em{color:#fff;font-style:normal;font:1rem Impact,sans-serif}.oct{width:104px;height:104px;clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);display:grid;place-items:center;font-size:2.8rem}
+.oct.blue{background:linear-gradient(#a9c7ff,#4d7fe0)}.oct.red{background:linear-gradient(#ff9a9a,#e0383f)}.g-pick .bl{filter:drop-shadow(0 0 12px #7fb0ff)}.g-pick .rd{filter:drop-shadow(0 0 12px #ff6a6a)}
+.gbody{display:flex;flex-direction:column;gap:8px;margin-top:10px}@media (orientation:landscape){.gbody{flex-direction:row}.g-side{width:200px;flex:none}}
+.g-side{background:#ef5a5a repeating-linear-gradient(135deg,#0000 0 14px,#fff1 14px 28px);color:#fff;padding:10px;display:grid;gap:8px;justify-items:center;font-family:Impact,'Arial Narrow',sans-serif;text-transform:uppercase;text-align:center}
+.g-side.def{background-color:#3d72d6}.g-side small{font-size:.6rem;opacity:.9}.g-sel{display:grid;place-items:center;width:100%}.g-sel svg{width:150px}
+.g-bat{background:#b0202a;padding:4px 10px;font-size:.8rem;cursor:pointer}.g-bat.on{background:#2c8a4a}.g-nav{display:flex;gap:10px;align-items:center}.g-nav button{padding:2px 10px;background:#fff3}
+.g-atk{background:#b0202a;border:3px solid #fff;color:#fff;font:1.3rem Impact,sans-serif;padding:8px 26px}.g-atk:disabled{opacity:.4}
+#g-grid{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;align-content:start}
+#g-grid div{position:relative;aspect-ratio:1.3;background:#0002;display:grid;place-items:center;border:1px solid #fff1}#g-grid div.sel{background:#ef5a5a}#g-grid div.mine{background:#3d72d633}
+#g-grid .pk{color:#fff5;font:1.4rem Impact,sans-serif;background:#ffffff0d}#g-grid svg{width:84%}
+#g-grid i.bd{position:absolute;left:4px;top:4px;width:20px;height:20px;border-radius:5px;background:#fff;color:#223;font:.7rem Impact,sans-serif;display:grid;place-items:center;font-style:normal}
+#g-grid i.hp{position:absolute;left:12%;right:12%;bottom:6px;height:5px;background:#0006;border-radius:3px;overflow:hidden}#g-grid i.hp b{display:block;height:100%;background:#59c24a}
+@keyframes gshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.shk{animation:gshake .25s 2}
+.g-redbtn{position:fixed;left:12px;bottom:14px;background:#c0262f;color:#fff;width:54px;height:46px;font-size:1.3rem;z-index:51;border:0}
 .gcfg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}.gcfg label{display:grid;font-size:.72rem;color:var(--mute);gap:2px}
+.gbr{display:grid;grid-template-columns:1.4fr 1fr .8fr .8fr;gap:4px;margin-bottom:4px}.gbr input{min-width:0;padding:6px}
 #typing{min-height:1.3em;color:var(--mute);font-size:.8rem;padding:2px 4px}
 #atk-prio{background:var(--panel);border:1px solid var(--gold);color:var(--gold);padding:8px 12px}
 #atk-prio-msg{color:var(--gold);margin:0 0 8px;min-height:0}
@@ -429,35 +446,40 @@ main.full{padding:0;max-width:none}
 
     <!-- Treino: Reis da Cidade -->
     <div id="tab-game" class="hidden">
-      <div class="gtop"><div><b id="g-na"></b><span id="g-sa">0</span></div><div class="gctr"><strong id="g-time">—</strong><small id="g-goal"></small></div><div><b id="g-nb"></b><span id="g-sb">0</span></div></div>
+      <div class="gtop"><div><b id="g-na"></b><span id="g-sa">0</span></div><div class="gm"><strong id="g-time">—</strong><small id="g-goal"></small></div><div><b id="g-nb"></b><span id="g-sb">0</span></div></div>
       <div class="gside">Jogando pela: <button data-s="A">Equipe A</button><button data-s="B">Equipe B</button></div>
-      <div class="gmapw"><div class="gmap" id="g-map"></div></div>
-      <div id="g-bld" class="hidden">
-        <div class="gbh"><h3 id="g-bt"></h3><button data-m="def">🛡 Defesa</button><button data-m="atk">⚔ Ataque</button><button id="g-x" aria-label="Fechar">✕</button></div>
-        <div class="help" id="g-bi" style="margin:6px 0 0"></div>
-        <div id="g-grid"></div>
-      </div>
+      <div class="gmapw" id="g-wrap"><div class="gmap" id="g-map"></div></div>
       <div class="card only-staff" id="g-cfg" style="margin-top:10px">
         <h3>Configurar treino</h3>
         <div class="gcfg">
-          <label>Carros por prédio<input id="g-cap" type="number" min="3" max="40"></label>
           <label>Pontos para vencer<input id="g-goal-i" type="number" min="1"></label>
           <label>Pontos por prédio/min<input id="g-ppm" type="number" min="0"></label>
           <label>Tempo restante (h)<input id="g-h" type="number" min="0" placeholder="manter"></label>
           <label>Tempo restante (min)<input id="g-m" type="number" min="0" placeholder="manter"></label>
-          <label>Nome da equipe A<input id="g-nm-a" maxlength="16"></label>
-          <label>Nome da equipe B<input id="g-nm-b" maxlength="16"></label>
-          <label>Carros iniciais A<input id="g-st-a" type="number" min="0"></label>
-          <label>Carros iniciais B<input id="g-st-b" type="number" min="0"></label>
+          <label>Nome da equipe A<input id="g-nm-a" maxlength="20"></label>
+          <label>Nome da equipe B<input id="g-nm-b" maxlength="20"></label>
+          <label>Cidade<input id="g-city" maxlength="20"></label>
+          <label>Distrito<input id="g-dist" maxlength="20"></label>
           <label>Carros que A já atacou<input id="g-at-a" type="number" min="0"></label>
           <label>Carros que B já atacou<input id="g-at-b" type="number" min="0"></label>
         </div>
+        <div class="help" style="margin:0 0 4px">Cada prédio tem a sua quantidade: nome · vagas · carros de A · carros de B (o resto são bots).</div>
+        <div id="g-bcfg"></div>
         <button id="g-save" type="button">Salvar</button> <button id="g-reset" type="button">Reiniciar mapa</button>
-        <div class="help" style="margin:6px 0 0">“Reiniciar” zera pontos e recoloca os carros iniciais; os demais lugares ficam com bots.</div>
+      </div>
+      <div id="g-scr" class="hidden">
+        <div class="g-hdr"><div class="g-loc">📍 <span id="g-bt"></span></div><div class="g-vs"><span id="g-v-a"></span><i>x</i><span id="g-v-b"></span></div><div class="g-bar" id="g-mb"></div><div class="g-tm" id="g-tm2"></div></div>
+        <div id="g-pick" class="g-pick"><button class="bl" data-m="def"><span class="oct blue">🛡️</span>Defender</button><em>OU</em><button class="rd" data-m="atk"><span class="oct red">🐟</span>Atacar</button></div>
+        <div id="g-fight" class="gbody hidden">
+          <aside class="g-side" id="g-side"><div class="g-sel" id="g-selcar"></div><div class="g-bat" id="g-bat">🔍 Batedor · grátis</div><small id="g-bat-t">Revele todos os oponentes</small>
+            <div class="g-nav"><button id="g-prev" type="button">◀</button>Selecionar<button id="g-next" type="button">▶</button></div><button id="g-go" class="g-atk" type="button">Atacar</button></aside>
+          <div id="g-grid"></div>
+        </div>
+        <button id="g-back" class="g-redbtn" type="button" aria-label="Voltar">◀</button>
       </div>
     </div>
 
-    <!-- Configuração -->
+    <!-- Configuração --><!-- Configuração -->
     <div id="tab-cfg" class="hidden">
       <div class="card">
         <h3>Cor de fundo</h3>
@@ -1425,21 +1447,19 @@ function renderRec(){
   if (!arr.length) box.textContent = 'Nenhum pedido.';
 }
 
-/* ---------- Treino: Reis da Cidade (tempo real) ---------- */
-const GB = [['Terraço',34,47,'⛱️'],['Arena',31,70,'🏟️'],['Fonte',49,81,'⛲'],['Porto 1',66,84,'⚓'],['Feira',81,70,'🎪'],['Porto 2',79,46,'🚢']];
-const GCARS = ['🚙','🛻','🏎️','🚜','🚓','🚐','🚛','🚌'], GDEF = { cap: 21, goal: 3000, ppm: 21, endAt: 0, startA: 0, startB: 0, nameA: 'EQUIPE A', nameB: 'EQUIPE B' };
-let GC = Object.assign({}, GDEF), GP = null, gSide = 'A', gOpen = -1, gMode = 'atk';
-const gNow = () => Date.now() + srvOff, gStaff = () => isLeader() || (me && me.role === 'mod');
-const gCnt = (s, c) => (s.match(new RegExp(c, 'g')) || []).length;
+/* ---------- Treino: Reis da Cidade (tempo real, em camadas) ---------- */
+const GPOS = [[34,47],[31,70],[49,82],[66,84],[81,70],[79,46]], GN0 = ['Terraço','Arena','Fonte','Porto 1','Feira','Porto 2'];
+const GDEF = { goal: 3000, ppm: 21, endAt: 0, nameA: 'EQUIPE A', nameB: 'EQUIPE B', city: 'MIAUSCOU', district: 'DISTRITO 1', bn: GN0.map(n => ({ name: n, cap: 21, a: 0, b: 0 })) };
+let GC = JSON.parse(JSON.stringify(GDEF)), GP = null, gSide = 'A', gOpen = -1, gMode = '', gSel = -1, gRev = false;
+const gNow = () => Date.now() + srvOff, gCnt = (s, c) => (s.match(new RegExp(c, 'g')) || []).length;
 function gBuild(){
-  const cap = GC.cap, na = Math.min(GC.startA, cap), nb = Math.min(GC.startB, cap - na), b = {};
-  GB.forEach((_, i) => { b[i] = 'A'.repeat(na) + 'B'.repeat(nb) + 'x'.repeat(cap - na - nb); });
+  const b = {}; GC.bn.forEach((x, i) => { const na = Math.min(x.a, x.cap), nb = Math.min(x.b, x.cap - na); b[i] = 'A'.repeat(na) + 'B'.repeat(nb) + 'x'.repeat(x.cap - na - nb); });
   return { b, sc: { A: 0, B: 0, t: gNow() }, atk: { A: 0, B: 0 } };
 }
 const gP = () => (GP && GP.b) ? GP : gBuild();
 function gScores(p, t){
   let a = 0, b = 0;
-  GB.forEach((_, i) => { const s = p.b[i] || '', h = Math.floor(s.length / 2) + 1; if (gCnt(s, 'A') >= h) a++; else if (gCnt(s, 'B') >= h) b++; });
+  GC.bn.forEach((_, i) => { const s = p.b[i] || '', h = Math.floor(s.length / 2) + 1; if (gCnt(s, 'A') >= h) a++; else if (gCnt(s, 'B') >= h) b++; });
   const m = Math.max(0, (Math.min(t, GC.endAt || t) - p.sc.t) / 60000);
   return { A: p.sc.A + m * GC.ppm * a, B: p.sc.B + m * GC.ppm * b };
 }
@@ -1455,57 +1475,96 @@ function gTake(i, k){
     return p;
   }).catch(console.error);
 }
+/* camadas do cenário */
+function gSky(n, seed, h0, h1, fill, op, blur){
+  let r = seed, o = ''; const bw = 1000 / n;
+  for (let k = 0; k < n; k++) {
+    r = (r * 9301 + 49297) % 233280; const h = h0 + (r / 233280) * (h1 - h0), x = k * bw;
+    o += `<rect x="${x}" y="${200 - h}" width="${bw - 3}" height="${h}" fill="${fill}"/>`;
+    for (let y = 200 - h + 8; y < 194; y += 12) if ((r + y) % 3) o += `<rect x="${x + 4}" y="${y}" width="${bw - 11}" height="4" fill="#ffe9a8" opacity=".5"/>`;
+  }
+  return `<svg viewBox="0 0 1000 200" preserveAspectRatio="none" style="opacity:${op};${blur ? 'filter:blur(1.5px)' : ''}">${o}</svg>`;
+}
+const gScene = () => `<div class="g-ly" data-k=".5">${gSky(30, 7, 50, 150, '#cfb0e0', .75, 1)}</div><div class="g-ly l2" data-k=".28">${gSky(22, 3, 40, 130, '#a97bbd', .9)}</div>
+<svg class="g-lm" viewBox="0 0 200 260"><polygon points="62,260 62,120 80,120 80,64 94,64 94,24 100,0 106,24 106,64 120,64 120,120 138,120 138,260" fill="#6a3f8a"/><polygon points="20,260 20,170 50,170 50,140 62,140 62,260" fill="#7d4f9f"/><polygon points="138,260 138,150 160,150 160,180 182,180 182,260" fill="#7d4f9f"/></svg>
+<div class="g-ly l3" data-k=".1">${gSky(16, 11, 30, 90, '#7d4f93', 1)}</div><div class="g-ground"></div>`;
 function gHead(){
   if (!me) return;
   const t = gNow(), p = gP(), x = gScores(p, t), left = GC.endAt ? Math.max(0, GC.endAt - t) : 0;
-  $('g-na').textContent = GC.nameA + ' · atacou ' + ((p.atk && p.atk.A) || 0); $('g-nb').textContent = GC.nameB + ' · atacou ' + ((p.atk && p.atk.B) || 0);
-  $('g-sa').textContent = Math.floor(x.A); $('g-sb').textContent = Math.floor(x.B);
-  $('g-time').textContent = GC.endAt ? Math.floor(left / 3600000) + 'h ' + String(Math.floor(left / 60000) % 60).padStart(2, '0') + 'm' : '—';
-  $('g-goal').textContent = gOver(p, t) ? '🏁 FIM: ' + (x.A === x.B ? 'empate' : (x.A > x.B ? GC.nameA : GC.nameB) + ' venceu') : 'PARA VITÓRIA INSTANTÂNEA ' + GC.goal;
+  const tm = GC.endAt ? Math.floor(left / 3600000) + 'h ' + String(Math.floor(left / 60000) % 60).padStart(2, '0') + 'm' : '—';
+  $('g-na').textContent = GC.nameA + ' · ⚔' + ((p.atk && p.atk.A) || 0); $('g-nb').textContent = GC.nameB + ' · ⚔' + ((p.atk && p.atk.B) || 0);
+  $('g-sa').textContent = Math.floor(x.A); $('g-sb').textContent = Math.floor(x.B); $('g-time').textContent = tm; $('g-tm2').textContent = tm;
+  $('g-goal').textContent = gOver(p, t) ? '🏁 FIM: ' + (x.A === x.B ? 'EMPATE' : (x.A > x.B ? GC.nameA : GC.nameB) + ' VENCEU') : 'PARA VITÓRIA INSTANTÂNEA ' + GC.goal;
 }
 function gRender(){
-  if (!me) return; const p = gP();
-  $('g-map').innerHTML = '<div class="g-title">RONCELONA<b>DISTRITO 10</b></div>' + GB.map((b, i) => {
+  if (!me) return; const p = gP(), top = $('g-wrap').scrollLeft;
+  $('g-map').innerHTML = gScene() + `<div class="g-title"><small>${esc(GC.city)}</small><b>${esc(GC.district)}</b></div>` + GC.bn.map((b, i) => {
     const s = p.b[i] || '', n = s.length || 1, na = gCnt(s, 'A'), nb = gCnt(s, 'B'), h = Math.floor(n / 2) + 1, own = na >= h ? 'a' : nb >= h ? 'b' : '';
-    return `<div class="g-b" data-i="${i}" style="left:${b[1]}%;top:${b[2]}%"><span class="g-deco">${b[3]}</span><div class="g-lab">${own ? `<em class="${own}">+${GC.ppm}</em>` : ''}<span>${b[0]}</span><small>🚗 ${n}</small><i class="g-bar"><s style="width:${na / n * 100}%"></s><u style="width:${nb / n * 100}%"></u></i></div></div>`;
+    return `<div class="g-b" data-i="${i}" style="left:${GPOS[i][0]}%;top:${GPOS[i][1]}%"><div class="g-lab">${own ? `<em class="${own}">+${GC.ppm}</em>` : ''}<span>${esc(b.name)}</span><small>🚚 ${n}</small><i class="g-bar"><s style="width:${na / n * 100}%"></s><u style="width:${nb / n * 100}%"></u></i></div></div>`;
   }).join('');
-  $('g-map').querySelectorAll('.g-b').forEach(el => { el.onclick = () => { gOpen = +el.dataset.i; gMode = 'atk'; $('g-bld').classList.remove('hidden'); gRenderB(); $('g-bld').scrollIntoView({ block: 'nearest' }); }; });
+  $('g-map').querySelectorAll('.g-b').forEach(el => { el.onclick = () => gOpenB(+el.dataset.i); });
+  $('g-wrap').scrollLeft = top; gPar();
   document.querySelectorAll('.gside [data-s]').forEach(b => b.classList.toggle('on', b.dataset.s === gSide));
-  gHead(); gRenderB();
+  gHead(); gFight();
 }
-function gRenderB(){
+const gPar = () => document.querySelectorAll('.g-ly').forEach(l => { l.style.transform = `translateX(${$('g-wrap').scrollLeft * l.dataset.k}px)`; });
+$('g-wrap').addEventListener('scroll', gPar);
+function gOpenB(i){ gOpen = i; gMode = ''; gSel = -1; gRev = false; $('g-scr').classList.remove('hidden'); $('g-pick').classList.remove('hidden'); $('g-fight').classList.add('hidden'); gFight(); }
+function gCar(c, hid, v){
+  const body = v % 2 ? 'M8 52 L16 30 H44 L56 14 H92 L108 34 V52 Z' : 'M8 52 L14 24 Q16 14 28 14 H84 Q92 14 98 26 L110 40 V52 Z';
+  return `<svg viewBox="0 0 120 70"><path d="${body}" fill="${c}"/>${hid ? '<text x="58" y="42" text-anchor="middle" font-size="26" font-weight="800" fill="#fff8">?</text>' : '<rect x="30" y="20" width="22" height="12" fill="#fff6"/><rect x="60" y="20" width="22" height="12" fill="#fff6"/>'}<circle cx="34" cy="54" r="11" fill="#1b1b24"/><circle cx="88" cy="54" r="11" fill="#1b1b24"/><circle cx="34" cy="54" r="4" fill="#889"/><circle cx="88" cy="54" r="4" fill="#889"/></svg>`;
+}
+const gCol = (o, hid) => hid ? '#26282e' : o === 'A' ? '#5f8fe8' : o === 'B' ? '#e8625f' : ['#6b8f5a', '#a9803f', '#8a5aa0'][0];
+function gFight(){
   if (gOpen < 0) return;
-  const i = gOpen, s = gP().b[i] || '', n = s.length, mine = gCnt(s, gSide), box = $('g-grid');
-  $('g-bt').textContent = GB[i][0];
-  $('g-bi').textContent = 'Seus carros: ' + mine + ' · Inimigos: ' + (n - mine) + ' · Pontua com ' + (Math.floor(n / 2) + 1);
-  document.querySelectorAll('#g-bld [data-m]').forEach(b => b.classList.toggle('on', b.dataset.m === gMode));
-  box.innerHTML = '';
-  [...s].forEach((o, k) => {
-    const isMine = o === gSide, show = gMode === 'atk' ? !isMine : isMine, d = document.createElement('button'); d.type = 'button';
-    d.className = show ? (o === 'x' ? 'bot' : isMine ? 'me' : 'en') : '';
-    d.innerHTML = show ? `<span class="g-car">${GCARS[(k * 3 + i) % GCARS.length]}</span><i class="g-hp"><b style="width:${60 + (k * 37 + i * 11) % 41}%"></b></i>` : 'P';
-    if (show && gMode === 'atk') d.onclick = () => gTake(i, k);
+  const i = gOpen, s = gP().b[i] || '', n = s.length, mine = gCnt(s, gSide), nb = GC.bn[i].name;
+  $('g-bt').textContent = nb; $('g-v-a').textContent = GC.nameA; $('g-v-b').textContent = GC.nameB;
+  $('g-mb').innerHTML = `<s style="width:${gCnt(s, 'A') / n * 100}%"></s><u style="width:${gCnt(s, 'B') / n * 100}%"></u>`;
+  if (!gMode) return;
+  const atk = gMode === 'atk', list = [...s].map((o, k) => k).filter(k => (s[k] === gSide) !== atk);
+  if (!list.includes(gSel)) gSel = list[0] ?? -1;
+  const side = $('g-side'); side.className = 'g-side' + (atk ? '' : ' def');
+  $('g-bat').style.display = $('g-go').style.display = atk ? '' : 'none'; $('g-bat').classList.toggle('on', gRev); $('g-bat-t').textContent = atk ? 'Revele todos os oponentes' : 'DEFENDENDO · ' + mine + ' carros';
+  const o = gSel >= 0 ? s[gSel] : '', hid = atk && !gRev;
+  $('g-selcar').innerHTML = gSel >= 0 ? gCar(gCol(o, hid), hid, gSel) : '<span>Sem carros</span>'; $('g-go').disabled = gSel < 0;
+  const box = $('g-grid'); box.innerHTML = '';
+  [...s].forEach((c, k) => {
+    const show = (c === gSide) !== atk, d = document.createElement('div');
+    if (!show) { d.className = 'pk'; d.textContent = 'P'; } else {
+      const h = atk && !gRev; d.className = (k === gSel ? 'sel ' : '') + (c === gSide ? 'mine' : '');
+      d.innerHTML = `<i class="bd">${c === 'A' ? 'A' : c === 'B' ? 'B' : '•'}</i>` + gCar(gCol(c, h), h, k) + (h ? '' : `<i class="hp"><b style="width:${60 + (k * 37 + i * 11) % 41}%"></b></i>`);
+      d.onclick = () => { gSel = k; gFight(); };
+    }
     box.appendChild(d);
   });
 }
+$('g-pick').querySelectorAll('[data-m]').forEach(b => { b.onclick = () => { gMode = b.dataset.m; $('g-pick').classList.add('hidden'); $('g-fight').classList.remove('hidden'); gFight(); }; });
+$('g-back').onclick = () => { if (gMode) { gMode = ''; $('g-fight').classList.add('hidden'); $('g-pick').classList.remove('hidden'); } else { gOpen = -1; $('g-scr').classList.add('hidden'); } };
+$('g-bat').onclick = () => { gRev = !gRev; gFight(); };
+const gStep = d => { const s = gP().b[gOpen] || '', l = [...s].map((o, k) => k).filter(k => (s[k] === gSide) !== (gMode === 'atk')); if (l.length) { gSel = l[(l.indexOf(gSel) + d + l.length) % l.length]; gFight(); } };
+$('g-prev').onclick = () => gStep(-1); $('g-next').onclick = () => gStep(1);
+$('g-go').onclick = () => { const k = gSel; if (k < 0) return; const c = $('g-grid').children[k]; if (c) c.classList.add('shk'); setTimeout(() => gTake(gOpen, k), 350); };
+document.querySelectorAll('.gside [data-s]').forEach(b => { b.onclick = () => { gSide = b.dataset.s; gRender(); }; });
+function gCfgBuild(){
+  $('g-bcfg').innerHTML = GC.bn.map((b, i) => `<div class="gbr"><input id="g-n${i}" maxlength="14" aria-label="Nome ${i + 1}"><input id="g-c${i}" type="number" min="1" max="40" aria-label="Vagas"><input id="g-a${i}" type="number" min="0" aria-label="Carros A"><input id="g-b${i}" type="number" min="0" aria-label="Carros B"></div>`).join('');
+}
 function gFillCfg(){
   if ($('g-cfg').contains(document.activeElement)) return;
-  const f = { 'g-cap': GC.cap, 'g-goal-i': GC.goal, 'g-ppm': GC.ppm, 'g-nm-a': GC.nameA, 'g-nm-b': GC.nameB, 'g-st-a': GC.startA, 'g-st-b': GC.startB, 'g-at-a': GP && GP.atk ? GP.atk.A || 0 : 0, 'g-at-b': GP && GP.atk ? GP.atk.B || 0 : 0 };
-  Object.keys(f).forEach(k => { $(k).value = f[k]; });
+  const f = { 'g-goal-i': GC.goal, 'g-ppm': GC.ppm, 'g-nm-a': GC.nameA, 'g-nm-b': GC.nameB, 'g-city': GC.city, 'g-dist': GC.district, 'g-at-a': GP && GP.atk ? GP.atk.A || 0 : 0, 'g-at-b': GP && GP.atk ? GP.atk.B || 0 : 0 };
+  GC.bn.forEach((b, i) => { f['g-n' + i] = b.name; f['g-c' + i] = b.cap; f['g-a' + i] = b.a; f['g-b' + i] = b.b; });
+  Object.keys(f).forEach(k => { if ($(k)) $(k).value = f[k]; });
 }
-document.querySelectorAll('.gside [data-s]').forEach(b => { b.onclick = () => { gSide = b.dataset.s; gRender(); }; });
-document.querySelectorAll('#g-bld [data-m]').forEach(b => { b.onclick = () => { gMode = b.dataset.m; gRenderB(); }; });
-$('g-x').onclick = () => { gOpen = -1; $('g-bld').classList.add('hidden'); };
+gCfgBuild();
 $('g-save').onclick = () => {
-  const n = id => Math.max(0, +$(id).value || 0), mins = n('g-h') * 60 + n('g-m');
-  const c = { cap: Math.min(40, Math.max(3, n('g-cap') || 21)), goal: n('g-goal-i') || 3000, ppm: n('g-ppm'), startA: n('g-st-a'), startB: n('g-st-b'),
-    nameA: $('g-nm-a').value.trim().slice(0, 16) || 'EQUIPE A', nameB: $('g-nm-b').value.trim().slice(0, 16) || 'EQUIPE B', endAt: mins ? gNow() + mins * 60000 : (GC.endAt || 0) };
-  db.ref('game/cfg').set(c).catch(console.error);
-  db.ref('game/play').transaction(p => { if (!p || !p.b) p = gBuild(); p.sc = p.sc || { A: 0, B: 0, t: gNow() }; p.atk = { A: n('g-at-a'), B: n('g-at-b') }; return p; }).catch(console.error);
+  const n = id => Math.max(0, +$(id).value || 0), mins = n('g-h') * 60 + n('g-m'), bn = {};
+  GC.bn.forEach((_, i) => { bn[i] = { name: $('g-n' + i).value.trim().slice(0, 14) || GN0[i], cap: Math.min(40, Math.max(1, n('g-c' + i) || 21)), a: n('g-a' + i), b: n('g-b' + i) }; });
+  const tx = id => $(id).value.trim().slice(0, 20);
+  db.ref('game/cfg').set({ goal: n('g-goal-i') || 3000, ppm: n('g-ppm'), nameA: tx('g-nm-a') || 'EQUIPE A', nameB: tx('g-nm-b') || 'EQUIPE B', city: tx('g-city') || 'MIAUSCOU', district: tx('g-dist') || 'DISTRITO 1', endAt: mins ? gNow() + mins * 60000 : (GC.endAt || 0), bn }).catch(console.error);
+  db.ref('game/play/atk').set({ A: n('g-at-a'), B: n('g-at-b') }).catch(console.error);
 };
 $('g-reset').onclick = () => { if (confirm('Reiniciar o mapa e zerar os pontos?')) db.ref('game/play').set(gBuild()).catch(console.error); };
 function gStart(){
-  db.ref('game/cfg').on('value', s => { GC = Object.assign({}, GDEF, s.val() || {}); gFillCfg(); gRender(); }, () => {});
+  db.ref('game/cfg').on('value', s => { const v = s.val() || {}; GC = Object.assign(JSON.parse(JSON.stringify(GDEF)), v); GC.bn = GDEF.bn.map((d, i) => Object.assign({}, d, (v.bn || {})[i])); gFillCfg(); gRender(); }, () => {});
   db.ref('game/play').on('value', s => { GP = s.val(); gFillCfg(); gRender(); }, () => {});
   setInterval(gHead, 1000);
 }

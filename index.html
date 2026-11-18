@@ -12,6 +12,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap">
 <style>
 :root{color-scheme:dark;--bg:#0a0f1a;--panel:#131b2c;--line:#23304a;--text:#eaf0fb;--mute:#8896b3;--blue:#3d8bff;--red:#ff4d5e;--gold:#ffc83d;--ok:#2fd27a;
   --inp:#0a1120;--deep:#050a14;--tb:#0e2342;--tr:#3a1220;--newbg:#0e2a1d;--donebg:#134a2e;--unbg:#4d141c;--meb:#16407a;--badge:#1d2a45;
@@ -221,41 +222,127 @@ main.full{padding:0;max-width:none}
 .msg.me{align-self:flex-end;background:var(--meb)}
 #chat-form{display:flex;gap:8px;padding-top:8px}
 #chat-in{flex:1}
-.gtop{display:grid;grid-template-columns:1fr auto 1fr;background:#fff;color:#223;border-radius:10px;overflow:hidden;margin-bottom:8px;text-align:center;font-family:Impact,'Arial Narrow',sans-serif}
-.gtop>div{padding:6px 4px}.gtop b{display:block;font-size:.9rem;font-weight:400;text-transform:uppercase}.gtop span{font-size:1.4rem}
-#g-sa{color:#3a6fe0}#g-sb{color:#e0453f}.gtop .gm{background:#8fa0b8;color:#fff;min-width:120px}.gm small{display:block;font-size:.55rem;opacity:.85}
-.gside{display:flex;gap:6px;align-items:center;margin-bottom:8px;font-size:.85rem}.gside button{padding:4px 12px}.gside button.on{background:var(--blue)}
-.gmapw{overflow-x:auto;border-radius:12px;scrollbar-width:none}.gmapw::-webkit-scrollbar{display:none}
-.gmap{position:relative;width:780px;height:340px;background:linear-gradient(#b99ad8,#e8a8c8 45%,#f3c7a8 72%,#7a5a8a);overflow:hidden}
-.g-ly{position:absolute;top:0;bottom:40px;left:-240px;width:calc(100% + 240px);pointer-events:none}
-.g-ly svg{position:absolute;left:0;bottom:0;width:100%;height:55%}.g-ly.l2 svg{height:42%}.g-ly.l3 svg{height:30%}
-.g-lm{position:absolute;left:50%;bottom:40px;height:78%;transform:translateX(-50%)}
-.g-ground{position:absolute;left:0;right:0;bottom:0;height:40px;background:#1f2760}.g-ground::before{content:"";position:absolute;left:0;right:0;top:-12px;height:14px;background:repeating-linear-gradient(45deg,transparent 0 5px,#0c0f2e 5px 7px)}
-.g-title{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);background:#5b2f7d;color:#fff;padding:4px 16px;text-align:center;font-family:Impact,'Arial Narrow',sans-serif;box-shadow:0 3px 0 #3a1b55}.g-title small{display:block;font-size:.6rem;opacity:.8}.g-title b{font-size:1.5rem;font-weight:400}
-.g-b{position:absolute;transform:translate(-50%,-50%);cursor:pointer}.g-lab{display:flex;align-items:center;gap:5px;background:#fff;color:#334;padding:3px 7px 5px;font:.8rem Impact,'Arial Narrow',sans-serif;flex-wrap:wrap;width:122px;text-transform:uppercase;box-shadow:0 2px 0 #0003}
-.g-lab small{margin-left:auto}.g-lab em{font-style:normal;color:#fff;padding:0 5px}.g-lab em.a{background:#4a7bd8}.g-lab em.b{background:#e0564f}
-.g-bar{display:flex;width:100%;height:6px;background:#5d6882;overflow:hidden}.g-bar s{background:#8fb0f0}.g-bar u{background:#e8575a;margin-left:auto}
-#g-scr{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;background:#4b5b55 radial-gradient(#6a7a72,#3d4a45);overflow:auto;padding:10px 10px 70px}
-.g-hdr{background:#fff;color:#223;font-family:Impact,'Arial Narrow',sans-serif;text-align:center;padding:14px 10px 8px;position:relative;margin-top:14px}
-.g-loc{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#8fa0b8;color:#fff;padding:2px 14px;font-size:.85rem;text-transform:uppercase}
-.g-vs{font-size:1.15rem;text-transform:uppercase}.g-vs i{margin:0 8px;font-style:normal}.g-hdr .g-bar{width:140px;height:9px;margin:4px auto 0}.g-tm{position:absolute;right:6px;bottom:-14px;background:#8fa0b8;color:#fff;padding:1px 10px;font-size:.9rem}
-.g-pick{flex:1;display:flex;align-items:center;justify-content:center;gap:14px}.g-pick button{background:none;color:#fff;display:grid;justify-items:center;gap:8px;font:1.1rem Impact,'Arial Narrow',sans-serif;text-transform:uppercase}
-.g-pick em{color:#fff;font-style:normal;font:1rem Impact,sans-serif}.oct{width:104px;height:104px;clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);display:grid;place-items:center;font-size:2.8rem}
-.oct.blue{background:linear-gradient(#a9c7ff,#4d7fe0)}.oct.red{background:linear-gradient(#ff9a9a,#e0383f)}.g-pick .bl{filter:drop-shadow(0 0 12px #7fb0ff)}.g-pick .rd{filter:drop-shadow(0 0 12px #ff6a6a)}
-.gbody{display:flex;flex-direction:column;gap:8px;margin-top:10px}@media (orientation:landscape){.gbody{flex-direction:row}.g-side{width:200px;flex:none}}
-.g-side{background:#ef5a5a repeating-linear-gradient(135deg,#0000 0 14px,#fff1 14px 28px);color:#fff;padding:10px;display:grid;gap:8px;justify-items:center;font-family:Impact,'Arial Narrow',sans-serif;text-transform:uppercase;text-align:center}
-.g-side.def{background-color:#3d72d6}.g-side small{font-size:.6rem;opacity:.9}.g-sel{display:grid;place-items:center;width:100%}.g-sel svg{width:150px}
-.g-bat{background:#b0202a;padding:4px 10px;font-size:.8rem;cursor:pointer}.g-bat.on{background:#2c8a4a}.g-nav{display:flex;gap:10px;align-items:center}.g-nav button{padding:2px 10px;background:#fff3}
-.g-atk{background:#b0202a;border:3px solid #fff;color:#fff;font:1.3rem Impact,sans-serif;padding:8px 26px}.g-atk:disabled{opacity:.4}
-#g-grid{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;align-content:start}
-#g-grid div{position:relative;aspect-ratio:1.3;background:#0002;display:grid;place-items:center;border:1px solid #fff1}#g-grid div.sel{background:#ef5a5a}#g-grid div.mine{background:#3d72d633}
-#g-grid .pk{color:#fff5;font:1.4rem Impact,sans-serif;background:#ffffff0d}#g-grid svg{width:84%}
-#g-grid i.bd{position:absolute;left:4px;top:4px;width:20px;height:20px;border-radius:5px;background:#fff;color:#223;font:.7rem Impact,sans-serif;display:grid;place-items:center;font-style:normal}
-#g-grid i.hp{position:absolute;left:12%;right:12%;bottom:6px;height:5px;background:#0006;border-radius:3px;overflow:hidden}#g-grid i.hp b{display:block;height:100%;background:#59c24a}
-@keyframes gshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.shk{animation:gshake .25s 2}
-.g-redbtn{position:fixed;left:12px;bottom:14px;background:#c0262f;color:#fff;width:54px;height:46px;font-size:1.3rem;z-index:51;border:0}
+/* ===== Treino: Reis da Cidade ===== */
+:root{--gf:'Lilita One','Arial Black',Impact,system-ui,sans-serif}
+.ghud *,#g-map *,#g-scr *,.gside .pl *{font-family:var(--gf);letter-spacing:.02em}
+/* placar */
+.ghud{display:grid;grid-template-columns:1fr auto 1fr;align-items:start;margin-bottom:8px;filter:drop-shadow(0 3px 0 rgba(0,0,0,.4))}
+.ghud .tp{position:relative;padding:7px 14px 11px;color:#fff;display:grid;gap:1px;min-width:0;overflow:hidden}
+.ghud .tp.a{background:linear-gradient(#6da2ff,#2d62d6);clip-path:polygon(0 0,100% 0,calc(100% - 12px) 100%,0 100%);border-radius:10px 0 0 10px}
+.ghud .tp.b{background:linear-gradient(#ff8a82,#d63d38);clip-path:polygon(12px 0,100% 0,100% 100%,0 100%);border-radius:0 10px 10px 0;text-align:right}
+.ghud .nm{font-size:.74rem;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 0 rgba(0,0,0,.4)}
+.ghud .sc{font-size:1.9rem;line-height:1;text-shadow:0 2px 0 rgba(0,0,0,.4),0 0 6px rgba(0,0,0,.3)}
+.ghud .at{font-size:.7rem;opacity:.92}
+.ghud .pg{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.35)}
+.ghud .pg b{display:block;height:100%;width:0;background:#fff;transition:width .6s}
+.ghud .tp.b .pg b{margin-left:auto}
+.ghud .you{display:none;position:absolute;bottom:8px;font-style:normal;font-size:.55rem;background:#fff;color:#223;padding:0 6px;border-radius:8px;box-shadow:0 1px 0 rgba(0,0,0,.3)}
+.ghud .tp.a .you{right:18px}.ghud .tp.b .you{left:18px}.ghud .you.on{display:block}
+.ghud .mid{background:linear-gradient(#566384,#2a324b);color:#fff;text-align:center;padding:5px 14px 8px;min-width:104px;border-radius:0 0 14px 14px;margin:0 -2px;position:relative;z-index:1;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25)}
+.ghud .tm{font-size:1.5rem;line-height:1.1;text-shadow:0 2px 0 rgba(0,0,0,.4)}
+.ghud .gl{font-size:.58rem;opacity:.92;text-transform:uppercase;line-height:1.15}
+.ghud .gl.fim{color:#ffd54a;font-size:.68rem;opacity:1}
+.gside{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;margin:0 0 8px;color:var(--mute);font-size:.8rem}
+.gside .pl{display:flex;gap:6px}
+.gside button{padding:6px 14px;border-radius:20px;border:2px solid transparent;background:var(--panel);color:var(--mute);font-size:.85rem;font-weight:400}
+.gside button[data-s=A].on{background:#2d62d6;color:#fff;border-color:#9bbcff}
+.gside button[data-s=B].on{background:#d63d38;color:#fff;border-color:#ffb0aa}
+/* mapa */
+.gmapw{max-width:980px;margin:0 auto;border-radius:16px;overflow:hidden;border:3px solid #2a1f48;box-shadow:0 5px 0 rgba(0,0,0,.35)}
+.gmap{position:relative;width:100%;aspect-ratio:2.1/1;background:linear-gradient(#4f3590 0%,#a05cb6 38%,#ee8fa6 66%,#ffb784 84%);overflow:hidden;user-select:none;-webkit-user-select:none}
+@media (max-aspect-ratio:1/1){.gmap{aspect-ratio:3/4}}
+.g-sun{position:absolute;left:64%;top:46%;width:36%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#fff6cf 0,#ffd98e 20%,rgba(255,170,120,.5) 46%,transparent 70%)}
+.g-ly{position:absolute;left:0;right:0;bottom:10%;pointer-events:none}
+.g-ly svg{display:block;width:100%;height:100%}
+.g-ly.l1{height:48%}.g-ly.l2{height:38%}.g-ly.l3{height:27%}
+.g-lm{position:absolute;left:50%;bottom:10%;height:66%;transform:translateX(-50%);pointer-events:none;filter:drop-shadow(0 0 10px rgba(255,200,140,.4))}
+.g-ground{position:absolute;left:0;right:0;bottom:0;height:10%;background:linear-gradient(#2b3072,#141845)}
+.g-ground::before{content:"";position:absolute;left:0;right:0;top:-9px;height:10px;background:repeating-linear-gradient(45deg,#ffd23f 0 9px,#2a2540 9px 18px);opacity:.9}
+.g-ground::after{content:"";position:absolute;left:0;right:0;top:50%;height:3px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0 22px,transparent 22px 44px)}
+.g-title{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:linear-gradient(#7a42a8,#4f2578);color:#fff;padding:5px 18px 6px;text-align:center;border-radius:6px;border:2px solid rgba(255,255,255,.55);box-shadow:0 4px 0 rgba(0,0,0,.35);z-index:2;white-space:nowrap}
+.g-title small{display:block;font-size:.62rem;opacity:.85;text-transform:uppercase}.g-title b{font-size:1.35rem;font-weight:400;text-shadow:0 2px 0 rgba(0,0,0,.4)}
+@media (max-aspect-ratio:1/1){.g-title{top:11%}}
+/* prédios no mapa */
+.g-b{position:absolute;left:var(--lx);top:var(--ly);transform:translate(-50%,-50%);cursor:pointer;display:grid;justify-items:center;z-index:3;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+@media (max-aspect-ratio:1/1){.g-b{left:var(--px);top:var(--py)}}
+.g-b:active{transform:translate(-50%,-50%) scale(.95)}
+.g-b.own-a{--oc:#4f8cff}.g-b.own-b{--oc:#ff5c55}.g-b.own-n{--oc:#a49ec2}
+.g-ic{width:clamp(36px,6.2vw,56px);height:auto;margin-bottom:-7px;filter:drop-shadow(0 3px 0 rgba(0,0,0,.35));position:relative;z-index:1}
+.g-lab{position:relative;width:clamp(126px,15vw,150px);background:#fff;color:#2b2f55;padding:4px 8px 7px;border-radius:6px;border-top:4px solid var(--oc);box-shadow:0 3px 0 rgba(0,0,0,.35)}
+.g-lab .r1{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.g-nm{font-size:.82rem;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g-cnt{font-size:.74rem;color:#6b7194;flex:none}
+.g-inc{position:absolute;right:-6px;top:-17px;background:var(--oc);color:#fff;font-size:.72rem;padding:1px 8px;border-radius:9px;box-shadow:0 2px 0 rgba(0,0,0,.3);text-shadow:0 1px 0 rgba(0,0,0,.35);z-index:2}
+.g-bar{display:flex;width:100%;height:7px;background:#c5c9dd;border-radius:4px;overflow:hidden;margin-top:4px}
+.g-bar s,.g-bar u{display:block;height:100%;text-decoration:none}
+.g-bar s{background:linear-gradient(#8fb8ff,#3f72dc)}.g-bar u{background:linear-gradient(#ff9a93,#e0443e);margin-left:auto}
+/* tela do prédio */
+#g-scr{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top) + 8px) 10px calc(env(safe-area-inset-bottom) + 8px);background:radial-gradient(120% 90% at 50% 0%,#5d716a 0,#3a4843 55%,#232d2a 100%);overflow:hidden}
+#g-scr::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(255,255,255,.035) 0 14px,transparent 14px 28px);pointer-events:none}
+#g-scr>*{position:relative}
+#g-scr>.g-redbtn{position:fixed}
+.g-hdr{background:#fff;color:#2b2f55;margin:14px 0 0;padding:16px 12px 8px;text-align:center;border-radius:8px;box-shadow:0 4px 0 rgba(0,0,0,.35)}
+.g-loc{position:absolute;top:-13px;left:12px;background:linear-gradient(#a7b4cf,#7d8bab);color:#fff;padding:2px 14px;font-size:.88rem;text-transform:uppercase;border-radius:6px;text-shadow:0 1px 0 rgba(0,0,0,.35);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.g-vs{font-size:1.1rem;text-transform:uppercase;display:flex;justify-content:center;align-items:center;gap:8px}
+.g-vs .a{color:#2f66d8}.g-vs .b{color:#d63d38}.g-vs i{font-style:normal;color:#8a90b0}
+.g-hdr .g-bar{height:10px;margin:5px auto 0;max-width:260px}
+.g-cnts{font-size:.72rem;color:#6b7194;margin-top:4px}
+.g-pick{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;gap:16px}
+.g-pick button{background:none;border:0;padding:0;display:grid;justify-items:center;gap:10px;color:#fff;font-size:1.25rem;text-transform:uppercase;text-shadow:0 2px 0 rgba(0,0,0,.5),0 0 4px rgba(0,0,0,.5);cursor:pointer}
+.g-pick em{color:#fff;font-style:normal;font-size:1rem;opacity:.9;text-shadow:0 2px 0 rgba(0,0,0,.5)}
+.oct{position:relative;width:min(34vw,132px);aspect-ratio:1;clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);background:#fff;display:grid;place-items:center;transition:transform .1s}
+.oct::before{content:"";position:absolute;inset:5px;clip-path:inherit;background:var(--oc)}
+.oct svg{position:relative;width:54%;filter:drop-shadow(0 3px 0 rgba(0,0,0,.35))}
+.oct.blue{--oc:linear-gradient(#b4cdff,#3b6fdc)}.oct.red{--oc:linear-gradient(#ffa59d,#d3342f)}
+.g-pick button:active .oct{transform:scale(.94)}
+.g-pick .bl{filter:drop-shadow(0 0 14px rgba(111,166,255,.8))}.g-pick .rd{filter:drop-shadow(0 0 14px rgba(255,106,100,.8))}
+.gbody{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;margin-top:12px}
+@media (min-aspect-ratio:1/1){.gbody{flex-direction:row}.g-side{width:232px;flex:none;align-self:flex-start}}
+.g-side{border-radius:10px;box-shadow:0 4px 0 rgba(0,0,0,.35);color:#fff;padding:10px;display:grid;gap:8px;justify-items:center;text-align:center;text-transform:uppercase;background:#e45454 repeating-linear-gradient(135deg,transparent 0 14px,rgba(255,255,255,.09) 14px 28px)}
+.g-side.def{background-color:#3f72dc}
+.g-ttl{font-size:1.05rem;text-shadow:0 2px 0 rgba(0,0,0,.4)}
+.g-sel{width:100%;display:grid;place-items:center;min-height:70px}
+.g-sel svg{width:min(150px,100%);filter:drop-shadow(0 4px 0 rgba(0,0,0,.3))}
+.g-ctl{display:grid;gap:7px;justify-items:center;width:100%}
+.g-ctl small{font-size:.62rem;opacity:.92;line-height:1.2}
+@media (max-aspect-ratio:1/1){.g-side{grid-template-columns:1fr 1fr;align-items:center;column-gap:10px}.g-ttl{grid-column:1/-1}}
+.g-bat{background:linear-gradient(#e0474f,#a8212a);border:2px solid #fff;color:#fff;padding:5px 12px;font-size:.85rem;border-radius:6px;cursor:pointer;text-transform:uppercase;box-shadow:0 2px 0 rgba(0,0,0,.3)}
+.g-bat.on{background:linear-gradient(#4fc46c,#2a8a45)}
+.g-nav{display:flex;gap:10px;align-items:center;font-size:.85rem}
+.g-nav button{background:rgba(255,255,255,.25);border:0;color:#fff;border-radius:6px;padding:4px 12px;font-size:1rem;cursor:pointer}
+.g-act{border:3px solid #fff;color:#fff;font-size:1.3rem;padding:8px 24px;border-radius:8px;text-transform:uppercase;background:linear-gradient(#e8505a,#a8212a);text-shadow:0 2px 0 rgba(0,0,0,.4);box-shadow:0 4px 0 rgba(0,0,0,.35);cursor:pointer}
+.g-act:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.35)}.g-act:disabled{opacity:.4;pointer-events:none}
+.g-act.rm{background:linear-gradient(#f59a45,#c4561a)}
+#g-gridw{flex:1;min-height:0;overflow-y:auto;padding:2px 2px 74px;scrollbar-width:thin}
+#g-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:6px}
+.gt{position:relative;aspect-ratio:1.25;border-radius:8px;display:grid;place-items:center;background:rgba(0,0,0,.28);border:2px solid rgba(255,255,255,.08);cursor:pointer;overflow:hidden}
+.gt.pk{aspect-ratio:auto;min-height:30px;cursor:default;color:rgba(255,255,255,.22);font-size:1.4rem;background:rgba(255,255,255,.05);border-style:dashed}
+.gt.mine{background:linear-gradient(rgba(79,140,255,.38),rgba(30,70,160,.38));border-color:rgba(150,190,255,.5)}
+.gt.sel{border-color:#fff;background:linear-gradient(#ff7d76,#d63d38);box-shadow:0 0 0 2px #fff,0 0 14px rgba(255,120,110,.75);z-index:1}
+.gt.mine.sel{background:linear-gradient(#6da2ff,#2d62d6);box-shadow:0 0 0 2px #fff,0 0 14px rgba(110,160,255,.8)}
+.gt svg{width:88%}
+.gt .bd{position:absolute;left:4px;top:4px;width:18px;height:18px;border-radius:50%;font-size:.62rem;display:grid;place-items:center;color:#fff;border:2px solid #fff;line-height:1}
+.gt .bd.a{background:#3f72dc}.gt .bd.b{background:#d63d38}.gt .bd.x{background:#c78a2a}
+.gt .vida{position:absolute;left:12%;right:12%;bottom:5px;height:5px;background:rgba(0,0,0,.5);border-radius:3px;overflow:hidden}
+.gt .vida b{display:block;height:100%;background:linear-gradient(#8de06d,#4aa83a)}
+@keyframes gshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes gpop{0%{transform:scale(.55);opacity:0}60%{transform:scale(1.14)}100%{transform:scale(1);opacity:1}}
+@keyframes gout{to{transform:translateY(18px) scale(.55);opacity:0}}
+.gt.hit{animation:gshake .12s 3}.gt.pop svg{animation:gpop .42s ease-out}.gt.out{animation:gout .28s forwards}
+.g-redbtn{position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom) + 14px);z-index:51;background:linear-gradient(#e8505a,#a8212a);border:3px solid #fff;color:#fff;width:56px;height:46px;font-size:1.3rem;border-radius:8px;box-shadow:0 4px 0 rgba(0,0,0,.35);cursor:pointer}
+/* celular deitado / telas baixas: tudo mais compacto */
+@media (max-height:480px){
+  .ghud .sc{font-size:1.4rem}.ghud .tp{padding:4px 12px 9px}.ghud .at{display:none}.ghud .tm{font-size:1.2rem}.ghud .you{bottom:7px}
+  .g-hdr{margin-top:10px;padding:12px 10px 5px}.g-cnts{display:none}.g-hdr .g-bar{height:8px;margin-top:3px}.g-vs{font-size:.95rem}
+  .gbody{margin-top:8px}.g-side{gap:5px;padding:8px 8px 64px;overflow-y:auto;max-height:100%}.g-sel{min-height:46px}.g-sel svg{width:104px}.g-ttl{font-size:.9rem}
+  .g-act{font-size:1.05rem;padding:5px 18px}.g-bat{font-size:.75rem;padding:3px 10px}
+  .g-ctl small{display:none}.g-sel svg{width:92px}.g-ctl{gap:5px}.g-nav button{padding:2px 10px}
+  .g-side{padding-bottom:10px}.g-redbtn{left:auto;right:12px;width:50px;height:42px}
+}
+/* configuração do treino (líder / moderador) */
 .gcfg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}.gcfg label{display:grid;font-size:.72rem;color:var(--mute);gap:2px}
 .gbr{display:grid;grid-template-columns:1.4fr 1fr .8fr .8fr;gap:4px;margin-bottom:4px}.gbr input{min-width:0;padding:6px}
+.gbr.gbh{font-size:.68rem;color:var(--mute);margin-top:6px}
 #typing{min-height:1.3em;color:var(--mute);font-size:.8rem;padding:2px 4px}
 #atk-prio{background:var(--panel);border:1px solid var(--gold);color:var(--gold);padding:8px 12px}
 #atk-prio-msg{color:var(--gold);margin:0 0 8px;min-height:0}
@@ -279,6 +366,15 @@ main.full{padding:0;max-width:none}
 <script>try{if(localStorage.getItem('cats_theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9cc0ff"/><stop offset="1" stop-color="#2c5fd0"/></linearGradient>
+  <linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffa8a0"/><stop offset="1" stop-color="#cf3a34"/></linearGradient>
+  <linearGradient id="gBot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0cf78"/><stop offset="1" stop-color="#b9792a"/></linearGradient>
+  <linearGradient id="gDark" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#555b6c"/><stop offset="1" stop-color="#262a35"/></linearGradient>
+  <radialGradient id="gRim"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#8d97b3"/></radialGradient>
+  <linearGradient id="gTw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a5cb4"/><stop offset="1" stop-color="#5a3880"/></linearGradient>
+</defs></svg>
+
 
 <!-- CARREGANDO -->
 <section id="boot">Entrando…</section>
@@ -446,8 +542,8 @@ main.full{padding:0;max-width:none}
 
     <!-- Treino: Reis da Cidade -->
     <div id="tab-game" class="hidden">
-      <div class="gtop"><div><b id="g-na"></b><span id="g-sa">0</span></div><div class="gm"><strong id="g-time">—</strong><small id="g-goal"></small></div><div><b id="g-nb"></b><span id="g-sb">0</span></div></div>
-      <div class="gside">Jogando pela: <button data-s="A">Equipe A</button><button data-s="B">Equipe B</button></div>
+      <div class="ghud" id="g-hud"></div>
+      <div class="gside">Você joga pela: <span class="pl"><button data-s="A">Equipe A</button><button data-s="B">Equipe B</button></span></div>
       <div class="gmapw" id="g-wrap"><div class="gmap" id="g-map"></div></div>
       <div class="card only-staff" id="g-cfg" style="margin-top:10px">
         <h3>Configurar treino</h3>
@@ -463,17 +559,37 @@ main.full{padding:0;max-width:none}
           <label>Carros que A já atacou<input id="g-at-a" type="number" min="0"></label>
           <label>Carros que B já atacou<input id="g-at-b" type="number" min="0"></label>
         </div>
-        <div class="help" style="margin:0 0 4px">Cada prédio tem a sua quantidade: nome · vagas · carros de A · carros de B (o resto são bots).</div>
+        <div class="help" style="margin:0 0 4px">Cada prédio tem a sua quantidade: nome · vagas · carros de A · carros de B (o resto são bots). As quantidades de carros valem depois de tocar em Reiniciar mapa.</div>
         <div id="g-bcfg"></div>
         <button id="g-save" type="button">Salvar</button> <button id="g-reset" type="button">Reiniciar mapa</button>
       </div>
+
       <div id="g-scr" class="hidden">
-        <div class="g-hdr"><div class="g-loc">📍 <span id="g-bt"></span></div><div class="g-vs"><span id="g-v-a"></span><i>x</i><span id="g-v-b"></span></div><div class="g-bar" id="g-mb"></div><div class="g-tm" id="g-tm2"></div></div>
-        <div id="g-pick" class="g-pick"><button class="bl" data-m="def"><span class="oct blue">🛡️</span>Defender</button><em>OU</em><button class="rd" data-m="atk"><span class="oct red">🐟</span>Atacar</button></div>
+        <div class="ghud" id="g-hud2"></div>
+        <div class="g-hdr">
+          <div class="g-loc">📍 <span id="g-bt"></span></div>
+          <div class="g-vs"><span class="a" id="g-v-a"></span><i>x</i><span class="b" id="g-v-b"></span></div>
+          <div class="g-bar" id="g-mb"></div>
+          <div class="g-cnts" id="g-cnts"></div>
+        </div>
+        <div id="g-pick" class="g-pick">
+          <button class="bl" data-m="def"><span class="oct blue"><svg viewBox="0 0 64 64"><path d="M32 6 L54 14 V32 Q54 48 32 58 Q10 48 10 32 V14 Z" fill="#fff" stroke="#1f3f8f" stroke-width="3" stroke-linejoin="round"/><path d="M32 14 L46 19 V32 Q46 42 32 50 Z" fill="#cfe0ff"/><path d="M32 14 L18 19 V32 Q18 42 32 50 Z" fill="#8fb4ff"/></svg></span>Defender</button>
+          <em>OU</em>
+          <button class="rd" data-m="atk"><span class="oct red"><svg viewBox="0 0 64 64"><path d="M6 32 Q22 10 44 20 L58 12 L54 32 L58 52 L44 44 Q22 54 6 32 Z" fill="#fff" stroke="#8f1f1f" stroke-width="3" stroke-linejoin="round"/><circle cx="20" cy="29" r="3.5" fill="#8f1f1f"/><path d="M30 24 Q34 32 30 40" stroke="#ff9c94" stroke-width="3" fill="none" stroke-linecap="round"/></svg></span>Atacar</button>
+        </div>
         <div id="g-fight" class="gbody hidden">
-          <aside class="g-side" id="g-side"><div class="g-sel" id="g-selcar"></div><div class="g-bat" id="g-bat">🔍 Batedor · grátis</div><small id="g-bat-t">Revele todos os oponentes</small>
-            <div class="g-nav"><button id="g-prev" type="button">◀</button>Selecionar<button id="g-next" type="button">▶</button></div><button id="g-go" class="g-atk" type="button">Atacar</button></aside>
-          <div id="g-grid"></div>
+          <aside class="g-side" id="g-side">
+            <div class="g-ttl" id="g-ttl"></div>
+            <div class="g-sel" id="g-selcar"></div>
+            <div class="g-ctl">
+              <div class="g-bat" id="g-bat">🔍 Batedor · grátis</div>
+              <small id="g-bat-t"></small>
+              <div class="g-nav"><button id="g-prev" type="button" aria-label="Anterior">◀</button>Selecionar<button id="g-next" type="button" aria-label="Próximo">▶</button></div>
+              <button id="g-go" class="g-act" type="button">Atacar</button>
+              <button id="g-rm" class="g-act rm" type="button">Retirar</button>
+            </div>
+          </aside>
+          <div id="g-gridw"><div id="g-grid"></div></div>
         </div>
         <button id="g-back" class="g-redbtn" type="button" aria-label="Voltar">◀</button>
       </div>
@@ -1447,10 +1563,12 @@ function renderRec(){
   if (!arr.length) box.textContent = 'Nenhum pedido.';
 }
 
-/* ---------- Treino: Reis da Cidade (tempo real, em camadas) ---------- */
-const GPOS = [[34,47],[31,70],[49,82],[66,84],[81,70],[79,46]], GN0 = ['Terraço','Arena','Fonte','Porto 1','Feira','Porto 2'];
+/* ---------- Treino: Reis da Cidade (tempo real) ---------- */
+const GPOS = [[30,42],[20,66],[40,82],[60,82],[80,66],[70,42]];     // posições com o celular deitado
+const GPOSP = [[27,30],[27,54],[27,78],[73,78],[73,54],[73,30]];    // posições com o celular em pé
+const GN0 = ['Terraço','Arena','Fonte','Porto 1','Feira','Porto 2'];
 const GDEF = { goal: 3000, ppm: 21, endAt: 0, nameA: 'EQUIPE A', nameB: 'EQUIPE B', city: 'MIAUSCOU', district: 'DISTRITO 1', bn: GN0.map(n => ({ name: n, cap: 21, a: 0, b: 0 })) };
-let GC = JSON.parse(JSON.stringify(GDEF)), GP = null, gSide = 'A', gOpen = -1, gMode = '', gSel = -1, gRev = false;
+let GC = JSON.parse(JSON.stringify(GDEF)), GP = null, gSide = 'A', gOpen = -1, gMode = '', gSel = -1, gRev = false, gPop = -1;
 const gNow = () => Date.now() + srvOff, gCnt = (s, c) => (s.match(new RegExp(c, 'g')) || []).length;
 function gBuild(){
   const b = {}; GC.bn.forEach((x, i) => { const na = Math.min(x.a, x.cap), nb = Math.min(x.b, x.cap - na); b[i] = 'A'.repeat(na) + 'B'.repeat(nb) + 'x'.repeat(x.cap - na - nb); });
@@ -1464,89 +1582,156 @@ function gScores(p, t){
   return { A: p.sc.A + m * GC.ppm * a, B: p.sc.B + m * GC.ppm * b };
 }
 const gOver = (p, t) => { const x = gScores(p, t); return (GC.endAt && t >= GC.endAt) || x.A >= GC.goal || x.B >= GC.goal; };
-function gTake(i, k){
-  const t = gNow(), side = gSide;
+/* troca um carro de lugar no mapa (atacar = vira seu; retirar = volta a ser bot) */
+function gMut(i, k, ch, ok, bump){
+  const t = gNow();
   db.ref('game/play').transaction(p => {
     if (!p || !p.b) p = gBuild();
     p.sc = p.sc || { A: 0, B: 0, t }; p.atk = p.atk || { A: 0, B: 0 };
-    const s = p.b[i]; if (!s || !s[k] || s[k] === side || gOver(p, t)) return;
+    const s = p.b[i]; if (!s || !s[k] || !ok(s[k]) || gOver(p, t)) return;
     const x = gScores(p, t); p.sc = { A: Math.round(x.A * 100) / 100, B: Math.round(x.B * 100) / 100, t };
-    p.b[i] = s.slice(0, k) + side + s.slice(k + 1); p.atk[side] = (p.atk[side] || 0) + 1;
+    p.b[i] = s.slice(0, k) + ch + s.slice(k + 1);
+    if (bump) p.atk[bump] = (p.atk[bump] || 0) + 1;
     return p;
   }).catch(console.error);
 }
-/* camadas do cenário */
-function gSky(n, seed, h0, h1, fill, op, blur){
+const gTake = (i, k) => { const side = gSide; gMut(i, k, side, c => c !== side, side); };
+const gDrop = (i, k) => { const side = gSide; gMut(i, k, 'x', c => c === side, ''); };
+
+/* ---- cenário ---- */
+function gSky(n, seed, h0, h1, fill, op, blur, lights){
   let r = seed, o = ''; const bw = 1000 / n;
   for (let k = 0; k < n; k++) {
     r = (r * 9301 + 49297) % 233280; const h = h0 + (r / 233280) * (h1 - h0), x = k * bw;
     o += `<rect x="${x}" y="${200 - h}" width="${bw - 3}" height="${h}" fill="${fill}"/>`;
-    for (let y = 200 - h + 8; y < 194; y += 12) if ((r + y) % 3) o += `<rect x="${x + 4}" y="${y}" width="${bw - 11}" height="4" fill="#ffe9a8" opacity=".5"/>`;
+    if (r % 4 === 0) o += `<rect x="${x + bw / 2 - 2}" y="${200 - h - 14}" width="3" height="14" fill="${fill}"/>`;
+    if (lights) for (let y = 200 - h + 8; y < 194; y += 12) if ((r + y) % 3) o += `<rect x="${x + 4}" y="${y}" width="${bw - 11}" height="4" fill="#ffe9a8" opacity=".55"/>`;
   }
   return `<svg viewBox="0 0 1000 200" preserveAspectRatio="none" style="opacity:${op};${blur ? 'filter:blur(1.5px)' : ''}">${o}</svg>`;
 }
-const gScene = () => `<div class="g-ly" data-k=".5">${gSky(30, 7, 50, 150, '#cfb0e0', .75, 1)}</div><div class="g-ly l2" data-k=".28">${gSky(22, 3, 40, 130, '#a97bbd', .9)}</div>
-<svg class="g-lm" viewBox="0 0 200 260"><polygon points="62,260 62,120 80,120 80,64 94,64 94,24 100,0 106,24 106,64 120,64 120,120 138,120 138,260" fill="#6a3f8a"/><polygon points="20,260 20,170 50,170 50,140 62,140 62,260" fill="#7d4f9f"/><polygon points="138,260 138,150 160,150 160,180 182,180 182,260" fill="#7d4f9f"/></svg>
-<div class="g-ly l3" data-k=".1">${gSky(16, 11, 30, 90, '#7d4f93', 1)}</div><div class="g-ground"></div>`;
+const GSCENE = `<div class="g-sun"></div><div class="g-ly l1">${gSky(30, 7, 50, 150, '#c9a7e0', .75, 1, 0)}</div><div class="g-ly l2">${gSky(22, 3, 40, 130, '#9a6bb6', .9, 0, 1)}</div>
+<svg class="g-lm" viewBox="0 0 200 260"><polygon points="62,260 62,120 80,120 80,64 94,64 94,24 100,0 106,24 106,64 120,64 120,120 138,120 138,260" fill="url(#gTw)" stroke="#3b2358" stroke-width="2"/><polygon points="20,260 20,170 50,170 50,140 62,140 62,260" fill="#7d4f9f"/><polygon points="138,260 138,150 160,150 160,180 182,180 182,260" fill="#7d4f9f"/><g fill="#ffe9a8" opacity=".7"><rect x="72" y="140" width="6" height="8"/><rect x="86" y="140" width="6" height="8"/><rect x="100" y="140" width="6" height="8"/><rect x="114" y="140" width="6" height="8"/><rect x="72" y="170" width="6" height="8"/><rect x="100" y="170" width="6" height="8"/><rect x="114" y="170" width="6" height="8"/><rect x="98" y="80" width="4" height="8"/></g></svg>
+<div class="g-ly l3">${gSky(16, 11, 30, 90, '#6a4286', 1, 0, 1)}</div><div class="g-ground"></div>
+<div class="g-title" id="g-title"></div><div id="g-bl"></div>`;
+$('g-map').innerHTML = GSCENE;
+
+/* ---- ícone do prédio (a bandeira usa a cor de quem domina) ---- */
+function gIcon(i){
+  const fl = '<rect x="29" y="1" width="2" height="13" fill="#2b2f55"/><path d="M31 2 H45 L41 7 L45 12 H31 Z" style="fill:var(--oc);stroke:#1c1840;stroke-width:1.5;stroke-linejoin:round"/>';
+  const O = 'stroke="#1c1840" stroke-width="2.5" stroke-linejoin="round"';
+  let b = '';
+  if (i % 3 === 0) {
+    b = `<rect x="16" y="16" width="28" height="38" rx="3" fill="#6b57a8" ${O}/><rect x="16" y="16" width="28" height="7" style="fill:var(--oc)"/>`;
+    for (let y = 27; y < 50; y += 8) for (let x = 21; x < 40; x += 9) b += `<rect x="${x}" y="${y}" width="5" height="5" fill="#ffe9a8"/>`;
+  } else if (i % 3 === 1) {
+    b = `<path d="M6 54 V36 Q6 14 30 14 Q54 14 54 36 V54 Z" fill="#6b57a8" ${O}/><path d="M6 36 H54" style="stroke:var(--oc)" stroke-width="6"/><rect x="23" y="40" width="14" height="14" rx="7" fill="#1c1840"/>`;
+  } else {
+    b = `<rect x="8" y="40" width="20" height="14" fill="#e8a23a" ${O}/><rect x="28" y="40" width="20" height="14" fill="#4a86c8" ${O}/><rect x="16" y="26" width="20" height="14" style="fill:var(--oc)" ${O}/><path d="M50 54 V16 H20" stroke="#2b2f55" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  }
+  return `<svg class="g-ic" viewBox="0 0 60 56">${b}${i % 3 === 2 ? '' : fl}</svg>`;
+}
+function gHudHTML(){
+  return `<div class="tp a"><em class="you ya">VOCÊ</em><span class="nm na"></span><span class="sc sa">0</span><span class="at aa"></span><i class="pg"><b class="pa"></b></i></div>
+<div class="mid"><div class="tm tt">—</div><div class="gl gg"></div></div>
+<div class="tp b"><em class="you yb">VOCÊ</em><span class="nm nb"></span><span class="sc sb">0</span><span class="at ab"></span><i class="pg"><b class="pb"></b></i></div>`;
+}
+$('g-hud').innerHTML = gHudHTML(); $('g-hud2').innerHTML = gHudHTML();
+
 function gHead(){
   if (!me) return;
-  const t = gNow(), p = gP(), x = gScores(p, t), left = GC.endAt ? Math.max(0, GC.endAt - t) : 0;
+  const t = gNow(), p = gP(), x = gScores(p, t), left = GC.endAt ? Math.max(0, GC.endAt - t) : 0, over = gOver(p, t);
   const tm = GC.endAt ? Math.floor(left / 3600000) + 'h ' + String(Math.floor(left / 60000) % 60).padStart(2, '0') + 'm' : '—';
-  $('g-na').textContent = GC.nameA + ' · ⚔' + ((p.atk && p.atk.A) || 0); $('g-nb').textContent = GC.nameB + ' · ⚔' + ((p.atk && p.atk.B) || 0);
-  $('g-sa').textContent = Math.floor(x.A); $('g-sb').textContent = Math.floor(x.B); $('g-time').textContent = tm; $('g-tm2').textContent = tm;
-  $('g-goal').textContent = gOver(p, t) ? '🏁 FIM: ' + (x.A === x.B ? 'EMPATE' : (x.A > x.B ? GC.nameA : GC.nameB) + ' VENCEU') : 'PARA VITÓRIA INSTANTÂNEA ' + GC.goal;
+  const set = (sel, fn) => document.querySelectorAll('.ghud ' + sel).forEach(fn);
+  const txt = (sel, v) => set(sel, e => { e.textContent = v; });
+  txt('.na', GC.nameA); txt('.nb', GC.nameB);
+  txt('.sa', Math.floor(x.A)); txt('.sb', Math.floor(x.B));
+  txt('.aa', '⚔ ' + ((p.atk && p.atk.A) || 0)); txt('.ab', '⚔ ' + ((p.atk && p.atk.B) || 0));
+  txt('.tt', tm);
+  set('.gg', e => { e.classList.toggle('fim', over); e.textContent = over ? '🏁 FIM · ' + (x.A === x.B ? 'EMPATE' : (x.A > x.B ? GC.nameA : GC.nameB) + ' VENCEU') : 'Vitória instantânea · ' + GC.goal; });
+  set('.pa', e => { e.style.width = Math.min(100, x.A / GC.goal * 100) + '%'; }); set('.pb', e => { e.style.width = Math.min(100, x.B / GC.goal * 100) + '%'; });
+  set('.ya', e => e.classList.toggle('on', gSide === 'A')); set('.yb', e => e.classList.toggle('on', gSide === 'B'));
 }
 function gRender(){
-  if (!me) return; const p = gP(), top = $('g-wrap').scrollLeft;
-  $('g-map').innerHTML = gScene() + `<div class="g-title"><small>${esc(GC.city)}</small><b>${esc(GC.district)}</b></div>` + GC.bn.map((b, i) => {
-    const s = p.b[i] || '', n = s.length || 1, na = gCnt(s, 'A'), nb = gCnt(s, 'B'), h = Math.floor(n / 2) + 1, own = na >= h ? 'a' : nb >= h ? 'b' : '';
-    return `<div class="g-b" data-i="${i}" style="left:${GPOS[i][0]}%;top:${GPOS[i][1]}%"><div class="g-lab">${own ? `<em class="${own}">+${GC.ppm}</em>` : ''}<span>${esc(b.name)}</span><small>🚚 ${n}</small><i class="g-bar"><s style="width:${na / n * 100}%"></s><u style="width:${nb / n * 100}%"></u></i></div></div>`;
+  if (!me) return; const p = gP();
+  $('g-title').innerHTML = `<small>${esc(GC.city)}</small><b>${esc(GC.district)}</b>`;
+  $('g-bl').innerHTML = GC.bn.map((b, i) => {
+    const s = p.b[i] || '', n = s.length || 1, na = gCnt(s, 'A'), nb = gCnt(s, 'B'), h = Math.floor(n / 2) + 1, own = na >= h ? 'a' : nb >= h ? 'b' : 'n';
+    return `<div class="g-b own-${own}" data-i="${i}" style="--lx:${GPOS[i][0]}%;--ly:${GPOS[i][1]}%;--px:${GPOSP[i][0]}%;--py:${GPOSP[i][1]}%">${gIcon(i)}<div class="g-lab">${own !== 'n' ? `<span class="g-inc">+${GC.ppm}</span>` : ''}<div class="r1"><span class="g-nm">${esc(b.name)}</span><span class="g-cnt">🚚 ${n}</span></div><i class="g-bar"><s style="width:${na / n * 100}%"></s><u style="width:${nb / n * 100}%"></u></i></div></div>`;
   }).join('');
-  $('g-map').querySelectorAll('.g-b').forEach(el => { el.onclick = () => gOpenB(+el.dataset.i); });
-  $('g-wrap').scrollLeft = top; gPar();
-  document.querySelectorAll('.gside [data-s]').forEach(b => b.classList.toggle('on', b.dataset.s === gSide));
+  $('g-bl').querySelectorAll('.g-b').forEach(el => { el.onclick = () => gOpenB(+el.dataset.i); });
+  document.querySelectorAll('.gside [data-s]').forEach(b => { b.classList.toggle('on', b.dataset.s === gSide); b.textContent = b.dataset.s === 'A' ? GC.nameA : GC.nameB; });
   gHead(); gFight();
 }
-const gPar = () => document.querySelectorAll('.g-ly').forEach(l => { l.style.transform = `translateX(${$('g-wrap').scrollLeft * l.dataset.k}px)`; });
-$('g-wrap').addEventListener('scroll', gPar);
 function gOpenB(i){ gOpen = i; gMode = ''; gSel = -1; gRev = false; $('g-scr').classList.remove('hidden'); $('g-pick').classList.remove('hidden'); $('g-fight').classList.add('hidden'); gFight(); }
-function gCar(c, hid, v){
-  const body = v % 2 ? 'M8 52 L16 30 H44 L56 14 H92 L108 34 V52 Z' : 'M8 52 L14 24 Q16 14 28 14 H84 Q92 14 98 26 L110 40 V52 Z';
-  return `<svg viewBox="0 0 120 70"><path d="${body}" fill="${c}"/>${hid ? '<text x="58" y="42" text-anchor="middle" font-size="26" font-weight="800" fill="#fff8">?</text>' : '<rect x="30" y="20" width="22" height="12" fill="#fff6"/><rect x="60" y="20" width="22" height="12" fill="#fff6"/>'}<circle cx="34" cy="54" r="11" fill="#1b1b24"/><circle cx="88" cy="54" r="11" fill="#1b1b24"/><circle cx="34" cy="54" r="4" fill="#889"/><circle cx="88" cy="54" r="4" fill="#889"/></svg>`;
+
+/* ---- carros (4 modelos, com o gato dirigindo) ---- */
+function gCar(o, hid, v){
+  const f = 'url(#' + (hid ? 'gDark' : o === 'A' ? 'gBlue' : o === 'B' ? 'gRed' : 'gBot') + ')', O = 'stroke="#10122a" stroke-opacity=".65" stroke-width="3" stroke-linejoin="round"';
+  const wheel = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#171a28" ${O}/><circle cx="${x}" cy="${y}" r="${r * .55}" fill="url(#gRim)"/><circle cx="${x}" cy="${y}" r="${r * .2}" fill="#566080"/>`;
+  const cat = (x, y) => hid ? `<text x="${x}" y="${y + 8}" text-anchor="middle" font-size="24" font-weight="800" fill="#fff" opacity=".7">?</text>` : `<polygon points="${x - 8},${y - 2} ${x - 7},${y - 13} ${x - 1},${y - 7}" fill="#e39a45"/><polygon points="${x + 8},${y - 2} ${x + 7},${y - 13} ${x + 1},${y - 7}" fill="#e39a45"/><circle cx="${x}" cy="${y}" r="8" fill="#f4b660"/><circle cx="${x - 3}" cy="${y - 1}" r="1.7" fill="#2a1c12"/><circle cx="${x + 3}" cy="${y - 1}" r="1.7" fill="#2a1c12"/><path d="M${x - 1.5} ${y + 3} h3" stroke="#2a1c12" stroke-width="1.2" stroke-linecap="round"/>`;
+  const gl = hid ? '#3a4157' : '#d9f2ff', lamp = '#fff3a0';
+  let b;
+  switch (v % 4) {
+    case 0: b = `<path d="M10 66 V56 Q10 50 18 48 L44 44 L60 28 Q64 24 70 24 H98 Q106 24 111 30 L124 46 Q132 50 132 58 V66 Z" fill="${f}" ${O}/><path d="M62 44 L71 31 H98 L108 44 Z" fill="${gl}"/>${cat(86, 41)}<path d="M14 57 H128" stroke="#fff" stroke-opacity=".45" stroke-width="3"/><rect x="6" y="38" width="16" height="4" rx="1" fill="#23263c"/><rect x="11" y="42" width="3" height="8" fill="#23263c"/><circle cx="126" cy="55" r="4" fill="${lamp}"/>${wheel(36, 68, 14)}${wheel(104, 68, 14)}`; break;
+    case 1: b = `<path d="M62 66 V44 H132 V66 Z" fill="${f}" ${O}/><path d="M68 44 V66 M84 44 V66 M100 44 V66 M116 44 V66" stroke="#10122a" stroke-opacity=".25" stroke-width="2"/><path d="M10 66 V40 Q10 32 18 32 H50 L62 46 V66 Z" fill="${f}" ${O}/><path d="M20 36 H46 L54 46 H20 Z" fill="${gl}"/>${cat(33, 43)}<rect x="56" y="20" width="5" height="24" rx="2" fill="#9aa3b8"/><circle cx="14" cy="57" r="3.5" fill="${lamp}"/>${wheel(30, 68, 14)}${wheel(108, 68, 14)}`; break;
+    case 2: b = `<rect x="8" y="56" width="124" height="22" rx="11" fill="#171a28" ${O}/>${[24, 47, 70, 93, 116].map(x => `<circle cx="${x}" cy="67" r="6.5" fill="url(#gRim)" stroke="#171a28" stroke-width="2"/>`).join('')}<path d="M12 58 V48 Q12 44 18 44 H122 Q128 44 128 48 V58 Z" fill="${f}" ${O}/><path d="M44 44 L52 30 H92 L100 44 Z" fill="${f}" ${O}/><rect x="98" y="33" width="36" height="8" rx="3" fill="${f}" ${O}/>${cat(72, 26)}`; break;
+    default: b = `<path d="M26 60 L36 38 Q38 34 44 34 H98 Q104 34 108 40 L118 60 Z" fill="${f}" ${O}/><path d="M44 40 H96 L102 53 H40 Z" fill="${gl}"/>${cat(70, 49)}<rect x="22" y="58" width="100" height="8" rx="3" fill="${f}" ${O}/><circle cx="114" cy="52" r="3.5" fill="${lamp}"/>${wheel(36, 66, 20)}${wheel(106, 66, 20)}`;
+  }
+  return `<svg viewBox="0 0 140 90"><ellipse cx="70" cy="82" rx="54" ry="5" fill="#000" opacity=".28"/>${b}</svg>`;
 }
-const gCol = (o, hid) => hid ? '#26282e' : o === 'A' ? '#5f8fe8' : o === 'B' ? '#e8625f' : ['#6b8f5a', '#a9803f', '#8a5aa0'][0];
+const gVar = (i, k) => (k * 7 + i * 3) % 4;
+
+/* ---- tela do prédio ---- */
 function gFight(){
   if (gOpen < 0) return;
-  const i = gOpen, s = gP().b[i] || '', n = s.length, mine = gCnt(s, gSide), nb = GC.bn[i].name;
-  $('g-bt').textContent = nb; $('g-v-a').textContent = GC.nameA; $('g-v-b').textContent = GC.nameB;
-  $('g-mb').innerHTML = `<s style="width:${gCnt(s, 'A') / n * 100}%"></s><u style="width:${gCnt(s, 'B') / n * 100}%"></u>`;
+  const i = gOpen, s = gP().b[i] || '', n = s.length || 1, na = gCnt(s, 'A'), nb = gCnt(s, 'B'), mine = gCnt(s, gSide);
+  $('g-bt').textContent = GC.bn[i].name; $('g-v-a').textContent = GC.nameA; $('g-v-b').textContent = GC.nameB;
+  $('g-mb').innerHTML = `<s style="width:${na / n * 100}%"></s><u style="width:${nb / n * 100}%"></u>`;
+  $('g-cnts').textContent = GC.nameA + ' ' + na + ' · ' + GC.nameB + ' ' + nb + ' · Bots ' + (n - na - nb);
   if (!gMode) return;
-  const atk = gMode === 'atk', list = [...s].map((o, k) => k).filter(k => (s[k] === gSide) !== atk);
-  if (!list.includes(gSel)) gSel = list[0] ?? -1;
-  const side = $('g-side'); side.className = 'g-side' + (atk ? '' : ' def');
-  $('g-bat').style.display = $('g-go').style.display = atk ? '' : 'none'; $('g-bat').classList.toggle('on', gRev); $('g-bat-t').textContent = atk ? 'Revele todos os oponentes' : 'DEFENDENDO · ' + mine + ' carros';
+  const atk = gMode === 'atk', idx = [...s].map((_, k) => k).filter(k => (s[k] === gSide) !== atk);
+  if (!idx.includes(gSel)) gSel = idx.length ? idx[0] : -1;
+  $('g-side').className = 'g-side' + (atk ? '' : ' def');
+  $('g-ttl').textContent = atk ? 'Atacando' : 'Defendendo · ' + mine + (mine === 1 ? ' carro' : ' carros');
+  $('g-bat').style.display = $('g-go').style.display = atk ? '' : 'none'; $('g-rm').style.display = atk ? 'none' : '';
+  $('g-bat').classList.toggle('on', gRev);
+  $('g-bat-t').textContent = atk ? 'Revele todos os oponentes' : (mine ? 'Retire um carro para ele sair da defesa' : 'Você não tem carros aqui');
   const o = gSel >= 0 ? s[gSel] : '', hid = atk && !gRev;
-  $('g-selcar').innerHTML = gSel >= 0 ? gCar(gCol(o, hid), hid, gSel) : '<span>Sem carros</span>'; $('g-go').disabled = gSel < 0;
+  $('g-selcar').innerHTML = gSel >= 0 ? gCar(o, hid, gVar(i, gSel)) : '<span>Sem carros</span>';
+  $('g-go').disabled = $('g-rm').disabled = gSel < 0;
   const box = $('g-grid'); box.innerHTML = '';
   [...s].forEach((c, k) => {
     const show = (c === gSide) !== atk, d = document.createElement('div');
-    if (!show) { d.className = 'pk'; d.textContent = 'P'; } else {
-      const h = atk && !gRev; d.className = (k === gSel ? 'sel ' : '') + (c === gSide ? 'mine' : '');
-      d.innerHTML = `<i class="bd">${c === 'A' ? 'A' : c === 'B' ? 'B' : '•'}</i>` + gCar(gCol(c, h), h, k) + (h ? '' : `<i class="hp"><b style="width:${60 + (k * 37 + i * 11) % 41}%"></b></i>`);
-      d.onclick = () => { gSel = k; gFight(); };
-    }
+    if (!show) { d.className = 'gt pk'; d.textContent = 'P'; box.appendChild(d); return; }
+    const h = atk && !gRev;
+    d.className = 'gt' + (k === gSel ? ' sel' : '') + (c === gSide ? ' mine' : '') + (k === gPop ? ' pop' : '');
+    d.innerHTML = `<i class="bd ${c === 'A' ? 'a' : c === 'B' ? 'b' : 'x'}">${c === 'x' ? '•' : c}</i>` + gCar(c, h, gVar(i, k)) + (h ? '' : `<i class="vida"><b style="width:${60 + (k * 37 + i * 11) % 41}%"></b></i>`);
+    d.onclick = () => { gSel = k; gFight(); };
     box.appendChild(d);
   });
+  gPop = -1;
 }
 $('g-pick').querySelectorAll('[data-m]').forEach(b => { b.onclick = () => { gMode = b.dataset.m; $('g-pick').classList.add('hidden'); $('g-fight').classList.remove('hidden'); gFight(); }; });
 $('g-back').onclick = () => { if (gMode) { gMode = ''; $('g-fight').classList.add('hidden'); $('g-pick').classList.remove('hidden'); } else { gOpen = -1; $('g-scr').classList.add('hidden'); } };
 $('g-bat').onclick = () => { gRev = !gRev; gFight(); };
-const gStep = d => { const s = gP().b[gOpen] || '', l = [...s].map((o, k) => k).filter(k => (s[k] === gSide) !== (gMode === 'atk')); if (l.length) { gSel = l[(l.indexOf(gSel) + d + l.length) % l.length]; gFight(); } };
+const gStep = d => { const s = gP().b[gOpen] || '', l = [...s].map((_, k) => k).filter(k => (s[k] === gSide) !== (gMode === 'atk')); if (l.length) { gSel = l[(l.indexOf(gSel) + d + l.length) % l.length]; gFight(); } };
 $('g-prev').onclick = () => gStep(-1); $('g-next').onclick = () => gStep(1);
-$('g-go').onclick = () => { const k = gSel; if (k < 0) return; const c = $('g-grid').children[k]; if (c) c.classList.add('shk'); setTimeout(() => gTake(gOpen, k), 350); };
-document.querySelectorAll('.gside [data-s]').forEach(b => { b.onclick = () => { gSide = b.dataset.s; gRender(); }; });
+const gBuzz = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
+$('g-go').onclick = () => {
+  const k = gSel; if (k < 0) return;
+  const c = $('g-grid').children[k]; if (c) c.classList.add('hit');
+  gBuzz(30); setTimeout(() => { gPop = k; gTake(gOpen, k); }, 380);
+};
+$('g-rm').onclick = () => {
+  const k = gSel; if (k < 0) return;
+  const c = $('g-grid').children[k]; if (c) c.classList.add('out');
+  setTimeout(() => gDrop(gOpen, k), 280);
+};
+document.querySelectorAll('.gside [data-s]').forEach(b => { b.onclick = () => { gSide = b.dataset.s; gSel = -1; gRender(); }; });
+
+/* ---- configuração (líder / moderador) ---- */
 function gCfgBuild(){
-  $('g-bcfg').innerHTML = GC.bn.map((b, i) => `<div class="gbr"><input id="g-n${i}" maxlength="14" aria-label="Nome ${i + 1}"><input id="g-c${i}" type="number" min="1" max="40" aria-label="Vagas"><input id="g-a${i}" type="number" min="0" aria-label="Carros A"><input id="g-b${i}" type="number" min="0" aria-label="Carros B"></div>`).join('');
+  $('g-bcfg').innerHTML = '<div class="gbr gbh"><span>Prédio</span><span>Vagas</span><span>Carros A</span><span>Carros B</span></div>' + GC.bn.map((b, i) => `<div class="gbr"><input id="g-n${i}" maxlength="14" aria-label="Nome ${i + 1}"><input id="g-c${i}" type="number" min="1" max="40" aria-label="Vagas"><input id="g-a${i}" type="number" min="0" aria-label="Carros A"><input id="g-b${i}" type="number" min="0" aria-label="Carros B"></div>`).join('');
 }
 function gFillCfg(){
   if ($('g-cfg').contains(document.activeElement)) return;
@@ -1563,9 +1748,14 @@ $('g-save').onclick = () => {
   db.ref('game/play/atk').set({ A: n('g-at-a'), B: n('g-at-b') }).catch(console.error);
 };
 $('g-reset').onclick = () => { if (confirm('Reiniciar o mapa e zerar os pontos?')) db.ref('game/play').set(gBuild()).catch(console.error); };
+let gIniting = false;
+function gInit(){
+  if (gIniting || !db) return; gIniting = true;
+  db.ref('game/play').transaction(p => (p && p.b) ? undefined : gBuild()).catch(() => {}).then(() => { gIniting = false; });
+}
 function gStart(){
   db.ref('game/cfg').on('value', s => { const v = s.val() || {}; GC = Object.assign(JSON.parse(JSON.stringify(GDEF)), v); GC.bn = GDEF.bn.map((d, i) => Object.assign({}, d, (v.bn || {})[i])); gFillCfg(); gRender(); }, () => {});
-  db.ref('game/play').on('value', s => { GP = s.val(); gFillCfg(); gRender(); }, () => {});
+  db.ref('game/play').on('value', s => { GP = s.val(); if (!GP || !GP.b) gInit(); gFillCfg(); gRender(); }, () => {});
   setInterval(gHead, 1000);
 }
 

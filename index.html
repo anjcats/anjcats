@@ -132,7 +132,7 @@ input[readonly].lk{background:transparent;border-color:transparent;pointer-event
 .ed .ghost{background:var(--bg);border:1px solid var(--line);color:var(--mute)}
 #e-err{color:var(--red);min-height:1em;font-size:.9rem}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-left:4px;vertical-align:middle}
-body.leader .only-member{display:none!important}
+body.leader .only-member,body.staff .only-member{display:none!important}
 .live{border-top:1px dashed var(--dash);padding-top:8px}
 .live label{color:var(--mute);font-weight:600}
 .live b{font-size:1.7rem;font-variant-numeric:tabular-nums}
@@ -215,13 +215,15 @@ main.full{padding:0;max-width:none}
 .rkrow select{width:auto;min-width:130px}
 
 /* chat */
-#chat-wrap{display:flex;flex-direction:column;height:100%}
-#msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:10px}
+#chat-wrap,#adm-wrap{display:flex;flex-direction:column;height:100%}
+#msgs,#adm-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:10px}
 .msg{max-width:80%;padding:9px 12px;border-radius:14px;background:var(--panel);line-height:1.35;word-break:break-word}
 .msg small{display:block;color:var(--mute);font-size:.72rem;margin-bottom:2px}
 .msg.me{align-self:flex-end;background:var(--meb)}
-#chat-form{display:flex;gap:8px;padding-top:8px}
-#chat-in{flex:1}
+#chat-form,#adm-form{display:flex;gap:8px;padding-top:8px}
+#chat-in,#adm-in{flex:1}
+.ctabs{grid-template-columns:1fr 1fr}
+#adm-wrap .admnote{color:var(--mute);font-size:.78rem;padding:0 4px 6px}
 /* ===== Treino: Reis da Cidade (réplica do jogo) ===== */
 :root{--gf:'Oswald','Fjalla One','Pathway Gothic One','Arial Narrow','Roboto Condensed',sans-serif-condensed,Impact,system-ui,sans-serif;--gnavy:#2b3556;--gblue:#4a79dc;--gred:#e5524b}
 .gmap *,#g-scr *,.gside .pl *,.gside .gatk{font-family:var(--gf);letter-spacing:.01em}
@@ -529,21 +531,21 @@ main.full{padding:0;max-width:none}
     <div id="tab-calc">
       <div class="team b">
         <div class="row"><label for="bp">PPM azul</label><input id="bp" type="number" inputmode="decimal" min="0" value="0"></div>
-        <div class="row only-leader"><label for="bs">Pontos azul (informar)</label><input id="bs" type="number" inputmode="decimal" min="0" value="0"></div>
+        <div class="row only-staff"><label for="bs">Pontos azul (informar)</label><input id="bs" type="number" inputmode="decimal" min="0" value="0"></div>
         <div class="row live"><label>Pontos agora</label><b id="lb">0</b></div>
         <div class="row need"><label>PPM necessário</label><b id="nb">--</b></div>
         <div class="needmsg" id="mb"></div>
       </div>
       <div class="team r">
         <div class="row"><label for="rp">PPM vermelho</label><input id="rp" type="number" inputmode="decimal" min="0" value="0"></div>
-        <div class="row only-leader"><label for="rs">Pontos vermelho (informar)</label><input id="rs" type="number" inputmode="decimal" min="0" value="0"></div>
+        <div class="row only-staff"><label for="rs">Pontos vermelho (informar)</label><input id="rs" type="number" inputmode="decimal" min="0" value="0"></div>
         <div class="row live"><label>Pontos agora</label><b id="lr">0</b></div>
         <div class="row need"><label>PPM necessário</label><b id="nr">--</b></div>
         <div class="needmsg" id="mr"></div>
       </div>
       <div class="panel">
         <div class="row"><label for="tot">Total do round</label><input id="tot" type="number" inputmode="decimal" min="0" value="0"></div>
-        <div class="clock-box only-leader">
+        <div class="clock-box only-staff">
           <label for="th">Definir tempo restante</label>
           <div class="clock">
             <div class="unit">
@@ -575,7 +577,7 @@ main.full{padding:0;max-width:none}
     <!-- Ataques -->
     <div id="tab-atk" class="hidden">
       <div class="btabs" id="btabs"></div>
-      <div class="bar"><span class="count" id="atk-count">0 de 0 atacaram</span><button id="atk-prio" class="only-staff" type="button">⭐ Prioridade</button><span class="barbtns only-leader"><button id="atk-clear">Zerar prédio</button><button id="atk-clear-all">Zerar tudo</button></span></div>
+      <div class="bar"><span class="count" id="atk-count">0 de 0 atacaram</span><button id="atk-prio" class="only-staff" type="button">⭐ Prioridade</button><span class="barbtns only-staff"><button id="atk-clear">Zerar prédio</button><button id="atk-clear-all">Zerar tudo</button></span></div>
       <p class="help" id="atk-prio-msg"></p>
       <div id="atk-list"></div>
       <p class="help" id="atk-empty"></p>
@@ -592,11 +594,11 @@ main.full{padding:0;max-width:none}
 
       <div id="str-main">
         <div id="str-view" class="strat empty only-member">Nenhuma estratégia definida ainda.</div>
-        <div class="card only-leader">
+        <div class="card only-staff">
           <h3>Mensagem de estratégia</h3>
           <textarea id="str-in" maxlength="600" placeholder="Ex.: Atacar 4 prédios apenas"></textarea>
           <button id="str-save">Salvar estratégia</button>
-          <div class="help" style="margin:0">Todos os membros veem esta mensagem. Só líderes podem mudar. Deixe vazio e salve para limpar.</div>
+          <div class="help" style="margin:0">Todos os membros veem esta mensagem. Só líderes e moderadores podem mudar. Deixe vazio e salve para limpar.</div>
         </div>
         <div id="str-when"></div>
       </div>
@@ -616,7 +618,7 @@ main.full{padding:0;max-width:none}
       </div>
 
       <div id="str-bat" class="hidden">
-        <div class="card only-leader">
+        <div class="card only-staff">
           <h3>Nova batalha</h3>
           <input id="bat-gang" maxlength="24" placeholder="Nome da gangue adversária" autocomplete="off">
           <div class="seg" style="margin-top:10px">
@@ -648,10 +650,21 @@ main.full{padding:0;max-width:none}
 
     <!-- Chat -->
     <div id="tab-chat" class="hidden" style="height:100%">
-      <div id="chat-wrap">
+      <div style="display:flex;flex-direction:column;height:100%">
+      <div class="stabs ctabs only-staff" id="chat-tabs">
+        <button type="button" data-csub="all" class="on">💬 Geral</button>
+        <button type="button" data-csub="adm">🛡️ ADM<span id="adm-dot" class="dot hidden"></span></button>
+      </div>
+      <div id="chat-wrap" style="flex:1;min-height:0;height:auto">
         <div id="msgs"></div>
         <div id="typing" aria-live="polite"></div>
         <div id="emo" class="hidden"></div><form id="chat-form"><button type="button" id="emo-btn" aria-label="Emotes">😊</button><input id="chat-in" placeholder="Mensagem" autocomplete="off" maxlength="500"><button>Enviar</button></form>
+      </div>
+      <div id="adm-wrap" class="hidden" style="flex:1;min-height:0;height:auto">
+        <div class="admnote">🛡️ Chat privado: só líderes e moderadores veem estas mensagens.</div>
+        <div id="adm-msgs"></div>
+        <form id="adm-form"><input id="adm-in" placeholder="Mensagem para a administração" autocomplete="off" maxlength="500"><button>Enviar</button></form>
+      </div>
       </div>
     </div>
 
@@ -759,12 +772,12 @@ main.full{padding:0;max-width:none}
         </div>
         <div class="help" style="margin:0">A escolha fica salva neste aparelho.</div>
       </div>
-      <div class="card only-leader">
+      <div class="card only-staff">
         <h3>Patentes dos membros</h3>
         <div id="rk-list"></div>
         <div class="help" style="margin:0">A patente aparece ao lado do nome no chat e nas sugestões, em mensagens novas.</div>
       </div>
-      <div class="card only-leader">
+      <div class="card only-staff">
         <h3>Tags dos membros</h3>
         <div id="tg-list"></div>
         <div class="help" style="margin:0">A tag aparece à esquerda do nome, no chat e nas sugestões, em mensagens novas.</div>
@@ -779,13 +792,13 @@ main.full{padding:0;max-width:none}
 
     <!-- Membros (só líder) -->
     <div id="tab-mem" class="hidden only-staff">
-      <div id="rec-new" class="hidden only-leader"></div>
-      <div class="card only-leader">
+      <div id="rec-new" class="hidden only-staff"></div>
+      <div class="card only-staff">
         <h3>Pedidos para entrar <span id="rec-n"></span></h3>
         <div id="rec-list">Nenhum pedido.</div>
         <div class="help" style="margin:0">✅ aprova e cria o acesso com o login e a senha que a pessoa escolheu. ❌ recusa.</div>
       </div>
-      <div class="card only-leader">
+      <div class="card only-staff">
         <h3>Online agora <span id="on-n"></span></h3>
         <div id="on-list" class="help" style="margin:0">Ninguém online.</div>
       </div>
@@ -813,7 +826,7 @@ main.full{padding:0;max-width:none}
     <button data-tab="atk"><span class="ic">⚔️</span>Ataques</button>
     <button data-tab="str"><span class="ic">🎯</span><span>Estratégia<span id="str-dot" class="dot hidden"></span></span></button>
     <button data-tab="cars"><span class="ic">🚗</span>Carros</button>
-    <button data-tab="chat"><span class="ic">💬</span>Chat</button>
+    <button data-tab="chat"><span class="ic">💬</span><span>Chat<span id="chat-dot" class="dot hidden"></span></span></button>
     <button data-tab="mem" class="only-staff"><span class="ic">👥</span><span>Membros<span id="rec-dot" class="dot hidden"></span></span></button>
     <button data-tab="game"><span class="ic">🎮</span>Treino</button>
     <button data-tab="cfg"><span class="ic">⚙️</span>Configuração</button>
@@ -852,6 +865,7 @@ let me = null, selfMoving = false;   // me = {code,name,role}
 let atkData = {}, usersData = {};
 const isLeader = () => !!me && me.role === 'leader';
 const isMod = () => !!me && me.role === 'mod';
+const isStaff = () => isLeader() || isMod();   // líder e moderador têm as mesmas funções (exceto cadastrar líder/mod)
 const roleName = r => r === 'leader' ? 'líder' : r === 'mod' ? 'moderador' : 'membro';
 const roleBadge = r => `<span class="badge ${r === 'leader' ? 'lead' : r === 'mod' ? 'mod' : ''}">${r === 'leader' ? 'LÍDER' : r === 'mod' ? 'MOD' : 'MEMBRO'}</span>`;
 const clean = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -905,7 +919,7 @@ function enter(){
   if (isMod()) document.body.classList.add('mod');
   $('me').textContent = me.name;
   const rb = $('role'); rb.textContent = isLeader() ? 'LÍDER' : isMod() ? 'MOD' : 'MEMBRO'; rb.classList.toggle('lead', isLeader()); rb.classList.toggle('mod', isMod());
-  if (!isLeader()) {
+  if (!isStaff()) {
     ['bp','bs','rp','rs','tot'].forEach(id => { $(id).readOnly = true; $(id).classList.add('lk'); });
   }
   $('atk-help').textContent = 'Escolha o prédio, digite o nome do jogador e os carros. Ao preencher um nome, abre a próxima vaga. ✓ deixa a barra verde (atacou) e ✕ deixa vermelha (indisponível). Para tirar alguém, apague o nome.';
@@ -946,7 +960,7 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
   if (curTab !== 'game' && typeof gFs === 'function') gFs(false);
   if (curTab === 'cars') showSub(curSub);
   if (curTab === 'game' && typeof gpMapChat === 'function') gpMapChat();
-  if (curTab === 'chat') { $('msgs').scrollTop = 1e9; }
+  if (curTab === 'chat') { if (chatSub === 'adm') { markAdmSeen(); $('adm-msgs').scrollTop = 1e9; } else $('msgs').scrollTop = 1e9; }
   if (curTab === 'str' && curStr === 'main') markStrSeen();
 });
 
@@ -996,10 +1010,10 @@ function needInfo(t, now){
 
 /* Calcula a partir do "retrato" salvo pelo líder (pontos no instante ts, fim da luta em endAt) */
 function compute(s){
-  if (!s || !s.ts) return { cls: '', who: 'Aguardando', sub: isLeader() ? 'Preencha os dados.' : 'O líder ainda não preencheu os dados.' };
+  if (!s || !s.ts) return { cls: '', who: 'Aguardando', sub: isStaff() ? 'Preencha os dados.' : 'O líder ainda não preencheu os dados.' };
   const bp = +s.bp || 0, bs = +s.bs || 0, rp = +s.rp || 0, rs = +s.rs || 0, tot = +s.tot || 0;
   const max = Math.max(0, ((s.endAt || s.ts) - s.ts) / 1000);
-  if (tot <= 0) return { cls: '', who: 'Aguardando', sub: isLeader() ? 'Insira a pontuação total do round.' : 'O líder ainda não definiu o total do round.' };
+  if (tot <= 0) return { cls: '', who: 'Aguardando', sub: isStaff() ? 'Insira a pontuação total do round.' : 'O líder ainda não definiu o total do round.' };
   if (bs >= tot && rs >= tot) return { cls: '', who: 'Empate', sub: 'As duas equipes já atingiram o total.' };
   if (bs >= tot) return { cls: 'b', who: 'Azul', sub: 'Já venceu.' };
   if (rs >= tot) return { cls: 'r', who: 'Vermelho', sub: 'Já venceu.' };
@@ -1027,13 +1041,13 @@ function fillInputs(){
   setClock(cs && cs.endAt ? Math.max(0, Math.ceil((cs.endAt - Date.now()) / 60000)) : 0);
 }
 function applyCalc(v){
-  if (isLeader() && calcFocused()) return;          // não atropela quem está digitando
+  if (isStaff() && calcFocused()) return;          // não atropela quem está digitando
   cs = v || null; fillInputs(); renderCalc(); tick();
 }
 
 /* O líder edita → grava o retrato no servidor (com pequena pausa para não gravar a cada tecla) */
 function leaderEdit(clockEdit, which){
-  if (!isLeader()) return;
+  if (!isStaff()) return;
   const now = Date.now(), typed = k => +$(k).value || 0;
   /* Ao mudar PPM, total ou tempo, os pontos de agora viram o novo ponto de partida (nada se perde).
      Ao digitar os pontos de um time, vale o que foi digitado; o outro time segue de onde estava. */
@@ -1181,7 +1195,7 @@ for (let b = 0; b < NB; b++) {
   $('atk-list').appendChild(list);
 }
 function renderAtk(){
-  const lead = isLeader();
+  const lead = isStaff();
   let mine = 0, allNamed = 0, allDone = 0, curNamed = 0, curDone = 0;
   for (let b = 0; b < NB; b++) {
     let named = 0, done = 0, firstEmpty = -1;
@@ -1231,11 +1245,11 @@ function clearMarks(list){
   if (Object.keys(up).length) db.ref().update(up).catch(console.error);
 }
 $('atk-clear').onclick = () => {
-  if (!isLeader() || !confirm('Zerar as marcações (atacou / indisponível) do Prédio ' + (curB + 1) + '? Os nomes continuam.')) return;
+  if (!isStaff() || !confirm('Zerar as marcações (atacou / indisponível) do Prédio ' + (curB + 1) + '? Os nomes continuam.')) return;
   clearMarks([curB]);
 };
 $('atk-clear-all').onclick = () => {
-  if (!isLeader() || !confirm('Zerar as marcações de TODOS os prédios? Os nomes continuam.')) return;
+  if (!isStaff() || !confirm('Zerar as marcações de TODOS os prédios? Os nomes continuam.')) return;
   clearMarks([...Array(NB).keys()]);
 };
 renderAtk();
@@ -1251,12 +1265,12 @@ function applyStrategy(v){
   const txt = (v && v.text) || '';
   const view = $('str-view'); view.textContent = txt || 'Nenhuma estratégia definida ainda.'; view.classList.toggle('empty', !txt);
   $('str-when').textContent = v && v.ts && txt ? 'Atualizado às ' + new Date(v.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
-  if (isLeader() && document.activeElement !== $('str-in')) $('str-in').value = txt;
+  if (isStaff() && document.activeElement !== $('str-in')) $('str-in').value = txt;
   if (curTab === 'str' && curStr === 'main') markStrSeen();
   else $('str-dot').classList.toggle('hidden', !(txt && v.ts > (+localStorage.getItem('cats_str_seen') || 0)));
 }
 $('str-save').onclick = async () => {
-  if (!isLeader()) return;
+  if (!isStaff()) return;
   const btn = $('str-save'); btn.disabled = true;
   try {
     await timeout(db.ref('strategy').set({ text: $('str-in').value.trim().slice(0, 600), ts: firebase.database.ServerValue.TIMESTAMP }));
@@ -1315,7 +1329,7 @@ function renderRx(id){
   });
   const add = document.createElement('button'); add.className = 'add'; add.textContent = '☺ +'; add.setAttribute('aria-label', 'Reagir');
   add.onclick = () => el.querySelector('.pick').classList.toggle('hidden'); box.appendChild(add);
-  if (isLeader()) {
+  if (isStaff()) {
     const x = document.createElement('button'); x.className = 'add'; x.textContent = '🗑'; x.setAttribute('aria-label', 'Apagar mensagem');
     x.onclick = () => { if (!confirm('Apagar esta mensagem para todos?')) return; db.ref('chat/' + id).remove().catch(console.error); db.ref('reactions/' + id).remove().catch(() => {}); };
     box.appendChild(x);
@@ -1334,7 +1348,7 @@ function startPresence(){
   const go = () => ref.onDisconnect().remove().then(() => ref.set({ name: me.name, ts: firebase.database.ServerValue.TIMESTAMP })).catch(() => {});
   db.ref('.info/connected').on('value', s => { if (s.val() === true && !document.hidden) go(); });
   document.addEventListener('visibilitychange', () => { if (document.hidden) ref.remove().catch(() => {}); else go(); });
-  if (isLeader()) db.ref('presence').on('value', s => { presData = s.val() || {}; renderOnline(); renderUsers(); }, () => {});
+  if (isStaff()) db.ref('presence').on('value', s => { presData = s.val() || {}; renderOnline(); renderUsers(); }, () => {});
 }
 function addMsg(m, box, key){
   box = box || $('msgs');
@@ -1352,6 +1366,7 @@ function addMsg(m, box, key){
   }
   const bottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   box.appendChild(el); if (bottom || mine) box.scrollTop = 1e9;
+  return el;
 }
 $('chat-form').onsubmit = e => {
   e.preventDefault();
@@ -1359,6 +1374,38 @@ $('chat-form').onsubmit = e => {
   db.ref('chat').push(Object.assign({ user: me.name, text, ts: firebase.database.ServerValue.TIMESTAMP, uid: auth.currentUser.uid }, postMeta())).catch(console.error);
   $('chat-in').value = ''; stopTyping();
 };
+/* ---------- Chat ADM (só líder e moderador) ---------- */
+const admEls = {};
+let chatSub = 'all', admLast = 0;
+const admSeenTs = () => +(localStorage.getItem('cats_adm_seen') || 0);
+function admDot(on){ ['adm-dot', 'chat-dot'].forEach(id => { const e = $(id); if (e) e.classList.toggle('hidden', !on); }); }
+function markAdmSeen(){ if (admLast) localStorage.setItem('cats_adm_seen', String(admLast)); admDot(false); }
+function showChatSub(k){
+  chatSub = k;
+  document.querySelectorAll('[data-csub]').forEach(b => b.classList.toggle('on', b.dataset.csub === k));
+  $('chat-wrap').classList.toggle('hidden', k !== 'all');
+  $('adm-wrap').classList.toggle('hidden', k !== 'adm');
+  if (k === 'adm') { markAdmSeen(); $('adm-msgs').scrollTop = 1e9; } else $('msgs').scrollTop = 1e9;
+}
+document.querySelectorAll('[data-csub]').forEach(b => b.onclick = () => showChatSub(b.dataset.csub));
+$('adm-form').onsubmit = e => {
+  e.preventDefault();
+  const text = $('adm-in').value.trim(); if (!text || !db || !me || !isStaff()) return;
+  db.ref('admchat').push(Object.assign({ user: me.name, text, ts: firebase.database.ServerValue.TIMESTAMP, uid: auth.currentUser.uid }, postMeta())).catch(console.error);
+  $('adm-in').value = '';
+};
+function addAdm(key, m){
+  const el = addMsg(m, $('adm-msgs'), null);
+  const rx = document.createElement('div'); rx.className = 'rx';
+  const x = document.createElement('button'); x.className = 'add'; x.textContent = '🗑'; x.setAttribute('aria-label', 'Apagar mensagem');
+  x.onclick = () => { if (confirm('Apagar esta mensagem do chat ADM?')) db.ref('admchat/' + key).remove().catch(console.error); };
+  rx.appendChild(x); el.appendChild(rx); admEls[key] = el;
+  admLast = Math.max(admLast, +m.ts || 0);
+  const mine = !!auth.currentUser && m.uid === auth.currentUser.uid;
+  if (curTab === 'chat' && chatSub === 'adm') markAdmSeen();
+  else if (!mine && (+m.ts || 0) > admSeenTs()) admDot(true);
+}
+
 let typers = {}, srvOff = 0, typTimer = null, typSent = 0;
 function renderTyping(){
   if (!me) return;
@@ -1412,7 +1459,7 @@ function addIdea(key, m){
   head.innerHTML = (m.kind === 'trip' ? '✈️ Aviso de viagem' : '💡 Sugestão') + ' · ' + nameTag(m) + ' · ' + when;
   const body = document.createElement('div'); body.textContent = m.text;
   el.appendChild(head); el.appendChild(body);
-  if (isLeader() || (auth.currentUser && m.uid === auth.currentUser.uid)) {
+  if (isStaff() || (auth.currentUser && m.uid === auth.currentUser.uid)) {
     const x = document.createElement('button'); x.className = 'x'; x.textContent = '🗑'; x.setAttribute('aria-label', 'Apagar');
     x.onclick = () => { if (confirm('Apagar esta mensagem?')) db.ref('ideas/' + key).remove().catch(console.error); };
     el.appendChild(x);
@@ -1427,7 +1474,7 @@ document.querySelectorAll('[data-bres]').forEach(b => b.onclick = () => {
   document.querySelectorAll('[data-bres]').forEach(x => x.classList.toggle('on', x === b));
 });
 $('bat-add').onclick = async () => {
-  const gang = $('bat-gang').value.trim().slice(0, 24); if (!gang || !isLeader()) return;
+  const gang = $('bat-gang').value.trim().slice(0, 24); if (!gang || !isStaff()) return;
   const btn = $('bat-add'); btn.disabled = true;
   try {
     await timeout(db.ref('battles').push({ gang, win: batRes === 'win', ts: firebase.database.ServerValue.TIMESTAMP, by: me.name }));
@@ -1446,7 +1493,7 @@ function renderBat(){
     const d = document.createElement('div'); d.className = 'bat ' + (x.win ? 'w' : 'l');
     const when = x.ts ? new Date(x.ts).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
     d.innerHTML = `<div class="g">${esc(x.gang)}<small>${when}</small></div><span class="res ${x.win ? 'win' : 'loss'}">${x.win ? '🏆 VITÓRIA' : '💀 DERROTA'}</span>`;
-    if (isLeader()) {
+    if (isStaff()) {
       const del = document.createElement('button'); del.className = 'x'; del.textContent = '🗑'; del.setAttribute('aria-label', 'Apagar batalha');
       del.onclick = () => { if (confirm('Apagar a batalha contra ' + x.gang + '?')) db.ref('battles/' + key).remove().catch(console.error); };
       d.appendChild(del);
@@ -1457,7 +1504,7 @@ function renderBat(){
 
 /* ---------- Patentes (só líder, em Configuração) ---------- */
 function renderRanks(){
-  if (!isLeader()) return;
+  if (!isStaff()) return;
   const box = $('rk-list'); if (box.contains(document.activeElement)) return;     // não fecha o seletor aberto
   box.innerHTML = '';
   Object.entries(usersData).sort((a, b) => String(a[1].name).localeCompare(String(b[1].name))).forEach(([code, u]) => {
@@ -1473,7 +1520,7 @@ function renderRanks(){
 }
 
 function renderTags(){
-  if (!isLeader()) return;
+  if (!isStaff()) return;
   const box = $('tg-list'); if (box.contains(document.activeElement)) return;
   box.innerHTML = '';
   Object.entries(usersData).sort((a, b) => String(a[1].name).localeCompare(String(b[1].name))).forEach(([code, u]) => {
@@ -1620,7 +1667,7 @@ function startSync(){
   const denied = e => { if (e && /permission/i.test(e.code || e.message || '')) forceLogout('Seu acesso foi alterado ou removido. Fale com o líder.'); };
   db.ref('calc').on('value', s => applyCalc(s.val()), denied);
   db.ref('strategy').on('value', s => applyStrategy(s.val()), denied);
-  db.ref('attacks').on('value', s => { atkData = s.val() || {}; renderAtk(); if (isLeader()) renderUsers(); }, denied);
+  db.ref('attacks').on('value', s => { atkData = s.val() || {}; renderAtk(); if (isStaff()) renderUsers(); }, denied);
   db.ref('users/' + me.code).on('value', s => {            // acompanha o próprio cadastro
     const v = s.val();
     if (!v) { if (!selfMoving) forceLogout('Seu acesso foi alterado ou removido. Entre de novo com o login que o líder te passou.'); return; }
@@ -1629,7 +1676,7 @@ function startSync(){
   }, denied);
   db.ref('chat').limitToLast(100).on('child_added', s => addMsg(s.val(), null, s.key), denied);
   db.ref('chat').limitToLast(100).on('child_removed', s => { const el = msgEls[s.key]; if (el) { el.remove(); delete msgEls[s.key]; } }, () => {});
-  if (isLeader()) db.ref('applications').on('value', s => { appsData = s.val() || {}; renderRec(); }, () => {});
+  if (isStaff()) db.ref('applications').on('value', s => { appsData = s.val() || {}; renderRec(); }, () => {});
   const rxSet = s => { rxData[s.key] = s.val() || {}; renderRx(s.key); };
   db.ref('reactions').limitToLast(200).on('child_added', rxSet, () => {});
   db.ref('reactions').limitToLast(200).on('child_changed', rxSet, () => {});
@@ -1638,8 +1685,12 @@ function startSync(){
   startPresence();
   gStart();
   const quiet = () => {};                                  // se as regras ainda não permitem, não desloga o moderador
+  if (isStaff()) {
+    db.ref('admchat').limitToLast(100).on('child_added', s => addAdm(s.key, s.val()), quiet);
+    db.ref('admchat').limitToLast(100).on('child_removed', s => { const el = admEls[s.key]; if (el) { el.remove(); delete admEls[s.key]; } }, quiet);
+  }
   if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); renderRanks(); renderTags(); renderRec(); }, denied);
-  else if (isMod()) db.ref('users').orderByChild('role').equalTo('member').on('value', s => { usersData = s.val() || {}; renderUsers(); }, quiet);   // moderador só enxerga membros
+  else if (isMod()) db.ref('users').orderByChild('role').equalTo('member').on('value', s => { usersData = s.val() || {}; renderUsers(); renderRanks(); renderTags(); renderRec(); }, quiet);   // moderador só enxerga membros (nunca o login de líderes/moderadores)
   db.ref('config/dev').once('value').then(s => { isDev = s.val() === me.code; }).catch(() => {});                  // quem é o DEV (definido no Firebase)
   db.ref('ideas').limitToLast(100).on('child_added', s => addIdea(s.key, s.val()), quiet);
   db.ref('ideas').on('child_removed', s => { const el = ideaEls[s.key]; if (el) { el.remove(); delete ideaEls[s.key]; } }, quiet);
@@ -1684,7 +1735,7 @@ $('ap-send').onclick = async () => {
   btn.disabled = false;
 };
 function showInvite(a){
-  const box = $('rec-new'); box.className = 'card only-leader';
+  const box = $('rec-new'); box.className = 'card only-staff';
   box.innerHTML = `<div><b>${esc(a.name)}</b> aprovado. Ele já pode entrar pela tela de pedido dele, ou com os dados abaixo.</div><code>${esc(a.login)}</code>` +
     (a.pass ? `<div>Senha: <b>${esc(a.pass)}</b></div>` : '<div style="color:var(--mute);font-size:.8rem">Sem senha: entra só com o login.</div>') +
     '<button id="rec-copy" type="button">Copiar convite</button>' +

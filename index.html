@@ -2255,17 +2255,31 @@ async function gReadPrint(file, msg){
     const rec = async (cv, wl, psm) => { if (!cv) return ''; const key = wl + '|' + psm; if (key !== wk._k) { await wk.setParameters({ tessedit_char_whitelist: wl, tessedit_pageseg_mode: String(psm) }); wk._k = key; } const r = await wk.recognize(cv); return (r.data.text || '').trim(); };
     const bx = (x0, y0, x1, y1) => [R(H + x0 * s), R(y0 * s), R(H + x1 * s), R(y1 * s)];
     const ink = (b, mode, sc) => gInk(I, b[0], b[1], b[2], b[3], mode, sc);
-    const num = async (b, tries) => { for (const [mode, sc] of tries) { const t = (await rec(ink(b, mode, sc), G_DIG, 7)).replace(/\D/g, ''); if (t) return +t; } return null; };
+    const num = async (b, tries) => { for (const [mode, sc] of tries) for (const psm of [7, 8, 10]) { const t = (await rec(ink(b, mode, sc), G_DIG, psm)).replace(/\D/g, ''); if (t) return +t; } return null; };
+    /* recorta só os dígitos do placar, deixando de fora o selo "+PPM" (azul ou vermelho) que fica colado no número */
+    const scoreBox = (x0, x1) => {
+      const X0 = R(H + x0 * s), X1 = R(H + x1 * s), Y0 = R(212 * s), Y1 = R(282 * s);
+      const isB = (x, y) => { if (x < 0 || x >= I.w || y < 0 || y >= I.h) return false; const k = (y * I.w + x) * 4, r = I.d[k], g = I.d[k + 1], b = I.d[k + 2]; return (b > 185 && r < 110 && g > 70 && g < 150) || (r > 180 && g < 120 && b < 120); };
+      const bad = []; for (let x = X0; x < X1; x++) { let c = 0; for (const y of [215, 217, 280, 282]) if (isB(x, R(y * s))) c++; bad.push(c >= 3); }
+      let bs = 0, bl = 0, i = 0;
+      while (i < bad.length) { if (bad[i]) { i++; continue; } let j = i; while (j < bad.length && !bad[j]) j++; if (j - i > bl) { bl = j - i; bs = i; } i = j; }
+      if (!bl || bl === bad.length) return [X0, Y0, X1, Y1];
+      let a = X0 + bs, b = X0 + bs + bl; if (bs > 0) a += R(14 * s); if (bs + bl < bad.length) b -= R(14 * s);
+      return b - a > 20 ? [a, Y0, b, Y1] : [X0, Y0, X1, Y1];
+    };
     const warn = [];
     msg('Lendo placar e tempo…');
-    const scA = await num(bx(206, 212, 412, 282), [['lum', 3], ['lum', 4], ['dark:150', 3]]);
-    const scB = await num(bx(806, 212, 995, 282), [['lum', 3], ['lum', 4], ['dark:150', 3]]);
+    let scA = await num(scoreBox(206, 412), [['lum', 3], ['lum', 4], ['dark:150', 3]]);
+    let scB = await num(scoreBox(806, 995), [['lum', 3], ['lum', 4], ['dark:150', 3]]);
     const goal = await num(bx(545, 237, 690, 292), [['lum', 3], ['lum', 4]]);
+    /* o placar nunca passa da meta: se passou, sobrou um dígito de fora do número (ex.: 248196 -> 48196) */
+    const fixSc = v => { if (v === null || !goal) return v; let t = String(v); while (+t > goal && t.length > 1) t = t.slice(1); return +t; };
+    scA = fixSc(scA); scB = fixSc(scB);
     let hh = null, mm = null;
     for (const [mode, sc] of [['lum', 3], ['lum', 4]]) {
       const t = await rec(ink(bx(520, 133, 650, 180), mode, sc), G_DIG + 'hms ', 7), tk = t.match(/\d+/g) || [];
       if (/h/i.test(t) && tk.length >= 2) { hh = +tk[0]; mm = +tk[1].slice(0, 2); break; }
-      if (!/h/i.test(t) && tk.length >= 2) { hh = +tk[0]; mm = +tk[1].slice(0, 2); break; }
+      if (!/h/i.test(t) && tk.length >= 2) { hh = +(tk[0].length >= 3 ? tk[0].slice(0, -1) : tk[0]); mm = +tk[1].slice(0, 2); break; }   // "17h" lido como "170"
       if (tk.length === 1 && /m/i.test(t)) { hh = 0; mm = +tk[0].slice(0, 2); break; }
       if (tk.length === 1 && /h/i.test(t)) { hh = +tk[0]; mm = 0; break; }
     }

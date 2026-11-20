@@ -479,6 +479,50 @@ main.full{padding:0;max-width:none}
 #gm-ta{width:100%;background:#eef2fb;color:#1d2a4a;border:1px solid #7d8fc0;border-radius:6px;padding:8px;font-family:var(--gf);font-size:.95rem;line-height:1.5;text-transform:uppercase}
 #gm-imp-msg{margin:0}
 .gpad{color:#c8d2f2;font-size:.78rem;text-align:center;margin:0 0 4px}
+
+/* ===== v2 ===== */
+.gtop{height:38px;padding:0 10px 6px}
+.gtop button,.gtop span{font-size:clamp(.66rem,1.7vw,1rem)}
+.gtop button.on{font-size:clamp(.74rem,2vw,1.15rem)}
+.gside{font-size:.74rem;margin:0 0 6px}
+.gside button{padding:4px 10px;font-size:.78rem}
+.gside button.gfs2{padding:4px 10px;font-size:.78rem;border-width:1px}
+.mini{padding:6px 9px;font-size:.78rem;border-radius:9px;background:var(--panel);border:1px solid var(--line);color:var(--text);font-weight:600;line-height:1;flex-shrink:0}
+.mini.ic{padding:6px 8px;font-size:1rem}
+.calcbar{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-bottom:10px}
+.calcbar .msg{flex:1;font-size:.75rem;color:var(--mute);line-height:1.3;min-width:0}
+.mystat{padding:5px 9px!important;font-size:.85rem;display:inline-flex;align-items:center;gap:4px;color:var(--text)!important;border-color:var(--gold)!important}
+.mspop{position:fixed;right:10px;top:calc(env(safe-area-inset-top) + 52px);z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px;display:grid;gap:8px;box-shadow:0 8px 28px rgba(0,0,0,.45);width:min(250px,calc(100vw - 20px))}
+.mspop .t{font-size:.82rem;color:var(--mute)}
+.mspop .opts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.mspop .opts button{padding:10px 0;font-size:1.05rem;background:var(--bg);border:2px solid var(--line);color:var(--text)}
+.mspop .opts button.on{border-color:var(--gold)}
+.mspop .m{font-size:.75rem;color:var(--mute);min-height:1em;line-height:1.3}
+.mrg{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--mute);border-radius:14px;padding:12px 14px;margin-top:12px;display:grid;gap:6px;font-size:.9rem;line-height:1.4}
+.mrg.ok{border-left-color:var(--ok)}.mrg.warn{border-left-color:var(--gold)}.mrg.bad{border-left-color:var(--red)}
+.mrg h4{font-size:.92rem}
+.mrg .l{color:var(--mute)}
+.mrg .l b{color:var(--text)}
+.mrg .bc{color:var(--blue)}.mrg .rc{color:var(--red)}
+#tab-str .stabs{grid-template-columns:repeat(4,1fr)}
+#tab-str .stabs button{font-size:.72rem;padding:9px 1px}
+.pchips{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:10px}
+.pchips button{background:var(--panel);border:1px solid var(--line);color:var(--mute);padding:7px 0;font-size:.8rem;display:grid;gap:1px;justify-items:center;min-height:38px}
+.pchips button small{font-size:.65rem;opacity:.85;min-height:.8em}
+.pchips button.on{color:var(--text);border-color:var(--gold);box-shadow:inset 0 -3px 0 var(--gold)}
+.pbar{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.pbar .t{flex:1;font-size:.85rem;color:var(--mute);font-weight:600}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pth{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--deep);border:1px solid var(--line);padding:0}
+.pth img{width:100%;height:100%;object-fit:cover;display:block}
+.pth small{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.65);color:#fff;font-size:.6rem;padding:2px 4px;text-align:left;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-weight:500}
+.pth .x{position:absolute;top:3px;right:3px;padding:2px 6px;font-size:.7rem;background:rgba(0,0,0,.6);color:#fff;border-radius:7px}
+.lbx{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px}
+.lbx img{max-width:100%;max-height:78vh;border-radius:10px}
+.lbx div{color:#fff;font-size:.85rem;text-align:center}
+.gh{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;background:var(--mute)}
+.gh.g{background:var(--ok)}.gh.y{background:var(--gold)}.gh.r{background:var(--red)}
+.ghx{font-size:.74rem;color:var(--mute);margin-top:2px}
 </style>
 <script>try{if(localStorage.getItem('cats_theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
 </head>
@@ -525,10 +569,21 @@ main.full{padding:0;max-width:none}
 
 <!-- APP -->
 <div id="app" class="hidden" style="display:flex;flex-direction:column;flex:1;min-height:0">
-  <header><b>Calculadora C.A.T.S</b><span class="who"><span id="me"></span><span id="role" class="badge"></span><button id="logout">Sair</button></span></header>
+  <header><b>Calculadora C.A.T.S</b><span class="who"><button id="mystat" class="mystat" type="button" aria-label="Meu status: carros disponíveis">🚗 <b id="ms-n">–</b></button><span id="me"></span><span id="role" class="badge"></span><button id="logout">Sair</button></span></header>
+  <div id="mspop" class="mspop hidden" role="dialog" aria-label="Meus carros disponíveis">
+    <div class="t">Quantos carros você ainda tem?</div>
+    <div class="opts"><button type="button" data-c="3">3</button><button type="button" data-c="2">2</button><button type="button" data-c="1">1</button><button type="button" data-c="0">0</button></div>
+    <div class="m" id="ms-m"></div>
+  </div>
   <main id="main">
     <!-- Calculadora -->
     <div id="tab-calc">
+      <div class="calcbar">
+        <span class="msg" id="c-imp-msg"></span>
+        <button id="c-copy" class="mini" type="button" title="Copiar resumo pro WhatsApp">📋 Resumo WhatsApp</button>
+        <button id="c-imp" class="mini ic only-staff" type="button" title="Preencher pela print do City Kings" aria-label="Preencher pela print do City Kings">📷</button>
+        <input type="file" id="c-imp-f" accept="image/*" class="hidden">
+      </div>
       <div class="team b">
         <div class="row"><label for="bp">PPM azul</label><input id="bp" type="number" inputmode="decimal" min="0" value="0"></div>
         <div class="row only-staff"><label for="bs">Pontos azul (informar)</label><input id="bs" type="number" inputmode="decimal" min="0" value="0"></div>
@@ -545,6 +600,7 @@ main.full{padding:0;max-width:none}
       </div>
       <div class="panel">
         <div class="row"><label for="tot">Total do round</label><input id="tot" type="number" inputmode="decimal" min="0" value="0"></div>
+        <div class="row only-staff"><label for="ex">Prédio em disputa (+PPM)</label><input id="ex" type="number" inputmode="decimal" min="0" value="0"></div>
         <div class="clock-box only-staff">
           <label for="th">Definir tempo restante</label>
           <div class="clock">
@@ -571,13 +627,14 @@ main.full{padding:0;max-width:none}
         <button id="btn-n" class="btn-n off">Avisar no fim: desligado</button>
       </div>
       <div id="result"><div class="sub">Preencha os dados.</div></div>
+      <div id="mrg" class="mrg hidden" aria-live="polite"></div>
       <div class="credits">Desenvolvido por <b>NITRO ZEUS</b></div>
     </div>
 
     <!-- Ataques -->
     <div id="tab-atk" class="hidden">
       <div class="btabs" id="btabs"></div>
-      <div class="bar"><span class="count" id="atk-count">0 de 0 atacaram</span><button id="atk-prio" class="only-staff" type="button">⭐ Prioridade</button><span class="barbtns only-staff"><button id="atk-clear">Zerar prédio</button><button id="atk-clear-all">Zerar tudo</button></span></div>
+      <div class="bar"><span class="count" id="atk-count">0 de 0 atacaram</span><button id="atk-copy" class="mini ic" type="button" title="Copiar resumo pro WhatsApp" aria-label="Copiar resumo pro WhatsApp">📋</button><button id="atk-prio" class="only-staff" type="button">⭐ Prioridade</button><span class="barbtns only-staff"><button id="atk-clear">Zerar prédio</button><button id="atk-clear-all">Zerar tudo</button></span></div>
       <p class="help" id="atk-prio-msg"></p>
       <div id="atk-list"></div>
       <p class="help" id="atk-empty"></p>
@@ -590,6 +647,7 @@ main.full{padding:0;max-width:none}
         <button data-stab="main" class="on">🎯 Estratégia</button>
         <button data-stab="ideas">💡 Sugestões</button>
         <button data-stab="bat">⚔️ Batalhas</button>
+        <button data-stab="prints">📸 Prints</button>
       </div>
 
       <div id="str-main">
@@ -611,6 +669,7 @@ main.full{padding:0;max-width:none}
             <button data-ikind="trip">✈️ Aviso de viagem</button>
           </div>
           <textarea id="idea-in" maxlength="300" placeholder="Ex.: Atacar primeiro o prédio 3"></textarea>
+          <label id="idea-until-w" class="help hidden" style="margin:0">Volta em (opcional, o aviso some sozinho depois): <input id="idea-until" type="date"></label>
           <button id="idea-send">Enviar</button>
           <div class="help" style="margin:0">Todos veem, com o seu nome. Você pode apagar o que enviou.</div>
         </div>
@@ -629,6 +688,13 @@ main.full{padding:0;max-width:none}
         </div>
         <div class="card bsum" id="bat-sum">Nenhuma batalha registrada.</div>
         <div id="bat-list"></div>
+      </div>
+
+      <div id="str-prints" class="hidden">
+        <div class="pchips" id="p-chips"></div>
+        <div class="pbar"><span class="t" id="p-title">Carros fortes no prédio 1</span><button class="mini ic" id="p-add" type="button" title="Enviar print" aria-label="Enviar print">📷</button><input type="file" id="p-f" accept="image/*" class="hidden"></div>
+        <div class="pgrid" id="p-grid"></div>
+        <p class="help" id="p-help">Todos podem enviar print dos carros fortes que estão no prédio. Toque na miniatura para ampliar.</p>
       </div>
     </div>
 
@@ -787,6 +853,13 @@ main.full{padding:0;max-width:none}
         <div class="cols" id="col-list"></div>
         <div class="help" style="margin:0">Aparece no chat e nas sugestões, em mensagens novas.</div>
       </div>
+      <div class="card only-staff" id="cl-card">
+        <h3>🧹 Limpeza automática do banco</h3>
+        <label class="chk"><input id="cl-on" type="checkbox" checked> Ligada (roda quando um líder abre o app)</label>
+        <div class="help" style="margin:0">Apaga mensagens do chat e do chat ADM com mais de 7 dias, avisos de viagem vencidos e prints de carros com mais de 7 dias. Ajuda a não estourar a cota gratuita do Firebase. Só líderes podem ligar, desligar ou limpar na hora.</div>
+        <div class="help" id="cl-info" style="margin:0"></div>
+        <button id="cl-now" class="only-leader" type="button">Limpar agora</button>
+      </div>
       <div class="credits">Desenvolvido por <b>NITRO ZEUS</b></div>
     </div>
 
@@ -817,6 +890,7 @@ main.full{padding:0;max-width:none}
       <div id="m-new" class="hidden"></div>
       <div class="card">
         <h3>Acessos cadastrados</h3>
+        <div class="help" style="margin:0">Bolinha: 🟢 ativo · 🟡 3 dias ou mais sem entrar ou sem atacar · 🔴 7 dias ou mais. Só conta a partir da primeira vez que a pessoa abrir o app depois desta atualização.</div>
         <div id="m-list"></div>
       </div>
     </div>
@@ -968,7 +1042,7 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
 let cs = null;                       // {bp,bs,rp,rs,tot,endAt,ts}
 let notifOn = false, target = null, fired = false, schedTimer = null, wTimer = null;
 const LN = () => window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications;
-const CALC_IDS = ['bp','bs','rp','rs','tot','th','tn'];
+const CALC_IDS = ['bp','bs','rp','rs','tot','ex','th','tn'];
 const calcFocused = () => CALC_IDS.includes(document.activeElement && document.activeElement.id);
 
 const pad2 = n => String(n).padStart(2, '0');
@@ -1036,7 +1110,7 @@ function renderCalc(){
 }
 function fillInputs(){
   const now = Date.now();
-  ['bp','rp','tot'].forEach(k => { $(k).value = cs ? (cs[k] || 0) : 0; });
+  ['bp','rp','tot','ex'].forEach(k => { $(k).value = cs ? (cs[k] || 0) : 0; });
   $('bs').value = Math.floor(liveVal('b', now)); $('rs').value = Math.floor(liveVal('r', now));
   setClock(cs && cs.endAt ? Math.max(0, Math.ceil((cs.endAt - Date.now()) / 60000)) : 0);
 }
@@ -1053,7 +1127,7 @@ function leaderEdit(clockEdit, which){
      Ao digitar os pontos de um time, vale o que foi digitado; o outro time segue de onde estava. */
   const bs = (!cs || which === 'bs') ? typed('bs') : liveVal('b', now);
   const rs = (!cs || which === 'rs') ? typed('rs') : liveVal('r', now);
-  const s = { bp: typed('bp'), bs, rp: typed('rp'), rs, tot: typed('tot'), endAt: (cs && cs.endAt) || 0, ts: now };
+  const s = { bp: typed('bp'), bs, rp: typed('rp'), rs, tot: typed('tot'), ex: typed('ex'), endAt: (cs && cs.endAt) || 0, ts: now };
   if (clockEdit || !s.endAt) s.endAt = now + clockMinutes() * 60000;
   if (which !== 'bs' && document.activeElement !== $('bs')) $('bs').value = Math.floor(bs);
   if (which !== 'rs' && document.activeElement !== $('rs')) $('rs').value = Math.floor(rs);
@@ -1061,7 +1135,7 @@ function leaderEdit(clockEdit, which){
   clearTimeout(wTimer);
   wTimer = setTimeout(() => db.ref('calc').set(cs).catch(console.error), 350);
 }
-['bp','bs','rp','rs','tot'].forEach(id => $(id).addEventListener('input', () => leaderEdit(false, id)));
+['bp','bs','rp','rs','tot','ex'].forEach(id => $(id).addEventListener('input', () => leaderEdit(false, id)));
 ['th','tn'].forEach(id => {
   const el = $(id);
   el.addEventListener('focus', () => setTimeout(() => el.select(), 0));
@@ -1089,6 +1163,7 @@ function tick(){
     $('cd').textContent = pad2(Math.floor(rem / 3600)) + ':' + pad2(Math.floor(rem % 3600 / 60)) + ':' + pad2(rem % 60);
     $('cd-end').textContent = rem > 0 ? 'Termina às ' + new Date(cs.endAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'Tempo esgotado';
   } else { $('cd').textContent = '--:--:--'; $('cd-end').textContent = ''; }
+  v2Margin();
 }
 
 function beep(){
@@ -1179,7 +1254,7 @@ for (let b = 0; b < NB; b++) {
     dn.onclick = () => {
       if (!canMark(k)) return;
       const x = atkData[k] || {}, nv = !x.done, up = {};
-      up['attacks/' + k + '/done'] = nv;
+      up['attacks/' + k + '/done'] = nv; if (nv) v2MarkAtk(x.name);
       if (nv && x.unavail) up['attacks/' + k + '/unavail'] = false;
       db.ref().update(up).catch(console.error);
     };
@@ -1429,8 +1504,9 @@ let curStr = 'main';
 function showStr(k){
   curStr = k;
   document.querySelectorAll('[data-stab]').forEach(b => b.classList.toggle('on', b.dataset.stab === k));
-  ['main', 'ideas', 'bat'].forEach(x => $('str-' + x).classList.toggle('hidden', x !== k));
+  ['main', 'ideas', 'bat', 'prints'].forEach(x => $('str-' + x).classList.toggle('hidden', x !== k));
   if (k === 'main') markStrSeen();
+  if (k === 'prints') tcEnter(); else tcStop();
 }
 document.querySelectorAll('[data-stab]').forEach(b => b.onclick = () => showStr(b.dataset.stab));
 
@@ -1447,7 +1523,7 @@ $('idea-send').onclick = async () => {
   const text = $('idea-in').value.trim().slice(0, 300); if (!text || !db || !me) return;
   const btn = $('idea-send'); btn.disabled = true;
   try {
-    await timeout(db.ref('ideas').push(Object.assign({ user: me.name, text, kind: ideaKind, ts: firebase.database.ServerValue.TIMESTAMP, uid: auth.currentUser.uid }, postMeta())));
+    await timeout(db.ref('ideas').push(Object.assign({ user: me.name, text, kind: ideaKind, ts: firebase.database.ServerValue.TIMESTAMP, uid: auth.currentUser.uid }, postMeta(), ideaUntil())));
     $('idea-in').value = ''; btn.textContent = 'Enviado ✓';
   } catch (e) { btn.textContent = 'Erro, tente de novo'; }
   setTimeout(() => { btn.textContent = 'Enviar'; btn.disabled = false; }, 1600);
@@ -1456,7 +1532,7 @@ function addIdea(key, m){
   const el = document.createElement('div'); el.className = 'idea' + (m.kind === 'trip' ? ' trip' : '');
   const when = new Date(m.ts).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
   const head = document.createElement('small');
-  head.innerHTML = (m.kind === 'trip' ? '✈️ Aviso de viagem' : '💡 Sugestão') + ' · ' + nameTag(m) + ' · ' + when;
+  head.innerHTML = (m.kind === 'trip' ? '✈️ Aviso de viagem' : '💡 Sugestão') + ' · ' + nameTag(m) + ' · ' + when + (m.kind === 'trip' && m.until ? ' · até ' + new Date(m.until).toLocaleDateString('pt-BR') : '');
   const body = document.createElement('div'); body.textContent = m.text;
   el.appendChild(head); el.appendChild(body);
   if (isStaff() || (auth.currentUser && m.uid === auth.currentUser.uid)) {
@@ -1645,8 +1721,8 @@ function renderUsers(){
     }
     if (editing === code) { buildEditRow(d, code, u); $('m-list').appendChild(d); return; }
     const inList = Object.values(atkData).some(x => x && sameName(x.name, u.name));
-    d.innerHTML = `<div><div class="nm">${presData[code] ? '<span class="on-dot"></span>' : ''}${esc(u.name)} ${roleBadge(u.role)}${rankTag(u.rank)}${code === me.code ? '<span class="ex">(você)</span>' : ''}</div>
-      <div class="ex"><code>${esc(code)}</code> · ${u.pass ? '🔒 senha: ' + esc(u.pass) : 'sem senha'}${u.role === 'member' ? (inList ? ' · ✓ na lista de ataque' : ' · ⚠ fora da lista de ataque') : ''}</div></div>
+    d.innerHTML = `<div><div class="nm">${ghostDot(code)}${presData[code] ? '<span class="on-dot"></span>' : ''}${esc(u.name)} ${roleBadge(u.role)}${rankTag(u.rank)}${code === me.code ? '<span class="ex">(você)</span>' : ''}</div>
+      <div class="ex"><code>${esc(code)}</code> · ${u.pass ? '🔒 senha: ' + esc(u.pass) : 'sem senha'}${u.role === 'member' ? (inList ? ' · ✓ na lista de ataque' : ' · ⚠ fora da lista de ataque') : ''}</div>${ghostLine(code)}</div>
       <div class="acts"><button data-a="inv" aria-label="Copiar convite" title="Copiar convite">📋</button><button data-a="ed" aria-label="Editar" title="Editar nome, login e senha">✏️</button>${code === me.code ? '' : '<button data-a="del" aria-label="Remover" title="Remover acesso">🗑</button>'}</div>`;
     d.querySelector('[data-a=inv]').onclick = async e => { if (await copyText(inviteText(code, u.pass))) { e.target.textContent = '✓'; setTimeout(() => e.target.textContent = '📋', 1500); } };
     d.querySelector('[data-a=ed]').onclick = () => { editing = code; draft = null; renderUsers(); };
@@ -1667,12 +1743,12 @@ function startSync(){
   const denied = e => { if (e && /permission/i.test(e.code || e.message || '')) forceLogout('Seu acesso foi alterado ou removido. Fale com o líder.'); };
   db.ref('calc').on('value', s => applyCalc(s.val()), denied);
   db.ref('strategy').on('value', s => applyStrategy(s.val()), denied);
-  db.ref('attacks').on('value', s => { atkData = s.val() || {}; renderAtk(); if (isStaff()) renderUsers(); }, denied);
+  db.ref('attacks').on('value', s => { atkData = s.val() || {}; renderAtk(); renderMyStat(); if (isStaff()) renderUsers(); }, denied);
   db.ref('users/' + me.code).on('value', s => {            // acompanha o próprio cadastro
     const v = s.val();
     if (!v) { if (!selfMoving) forceLogout('Seu acesso foi alterado ou removido. Entre de novo com o login que o líder te passou.'); return; }
     if (v.role !== me.role) { location.reload(); return; }
-    me.name = v.name; me.rank = v.rank || ''; me.tag = v.tag || ''; $('me').textContent = v.name; renderAtk();
+    me.name = v.name; me.rank = v.rank || ''; me.tag = v.tag || ''; $('me').textContent = v.name; renderAtk(); renderMyStat();
   }, denied);
   db.ref('chat').limitToLast(100).on('child_added', s => addMsg(s.val(), null, s.key), denied);
   db.ref('chat').limitToLast(100).on('child_removed', s => { const el = msgEls[s.key]; if (el) { el.remove(); delete msgEls[s.key]; } }, () => {});
@@ -1698,7 +1774,7 @@ function startSync(){
   db.ref('typing').on('value', s => { typers = s.val() || {}; renderTyping(); }, quiet);
   db.ref('.info/serverTimeOffset').on('value', s => { srvOff = s.val() || 0; });
   db.ref('battles').on('value', s => { batData = s.val() || {}; renderBat(); }, quiet);
-
+  v2Start();
 }
 
 /* ---------- Pedidos para entrar no clã: formulário público + aba Membros ---------- */
@@ -2085,9 +2161,8 @@ function gReconcile(capV, badV){
   const cap = best[1], ok = [...badV.entries()].filter(([v]) => v >= cap && v <= cap * 10 && v % cap === 0).sort((a, b) => b[1] - a[1] || b[0] - a[0]);
   return { cap, ppm: ok.length ? ok[0][0] : cap };
 }
-async function gImport(file){
-  const msg = (t, ok) => { $('g-imp-msg').textContent = t; $('g-imp-msg').style.color = ok === false ? 'var(--red)' : ok ? 'var(--ok)' : ''; };
-  const btn = $('g-imp'); btn.disabled = true; let wk = null;
+async function gReadPrint(file, msg){
+  let wk = null;
   try {
     msg('Lendo o print…');
     const I = await gImg(file), G = gGeo(I), s = G.s, H = G.H, R = Math.round;
@@ -2143,6 +2218,14 @@ async function gImport(file){
       res.push({ name: (rawName.length >= 2 ? rawName : old.name).slice(0, 14), cap, a, b, p, x });
     }
 
+    return { nameA, nameB, scA, scB, goal, hh, mm, res, warn, found: G.found };
+  } finally { try { if (wk) await wk.terminate(); } catch (e) {} }
+}
+async function gImport(file){
+  const msg = (t, ok) => { $('g-imp-msg').textContent = t; $('g-imp-msg').style.color = ok === false ? 'var(--red)' : ok ? 'var(--ok)' : ''; };
+  const btn = $('g-imp'); btn.disabled = true;
+  try {
+    const { nameA, nameB, scA, scB, goal, hh, mm, res, warn, found } = await gReadPrint(file, msg);
     /* preenche o formulário (ainda não grava: dá para corrigir antes de iniciar) */
     const set = (id, v) => { if ($(id) && v !== null && v !== undefined) $(id).value = v; };
     if (nameA.length >= 2) set('g-nm-a', nameA.slice(0, 20)); if (nameB.length >= 2) set('g-nm-b', nameB.slice(0, 20));
@@ -2151,13 +2234,12 @@ async function gImport(file){
     res.forEach((o, i) => { if (!o) return; set('g-n' + i, o.name); set('g-c' + i, o.cap); set('g-a' + i, o.a); set('g-b' + i, o.b); set('g-p' + i, o.p); set('g-x' + i, o.x); });
     gDirty = true;
     const ok = res.filter(Boolean).length;
-    msg((G.found ? '' : 'Não achei o painel do placar com certeza, usei a posição padrão. ') + 'Li ' + ok + ' de 6 prédios.' + (warn.length ? ' Não consegui ler: ' + warn.join(', ') + '. ' : ' ') + 'Confira os números abaixo (o OCR pode errar um dígito ou um nome) e toque em “▶ Iniciar treino com estes dados”.', warn.length ? undefined : true);
+    msg((found ? '' : 'Não achei o painel do placar com certeza, usei a posição padrão. ') + 'Li ' + ok + ' de 6 prédios.' + (warn.length ? ' Não consegui ler: ' + warn.join(', ') + '. ' : ' ') + 'Confira os números abaixo (o OCR pode errar um dígito ou um nome) e toque em “▶ Iniciar treino com estes dados”.', warn.length ? undefined : true);
     $('g-cfg').scrollIntoView({ block: 'nearest' });
   } catch (e) {
     console.error(e);
     msg(e && e.message === 'ocr-load' ? 'Não consegui baixar o leitor de texto. Confira a internet e tente de novo.' : e && e.message === 'small' ? 'Essa imagem é pequena demais. Envie o print original da tela.' : 'Não consegui ler esse print. Use um print inteiro da tela “Reis da cidade”.', false);
   }
-  try { if (wk) await wk.terminate(); } catch (e) {}
   btn.disabled = false;
 }
 $('g-imp').onclick = () => $('g-imp-f').click();
@@ -2349,6 +2431,414 @@ $('gm-copy').onclick = () => {
 };
 
 /* ---------- Início: tenta entrar sozinho com o último acesso ---------- */
+/* =====================================================================
+   NOVIDADES v2: margem de segurança, Meu Status, print -> calculadora,
+   prints dos carros (P1-P6), limpeza do banco, resumo WhatsApp,
+   detector de fantasma e swipe entre abas.
+   ===================================================================== */
+const V2DAY = 864e5;
+const V2 = { seen: {} };
+const v2T = ms => new Date(ms).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+const v2D = ms => new Date(ms).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+function v2Dur(sec){
+  sec = Math.max(0, Math.round(sec));
+  const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60);
+  if (h) return pad2(h) + 'h' + pad2(m) + 'm';
+  if (m) return m + ' min';
+  return sec + ' s';
+}
+function v2K(v){
+  v = Math.floor(+v || 0);
+  if (v < 1000) return String(v);
+  return (Math.round(v / 100) / 10).toString().replace('.', ',') + 'k';
+}
+async function v2Copy(t){
+  try { await navigator.clipboard.writeText(t); return true; }
+  catch (e) {
+    try {
+      const ta = document.createElement('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+      document.body.appendChild(ta); ta.select(); const ok = document.execCommand('copy'); ta.remove();
+      if (ok) return true;
+    } catch (_) {}
+    prompt('Copie o texto abaixo:', t); return false;
+  }
+}
+function v2Flash(btn, okTxt){
+  const old = btn.dataset.old || btn.textContent; btn.dataset.old = old;
+  btn.textContent = okTxt; clearTimeout(btn._t); btn._t = setTimeout(() => { btn.textContent = old; }, 1600);
+}
+
+/* ---------------------------------------------------------------------
+   1) Margem de segurança / tempo para a virada (Calculadora)
+   --------------------------------------------------------------------- */
+/* simula o fim do round: quem chega no total primeiro vence; se ninguém chega, vence quem tem mais pontos no fim */
+function v2Sim(sB, pB, sR, pR, tot, rem){
+  const tb = sB >= tot ? 0 : (pB > 0 ? (tot - sB) / pB : Infinity);
+  const tr = sR >= tot ? 0 : (pR > 0 ? (tot - sR) / pR : Infinity);
+  const m = Math.min(tb, tr);
+  if (m !== Infinity && m <= rem) return { w: tb < tr ? 'b' : tr < tb ? 'r' : '=', t: m };
+  const fb = sB + pB * rem, fr = sR + pR * rem;
+  return { w: fb > fr ? 'b' : fr > fb ? 'r' : '=', t: rem };
+}
+function v2MarginInfo(now){
+  if (!cs || !cs.ts || !cs.endAt || !(+cs.tot > 0)) return null;
+  const rem = (cs.endAt - now) / 60000; if (rem <= 0.02) return null;
+  const tot = +cs.tot, sB = liveVal('b', now), sR = liveVal('r', now), pB = +cs.bp || 0, pR = +cs.rp || 0, ex = Math.max(0, +cs.ex || 0);
+  if (sB >= tot || sR >= tot || (pB <= 0 && pR <= 0)) return null;
+  const cur = v2Sim(sB, pB, sR, pR, tot, rem);
+  const nm = t => `<b class="${t}c">${t === 'b' ? 'Azul' : 'Vermelho'}</b>`;
+  if (cur.w === '=') return { cls: 'warn', html: '<h4>🛡️ Margem de segurança</h4><div><b>🟡 Empate no ritmo atual</b></div><div class="l">Qualquer prédio que mudar de mãos decide o round.</div>' };
+  const W = cur.w, T = W === 'b' ? 'r' : 'b', pT = T === 'b' ? pB : pR;
+  /* o time de trás ganha +e PPM daqui a d minutos: ele vira o jogo? */
+  const flips = (e, d) => {
+    if (d >= cur.t) return false;
+    return v2Sim(sB + pB * d, pB + (T === 'b' ? e : 0), sR + pR * d, pR + (T === 'r' ? e : 0), tot, rem - d).w === T;
+  };
+  let hi = Math.max(100, pT), g = 0, need = Infinity;
+  while (!flips(hi, 0) && g++ < 40) hi *= 2;
+  if (flips(hi, 0)) { let lo = 0; for (let i = 0; i < 40; i++) { const mid = (lo + hi) / 2; if (flips(mid, 0)) hi = mid; else lo = mid; } need = Math.ceil(hi); }
+  const ends = cur.t < rem - 1e-6 ? 'fecha o round em ' + v2Dur(cur.t * 60) : 'segura a liderança até o fim';
+  const L = [];
+  if (need === Infinity) L.push(`${nm(T)} <b>não consegue mais virar</b>: ${nm(W)} ${ends}.`);
+  else L.push(`${nm(T)} precisaria de <b>+${fmtN(need)} PPM</b> a mais, a partir de agora, para virar antes do fim.`);
+  let sev = 0;
+  if (ex > 0) {
+    if (!flips(ex, 0)) L.push(`✅ Mesmo se o ${nm(T)} pegar um prédio de <b>+${fmtN(ex)} PPM</b> agora, ele <b>não alcança</b> antes do tempo acabar.`);
+    else {
+      let lo = 0, hi2 = cur.t; for (let i = 0; i < 40; i++) { const mid = (lo + hi2) / 2; if (flips(ex, mid)) lo = mid; else hi2 = mid; }
+      sev = 1;
+      L.push(`⚠️ Se o ${nm(T)} pegar um prédio de <b>+${fmtN(ex)} PPM</b>, ele vira o jogo, desde que pegue em até <b>${lo < 0.5 ? 'poucos segundos' : v2Dur(lo * 60)}</b> (até ${v2T(now + lo * 60000)}).`);
+    }
+  } else {
+    const r = need === Infinity ? 9 : need / Math.max(pT, 1);
+    sev = r <= 0.15 ? 2 : r <= 0.5 ? 1 : 0;
+    if (isStaff()) L.push('<span class="l">Preencha “Prédio em disputa (+PPM)” para ver se uma tomada vira o jogo.</span>');
+  }
+  const head = sev === 0 ? `🟢 ${nm(W)} está com folga` : sev === 1 ? `🟡 Atenção: margem curta para o ${nm(W)}` : `🔴 Virada por pouco: o ${nm(T)} está perto`;
+  return { cls: ['ok', 'warn', 'bad'][sev], html: `<h4>🛡️ Margem de segurança</h4><div><b>${head}</b></div>` + L.map(x => `<div class="l">${x}</div>`).join('') };
+}
+let v2MrgHtml = '';
+function v2Margin(){
+  const el = $('mrg'); if (!el) return;
+  let r = null; try { r = v2MarginInfo(Date.now()); } catch (e) { console.error(e); }
+  const html = r ? r.html : '';
+  if (html !== v2MrgHtml) { v2MrgHtml = html; el.innerHTML = html; }
+  el.className = 'mrg ' + (r ? r.cls : 'hidden');
+}
+
+/* ---------------------------------------------------------------------
+   2) Meu Status: carros disponíveis, direto no cabeçalho
+   --------------------------------------------------------------------- */
+const myRows = () => me ? Object.keys(atkData).filter(k => atkData[k] && sameName(atkData[k].name, me.name)) : [];
+function renderMyStat(){
+  const ks = myRows(), v = ks.map(k => +atkData[k].cars || 0), same = v.every(x => x === v[0]);
+  $('ms-n').textContent = !ks.length ? '–' : same ? String(v[0]) : Math.max(...v) + '*';
+  $('mystat').title = ks.length ? 'Meus carros disponíveis (toque para mudar)' : 'Seu nome ainda não está na lista de ataques';
+  document.querySelectorAll('#mspop [data-c]').forEach(b => b.classList.toggle('on', ks.length > 0 && same && +b.dataset.c === v[0]));
+}
+$('mystat').onclick = e => {
+  e.stopPropagation();
+  const p = $('mspop'); p.classList.toggle('hidden'); $('ms-m').textContent = '';
+  if (!p.classList.contains('hidden')) renderMyStat();
+};
+document.addEventListener('click', e => { const p = $('mspop'); if (!p.classList.contains('hidden') && !p.contains(e.target)) p.classList.add('hidden'); });
+document.querySelectorAll('#mspop [data-c]').forEach(b => b.onclick = async () => {
+  const ks = myRows(), m = $('ms-m');
+  if (!ks.length) { m.textContent = 'Seu nome não está na lista de Ataques. Peça a um líder para te colocar.'; return; }
+  const up = {}; ks.forEach(k => { up['attacks/' + k + '/cars'] = +b.dataset.c; });
+  try {
+    await timeout(db.ref().update(up));
+    m.textContent = 'Atualizado' + (ks.length > 1 ? ' em ' + ks.length + ' prédios' : '') + ' ✓';
+    setTimeout(() => $('mspop').classList.add('hidden'), 700);
+  } catch (e) { m.textContent = 'Não foi possível salvar. Tente de novo.'; }
+});
+
+/* ---------------------------------------------------------------------
+   3) Print do City Kings -> Calculadora (reaproveita o leitor do Treino)
+   --------------------------------------------------------------------- */
+async function calcImport(file){
+  const el = $('c-imp-msg'), btn = $('c-imp');
+  const msg = (t, ok) => { el.textContent = t; el.style.color = ok === false ? 'var(--red)' : ok ? 'var(--ok)' : ''; };
+  btn.disabled = true;
+  try {
+    const r = await gReadPrint(file, msg);
+    let pa = 0, pb = 0, nOk = 0;
+    r.res.forEach(o => {
+      if (!o) return; nOk++;
+      const h = Math.floor(o.cap / 2) + 1, v = Math.max(0, +o.p || 0) * Math.max(1, +o.x || 1);
+      if (o.a >= h) pa += v; else if (o.b >= h) pb += v;
+    });
+    const now = Date.now(), has = nOk > 0, tm = r.hh !== null;
+    const s = {
+      bp: has ? pa : (cs ? +cs.bp || 0 : 0), bs: r.scA !== null ? r.scA : Math.floor(liveVal('b', now)),
+      rp: has ? pb : (cs ? +cs.rp || 0 : 0), rs: r.scB !== null ? r.scB : Math.floor(liveVal('r', now)),
+      tot: r.goal || (cs ? +cs.tot || 0 : 0),
+      endAt: tm ? now + (r.hh * 60 + r.mm) * 60000 : (cs && cs.endAt) || 0,
+      ts: now, ex: cs ? +cs.ex || 0 : 0
+    };
+    const lines = [
+      '🔵 Azul: ' + fmtN(s.bs) + ' pontos · +' + fmtN(s.bp) + ' PPM',
+      '🔴 Vermelho: ' + fmtN(s.rs) + ' pontos · +' + fmtN(s.rp) + ' PPM',
+      'Total do round: ' + fmtN(s.tot),
+      'Tempo restante: ' + (tm ? pad2(r.hh) + ':' + pad2(r.mm) : 'não li (mantido)')
+    ];
+    if (r.warn.length) lines.push('', '⚠ Não consegui ler: ' + r.warn.join(', ') + '.');
+    if (has && nOk < 6) lines.push('PPM calculado com ' + nOk + ' de 6 prédios: confira.');
+    if (!confirm('Lido do print:\n\n' + lines.join('\n') + '\n\nAplicar na calculadora para todos?')) { msg('Cancelado. Nada foi alterado.'); btn.disabled = false; return; }
+    cs = s; fillInputs(); renderCalc(); tick();
+    await timeout(db.ref('calc').set(cs));
+    msg('Calculadora preenchida pelo print ✓', true);
+  } catch (e) {
+    console.error(e);
+    msg(e && e.message === 'ocr-load' ? 'Não consegui baixar o leitor de texto. Confira a internet.' : e && e.message === 'small' ? 'Imagem pequena demais. Envie o print original.' : 'Não consegui ler esse print. Use um print inteiro da tela “Reis da cidade”.', false);
+  }
+  btn.disabled = false;
+}
+$('c-imp').onclick = () => $('c-imp-f').click();
+$('c-imp-f').onchange = e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) calcImport(f); };
+
+/* ---------------------------------------------------------------------
+   4) Resumo da guerra para o WhatsApp
+   --------------------------------------------------------------------- */
+function warText(){
+  const now = Date.now(), L = [];
+  const live = !!(cs && cs.ts && cs.endAt && cs.endAt > now);
+  L.push(live ? '🚨 *GUERRA EM ANDAMENTO*' : '📋 *RESUMO DA GUERRA*');
+  if (cs && cs.ts) {
+    L.push('📊 Placar: 🔵 ' + v2K(liveVal('b', now)) + ' x 🔴 ' + v2K(liveVal('r', now)) + (+cs.tot > 0 ? ' (meta ' + v2K(cs.tot) + ')' : ''));
+    if (cs.endAt) L.push(cs.endAt > now ? '⏳ Faltam: ' + v2Dur((cs.endAt - now) / 1000) + ' (termina às ' + v2T(cs.endAt) + ')' : '⏳ Tempo esgotado');
+    const r = compute(cs); if (r && r.who && r.who !== 'Aguardando' && live) L.push('📈 No ritmo atual: ' + (r.who === 'Azul' ? '🔵 ' : r.who === 'Vermelho' ? '🔴 ' : '') + r.who);
+  }
+  const pk = Object.keys(prioData).map(Number).sort();
+  if (pk.length) L.push('🎯 Foco: ' + pk.map(b => 'Prédio ' + (b + 1)).join(' e '));
+  const pend = [], unav = new Set(); let named = 0, done = 0;
+  for (let b = 0; b < NB; b++) {
+    const names = [];
+    for (let i = 0; i < N; i++) {
+      const x = atkData[keyOf(b, i)]; if (!x || !x.name) continue;
+      named++; if (x.done) done++;
+      if (x.unavail) unav.add(x.name); else if (!x.done) names.push(x.name);
+    }
+    if (names.length) pend.push({ b, names });
+  }
+  if (named) {
+    if (pend.length) {
+      L.push('⚔️ *Faltam atacar:*');
+      pend.sort((a, c) => (prioData[c.b] ? 1 : 0) - (prioData[a.b] ? 1 : 0) || a.b - c.b).forEach(p => {
+        L.push('• ' + (prioData[p.b] ? '⭐ ' : '') + 'P' + (p.b + 1) + ': ' + p.names.slice(0, 10).join(', ') + (p.names.length > 10 ? ' (+' + (p.names.length - 10) + ')' : ''));
+      });
+    } else L.push('✅ Todo mundo já atacou!');
+    L.push('✅ Já atacaram: ' + done + ' de ' + named);
+    if (unav.size) L.push('🚫 Indisponíveis: ' + [...unav].slice(0, 12).join(', ') + (unav.size > 12 ? ' (+' + (unav.size - 12) + ')' : ''));
+  }
+  if (strData && strData.text) L.push('', '🧠 ' + strData.text);
+  return L.join('\n');
+}
+['c-copy', 'atk-copy'].forEach(id => $(id).onclick = async () => {
+  const b = $(id), ok = await v2Copy(warText()); v2Flash(b, ok ? '✓' + (id === 'c-copy' ? ' Copiado' : '') : b.textContent);
+});
+
+/* ---------------------------------------------------------------------
+   5) Prints dos carros fortes (P1 a P6), na aba Estratégia
+   --------------------------------------------------------------------- */
+const PK = ['p1', 'p2', 'p3', 'p4', 'p5', 'p6'], TC = { b: 0, ref: null, items: {}, built: false };
+const TC_MAX = 80000, TC_SHOW = 8;
+function tcBuild(){
+  if (TC.built) return; TC.built = true;
+  PK.forEach((k, i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.innerHTML = 'P' + (i + 1) + '<small></small>';
+    b.onclick = () => tcOpen(i); $('p-chips').appendChild(b);
+  });
+}
+function tcStop(){ if (TC.ref) { TC.ref.off(); TC.ref = null; } }
+function tcEnter(){ tcBuild(); if (!TC.ref) tcOpen(TC.b); }
+function tcOpen(i){
+  tcStop(); TC.b = i; TC.items = {};
+  document.querySelectorAll('#p-chips button').forEach((b, j) => { b.classList.toggle('on', j === i); b.querySelector('small').textContent = ''; });
+  $('p-title').textContent = 'Carros fortes no prédio ' + (i + 1); $('p-grid').innerHTML = '';
+  const r = db.ref('tact/' + PK[i]).orderByChild('ts').limitToLast(TC_SHOW); TC.ref = r;
+  r.on('child_added', s => { TC.items[s.key] = s.val(); tcRender(); }, () => { $('p-help').textContent = 'Sem permissão para ver os prints. O líder precisa publicar as regras novas do Firebase.'; });
+  r.on('child_removed', s => { delete TC.items[s.key]; tcRender(); }, () => {});
+}
+function tcView(m){
+  const o = document.createElement('div'); o.className = 'lbx';
+  const im = document.createElement('img'); im.src = m.img; im.alt = 'Print';
+  const t = document.createElement('div'); t.textContent = (m.user || '') + ' · ' + v2D(m.ts) + ' ' + v2T(m.ts) + ' · toque para fechar';
+  o.append(im, t); o.onclick = () => o.remove(); document.body.appendChild(o);
+}
+function tcRender(){
+  const arr = Object.entries(TC.items).filter(([, m]) => m && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(m.img || '')).sort((a, b) => (b[1].ts || 0) - (a[1].ts || 0));
+  const g = $('p-grid'); g.innerHTML = '';
+  const chip = document.querySelectorAll('#p-chips button')[TC.b]; if (chip) chip.querySelector('small').textContent = arr.length ? arr.length : '';
+  if (!arr.length) { g.innerHTML = '<div class="help" style="grid-column:1/-1;margin:0">Nenhum print neste prédio ainda. Toque em 📷 para enviar.</div>'; return; }
+  arr.forEach(([k, m]) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'pth'; b.setAttribute('aria-label', 'Abrir print de ' + (m.user || ''));
+    const im = document.createElement('img'); im.src = m.img; im.alt = ''; im.loading = 'lazy';
+    const sm = document.createElement('small'); sm.textContent = (m.user || '') + ' · ' + v2D(m.ts) + ' ' + v2T(m.ts);
+    b.append(im, sm); b.onclick = () => tcView(m);
+    if (isStaff() || (auth.currentUser && m.uid === auth.currentUser.uid)) {
+      const x = document.createElement('span'); x.className = 'x'; x.textContent = '🗑'; x.setAttribute('role', 'button'); x.setAttribute('aria-label', 'Apagar print');
+      x.onclick = e => { e.stopPropagation(); if (confirm('Apagar este print?')) db.ref('tact/' + PK[TC.b] + '/' + k).remove().catch(console.error); };
+      b.appendChild(x);
+    }
+    g.appendChild(b);
+  });
+}
+/* reduz o print (foto da tela) para caber no banco gratuito: JPEG de até ~60 KB */
+async function tcCompress(file){
+  const url = URL.createObjectURL(file);
+  const im = await new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error('img')); i.src = url; });
+  URL.revokeObjectURL(url);
+  let side = 900, out = '';
+  for (let tries = 0; tries < 4; tries++) {
+    const sc = Math.min(1, side / Math.max(im.naturalWidth, im.naturalHeight));
+    const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(im.naturalWidth * sc)); c.height = Math.max(1, Math.round(im.naturalHeight * sc));
+    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+    for (let q = .72; q >= .38; q -= .1) { out = c.toDataURL('image/jpeg', q); if (out.length <= TC_MAX) return out; }
+    side = Math.round(side * .75);
+  }
+  throw new Error('big');
+}
+$('p-add').onclick = () => $('p-f').click();
+$('p-f').onchange = async e => {
+  const f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f || !me) return;
+  const btn = $('p-add'), h = $('p-help'); btn.disabled = true; h.textContent = 'Enviando…';
+  try {
+    const img = await tcCompress(f);
+    await timeout(db.ref('tact/' + PK[TC.b]).push({ img, user: me.name, ts: firebase.database.ServerValue.TIMESTAMP, uid: auth.currentUser.uid }), 25000);
+    h.textContent = 'Print enviado ✓';
+  } catch (err) {
+    console.error(err);
+    h.textContent = err && err.message === 'big' ? 'Não consegui reduzir essa imagem. Tente um print menor.' : /permission/i.test((err && (err.code || err.message)) || '') ? 'Sem permissão. O líder precisa publicar as regras novas do Firebase.' : 'Não foi possível enviar. Tente de novo.';
+  }
+  btn.disabled = false;
+};
+document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => { if (b.dataset.tab !== 'str') tcStop(); else if (curStr === 'prints') tcEnter(); }));
+
+/* ---------------------------------------------------------------------
+   6) Aviso de viagem com data de volta (opcional)
+   --------------------------------------------------------------------- */
+function ideaUntil(){
+  if (ideaKind !== 'trip') return {};
+  const v = $('idea-until').value; if (!v) return {};
+  const [y, m, d] = v.split('-').map(Number); if (!y || !m || !d) return {};
+  return { until: new Date(y, m - 1, d, 23, 59, 59).getTime() };
+}
+document.querySelectorAll('[data-ikind]').forEach(b => b.addEventListener('click', () => $('idea-until-w').classList.toggle('hidden', ideaKind !== 'trip')));
+$('idea-send').addEventListener('click', () => setTimeout(() => { $('idea-until').value = ''; }, 0));
+
+/* ---------------------------------------------------------------------
+   7) Limpeza automática do banco (roda quando um LÍDER abre o app)
+   --------------------------------------------------------------------- */
+function tripExpiry(m){
+  if (m.until) return +m.until;
+  const re = /(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?/g, base = new Date(m.ts || Date.now()); let best = 0, x;
+  while ((x = re.exec(m.text || ''))) {
+    const d = +x[1], mo = +x[2]; if (d < 1 || d > 31 || mo < 1 || mo > 12) continue;
+    let y = x[3] ? +x[3] : base.getFullYear(); if (y < 100) y += 2000;
+    let t = new Date(y, mo - 1, d, 23, 59, 59).getTime();
+    if (!x[3] && t < base.getTime() - 60 * V2DAY) t = new Date(y + 1, mo - 1, d, 23, 59, 59).getTime();
+    if (t > best) best = t;
+  }
+  return best || ((m.ts || 0) + 7 * V2DAY);
+}
+let v2Cleaning = false;
+async function v2Cleanup(force){
+  if (!isLeader() || !db || v2Cleaning) return;
+  v2Cleaning = true;
+  const info = $('cl-info');
+  try {
+    const cfg = (await timeout(db.ref('cleanup').once('value'))).val() || {};
+    const now = Date.now() + srvOff;
+    if (!force && (cfg.on === false || (cfg.last && now - cfg.last < 6 * 3600e3))) { v2Cleaning = false; return; }
+    if (force) info.textContent = 'Limpando…';
+    const cut = now - 7 * V2DAY; let total = 0;
+    const flush = async up => { const ks = Object.keys(up); if (!ks.length) return; try { await db.ref().update(up); total += ks.length; } catch (e) { console.error('limpeza', e); } };
+    for (const node of ['chat', 'admchat']) {
+      const s = await db.ref(node).orderByChild('ts').endAt(cut).limitToFirst(400).once('value'), up = {}, rx = {};
+      s.forEach(c => { up[node + '/' + c.key] = null; if (node === 'chat') rx['reactions/' + c.key] = null; });
+      await flush(up); await flush(rx);
+    }
+    const ideas = (await db.ref('ideas').once('value')).val() || {}, upI = {};
+    Object.entries(ideas).forEach(([k, m]) => { if (m && m.kind === 'trip' && tripExpiry(m) < now) upI['ideas/' + k] = null; });
+    await flush(upI);
+    for (const p of PK) {
+      const s = await db.ref('tact/' + p).orderByChild('ts').endAt(cut).limitToFirst(100).once('value'), up = {};
+      s.forEach(c => { up['tact/' + p + '/' + c.key] = null; }); await flush(up);
+    }
+    await db.ref('cleanup').update({ last: firebase.database.ServerValue.TIMESTAMP, n: total }).catch(() => {});
+    if (force) info.textContent = 'Pronto: ' + total + ' item(ns) apagado(s).';
+  } catch (e) { console.error(e); if (force) info.textContent = 'Não foi possível limpar agora.'; }
+  v2Cleaning = false;
+}
+function v2CleanInfo(c){
+  $('cl-on').checked = c.on !== false; $('cl-on').disabled = !isLeader();
+  $('cl-info').textContent = c.last ? 'Última limpeza: ' + v2D(c.last) + ' às ' + v2T(c.last) + ' · ' + (c.n || 0) + ' item(ns) apagado(s).' : 'Ainda não rodou.';
+}
+$('cl-on').onchange = () => { if (isLeader()) db.ref('cleanup/on').set($('cl-on').checked).catch(console.error); };
+$('cl-now').onclick = () => { if (isLeader() && confirm('Apagar agora as mensagens com mais de 7 dias, avisos de viagem vencidos e prints antigos?')) v2Cleanup(true); };
+
+/* ---------------------------------------------------------------------
+   8) Detector de fantasma (aba Membros)
+   --------------------------------------------------------------------- */
+function v2Ghost(code){
+  const s = V2.seen[code] || {}, now = Date.now() + srvOff, on = !!presData[code];
+  const lo = on ? now : (+s.ts || 0), la = +s.atk || 0;
+  if (!lo && !la) return { cls: '', txt: 'sem registro de acesso ainda' };
+  const dO = lo ? (now - lo) / V2DAY : null, dA = la ? (now - la) / V2DAY : null;
+  const sev = d => d === null ? 0 : d >= 7 ? 2 : d >= 3 ? 1 : 0;
+  const word = d => d === null ? 'sem registro' : d < 1 ? 'hoje' : d < 2 ? 'ontem' : 'há ' + Math.floor(d) + ' dias';
+  return { cls: ['g', 'y', 'r'][Math.max(sev(dO), sev(dA))], txt: 'entrou: ' + (on ? 'agora' : word(dO)) + ' · atacou: ' + word(dA) };
+}
+const ghostDot = code => { const g = v2Ghost(code); return `<span class="gh ${g.cls}" title="${g.txt}"></span>`; };
+const ghostLine = code => `<div class="ghx">${v2Ghost(code).txt}</div>`;
+let v2Last = 0;
+function v2Mark(){
+  const n = Date.now(); if (!me || n - v2Last < 5 * 60e3) return; v2Last = n;
+  db.ref('seen/' + me.code + '/ts').set(firebase.database.ServerValue.TIMESTAMP).catch(() => {});
+}
+function v2MarkAtk(name){
+  let code = null;
+  if (me && sameName(name, me.name)) code = me.code;
+  else if (isStaff()) { const e = Object.entries(usersData).find(([, u]) => u && sameName(u.name, name)); if (e) code = e[0]; }
+  if (code) db.ref('seen/' + code + '/atk').set(firebase.database.ServerValue.TIMESTAMP).catch(() => {});
+}
+
+/* ---------------------------------------------------------------------
+   9) Deslizar o dedo para trocar de aba (Calculadora <-> Ataques <-> Chat)
+   --------------------------------------------------------------------- */
+(function(){
+  const order = ['calc', 'atk', 'chat'], main = $('main'); let sx = 0, sy = 0, st = 0, ok = false;
+  main.addEventListener('touchstart', e => {
+    ok = e.touches.length === 1 && order.includes(curTab) && !e.target.closest('input,textarea,select,.clock,.btabs,#emo,.stabs,[contenteditable]');
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
+  }, { passive: true });
+  main.addEventListener('touchend', e => {
+    if (!ok) return; ok = false;
+    const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.8 || Date.now() - st > 700) return;
+    if (String(window.getSelection && window.getSelection()).length) return;
+    const n = order.indexOf(curTab) + (dx < 0 ? 1 : -1);
+    if (n < 0 || n >= order.length) return;
+    document.querySelector('nav button[data-tab="' + order[n] + '"]').click();
+  }, { passive: true });
+})();
+
+/* ---------------------------------------------------------------------
+   Liga tudo depois do login (chamado no fim do startSync)
+   --------------------------------------------------------------------- */
+function v2Start(){
+  const quiet = () => {};
+  renderMyStat();
+  v2Mark();
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) v2Mark(); });
+  if (isStaff()) {
+    db.ref('seen').on('value', s => { V2.seen = s.val() || {}; renderUsers(); }, quiet);
+    db.ref('cleanup').on('value', s => v2CleanInfo(s.val() || {}), quiet);
+  }
+  if (isLeader()) setTimeout(() => v2Cleanup(false), 6000);
+}
+
 (async function boot(){
   const msg = sessionStorage.getItem('cats_msg'); sessionStorage.removeItem('cats_msg');
   let saved = null; try { saved = JSON.parse(localStorage.getItem('cats_login')); } catch(e){}

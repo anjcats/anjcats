@@ -586,6 +586,19 @@ button{background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 86%,#fff)
 #login input,#apply input{padding:15px 16px}
 #login-btn,#ap-send{background:linear-gradient(180deg,#f7cd6a,var(--gold));color:#2a1d00;padding:15px;font-size:1.02rem}
 #apply-btn,#ap-back{background:none;box-shadow:none}
+
+/* ===== Música (opcional) ===== */
+#mus-b{position:fixed;right:14px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:40;width:44px;height:44px;border-radius:50%;padding:0;font-size:1.25rem;line-height:1;background:var(--panel);color:var(--gold);border:1px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+#mus-b.on{background:linear-gradient(180deg,#f7cd6a,var(--gold));color:#2a1d00}
+#mus-p{position:fixed;left:10px;right:10px;bottom:calc(142px + env(safe-area-inset-bottom));z-index:41;max-width:540px;margin:0 auto;display:grid;gap:10px;padding:14px;border:1px solid var(--line);border-radius:22px;background:color-mix(in srgb,var(--panel) 94%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 16px 40px rgba(0,0,0,.5);transition:opacity .2s,transform .2s}
+#mus-p:not(.open){opacity:0;pointer-events:none;transform:translateY(12px);visibility:hidden}
+.mus-t{display:grid;gap:2px}.mus-t b{font-size:1rem}.mus-t span,.mus-s{font-size:.8rem;color:var(--mute)}
+.mus-r{display:flex;gap:8px}.mus-r input{flex:1}
+.mus-g{flex:1;background:none;box-shadow:none;border:1px solid var(--line);color:var(--mute)}
+#mus-l{display:grid;gap:6px;max-height:34vh;overflow:auto}
+#mus-l button{background:var(--inp);box-shadow:none;color:var(--text);text-align:left;font-weight:600;padding:11px 13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mus-l button.on{outline:2px solid var(--gold)}
+#mus-f iframe{width:100%;border:0;border-radius:14px;display:block}
 </style>
 <script>try{if(localStorage.getItem('cats_theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
 </head>
@@ -953,6 +966,16 @@ button{background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 86%,#fff)
       </div>
     </div>
   </main>
+  <button id="mus-b" type="button" aria-label="Música" aria-expanded="false">♪</button>
+  <div id="mus-p" aria-hidden="true">
+    <div class="mus-t"><b>Música</b><span>Opcional. Só toca se você quiser.</span></div>
+    <div class="mus-r"><input id="mus-in" placeholder="Playlist (YouTube/Spotify) ou link de rádio" autocomplete="off"><button id="mus-go" type="button">Ouvir</button></div>
+    <button id="mus-rock" type="button" class="mus-g">📻 Rádios de rock</button>
+    <div id="mus-l"></div>
+    <div id="mus-f"></div>
+    <div class="mus-r"><button id="mus-stop" type="button" class="mus-g">Parar música</button><button id="mus-x" type="button" class="mus-g">Fechar</button></div>
+    <div id="mus-m" class="mus-s"></div>
+  </div>
   <nav>
     <button data-tab="calc" class="on"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 13h.01M12 13h.01M16 13h.01M8 17h.01M12 17h.01M16 17h.01"/></svg></span>Calculadora</button>
     <button data-tab="atk"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="m13 19 6-6M16 16l4 4M19 21l2-2"/></svg></span>Ataques</button>
@@ -1421,7 +1444,7 @@ let isDev = false;   // vira true se o login for o definido em config/dev no Fir
 
 const crownSvg = c => `<svg class="crown" viewBox="0 0 24 24" aria-hidden="true"><path fill="${c}" stroke="rgba(0,0,0,.35)" stroke-width="1" stroke-linejoin="round" d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>`;
 const roleCrown = r => r === 'leader' ? crownSvg('#ffc83d') : r === 'mod' ? crownSvg('#c8d0dc') : '';
-const TAGS = [['dev','Dev','#0ea5a4'],['lider','Líder','#e0a21b'],['vice','Vice-líder','#d9711a'],['capitao','Capitão','#2f73e0'],['estrategista','Estrategista','#8b5cf6'],['veterano','Veterano','#5b6785'],['elite','Elite','#d93a4b'],['suporte','Suporte','#20a56b']];
+const TAGS = [['dev','Dev','#0ea5a4'],['lider','Líder','#e0a21b'],['vice','Vice-líder','#d9711a'],['capitao','Capitão','#2f73e0'],['estrategista','Estrategista','#8b5cf6'],['veterano','Veterano','#5b6785'],['elite','Elite','#d93a4b'],['suporte','Suporte','#20a56b'],['resenha','Resenha','#e8863c'],['gay','Gay','#ec4899'],['novato','Novato','#3b9fd8']];
 const tagPill = t => { const x = TAGS.find(a => a[0] === t); return x ? `<span class="tg" style="background:${x[2]}">${x[1]}</span>` : ''; };
 const colOk = c => /^#[0-9a-f]{6}$/.test(c || '');
 const nameTag = m => roleCrown(m.role) + tagPill(m.tag) + (m.tag === 'dev' ? '' : devTag(m.dev)) + '<span class="nmc"' + (colOk(m.color) ? ` style="color:${m.color}"` : '') + '>' + esc(m.user) + '</span>' + rankTag(m.rank);
@@ -2878,6 +2901,58 @@ function v2Start(){
 if ('serviceWorker' in navigator && !window.Capacitor && /^https?:$/.test(location.protocol)) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
 }
+
+/* ---------- Música opcional (cada pessoa decide se ouve) ---------- */
+const PLAYLIST_URL = '';   // opcional: cole aqui o link da playlist do clã (YouTube ou Spotify)
+(function(){
+  const g = id => document.getElementById(id), P = g('mus-p'), B = g('mus-b'), F = g('mus-f'), M = g('mus-m'), K = 'cats_music';
+  const get = () => { try { return localStorage.getItem(K) || ''; } catch (e) { return ''; } };
+  const put = v => { try { v ? localStorage.setItem(K, v) : localStorage.removeItem(K); } catch (e) {} };
+  function embed(u){
+    u = (u || '').trim(); let m;
+    if ((m = u.match(/[?&]list=([\w-]+)/)) && /youtu/.test(u)) return { h: 200, src: 'https://www.youtube.com/embed/videoseries?list=' + m[1] };
+    if ((m = u.match(/open\.spotify\.com\/(?:intl-[a-z]+\/)?(playlist|album|track|episode|show)\/([\w]+)/))) return { h: m[1] === 'track' || m[1] === 'episode' ? 152 : 352, src: 'https://open.spotify.com/embed/' + m[1] + '/' + m[2] };
+    return null;
+  }
+  function play(){
+    const raw = g('mus-in').value.trim(), e = embed(raw);
+    if (!e && /^https:\/\//i.test(raw)) { put(raw); return radio(raw, 'sua rádio'); }
+    if (!e) { M.textContent = 'Link inválido. Use uma playlist do YouTube/Spotify ou o link direto (https) de uma rádio.'; return; }
+    A.pause();
+    put(g('mus-in').value.trim()); M.textContent = '';
+    F.innerHTML = '<iframe allow="autoplay; encrypted-media" loading="lazy" title="Playlist" height="' + e.h + '" src="' + e.src + '"></iframe>'; B.classList.add('on');
+  }
+  const A = new Audio(); A.preload = 'none';
+  function radio(url, name){
+    F.innerHTML = ''; A.src = url; M.textContent = 'Conectando em ' + name + '...';
+    A.play().then(() => { M.textContent = 'Tocando: ' + name; B.classList.add('on'); }).catch(() => { M.textContent = 'Não consegui tocar essa rádio. Tente outra.'; B.classList.remove('on'); });
+  }
+  async function rock(){
+    const L = g('mus-l'); L.innerHTML = ''; M.textContent = 'Buscando rádios de rock...';
+    const q = 'stations/search?tag=rock&order=clickcount&reverse=true&hidebroken=true&is_https=true&limit=';
+    for (const h of ['de1', 'nl1', 'at1']) {
+      try {
+        const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 8000), base = 'https://' + h + '.api.radio-browser.info/json/';
+        let r = await (await fetch(base + q + '12&countrycode=BR', { signal: ctl.signal })).json();
+        if (r.length < 4) r = r.concat(await (await fetch(base + q + '12', { signal: ctl.signal })).json());
+        clearTimeout(t); const seen = new Set(); r = r.filter(x => x.url_resolved && !seen.has(x.url_resolved) && seen.add(x.url_resolved)).slice(0, 12);
+        if (!r.length) continue; M.textContent = 'Toque numa rádio para ouvir.';
+        r.forEach(x => { const b = document.createElement('button'); b.type = 'button'; b.textContent = '📻 ' + String(x.name).trim().slice(0, 40);
+          b.onclick = () => { L.querySelectorAll('button').forEach(y => y.classList.remove('on')); b.classList.add('on'); radio(x.url_resolved, String(x.name).trim()); }; L.appendChild(b); });
+        return;
+      } catch (e) {}
+    }
+    M.textContent = 'Não consegui buscar as rádios agora. Cole o link direto de uma rádio no campo acima.';
+  }
+  g('mus-rock').onclick = rock;
+  function toggle(o){ P.classList.toggle('open', o); P.setAttribute('aria-hidden', String(!o)); B.setAttribute('aria-expanded', String(o)); }
+  B.onclick = () => toggle(!P.classList.contains('open'));
+  g('mus-x').onclick = () => toggle(false);
+  g('mus-go').onclick = play;
+  g('mus-in').onkeydown = e => { if (e.key === 'Enter') play(); };
+  g('mus-stop').onclick = () => { A.pause(); A.removeAttribute('src'); A.load(); M.textContent = ''; F.innerHTML = ''; B.classList.remove('on'); };
+  g('mus-in').value = get() || PLAYLIST_URL;
+})();
 </script>
 </body>
 </html>

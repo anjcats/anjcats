@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap">
 <style>
 :root{color-scheme:dark;--bg:#0a0f1a;--panel:#131b2c;--line:#23304a;--text:#eaf0fb;--mute:#8896b3;--blue:#3d8bff;--red:#ff4d5e;--gold:#ffc83d;--ok:#2fd27a;
   --inp:#0a1120;--deep:#050a14;--tb:#0e2342;--tr:#3a1220;--newbg:#0e2a1d;--donebg:#134a2e;--unbg:#4d141c;--meb:#16407a;--badge:#1d2a45;
@@ -523,6 +523,37 @@ main.full{padding:0;max-width:none}
 .gh{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;background:var(--mute)}
 .gh.g{background:var(--ok)}.gh.y{background:var(--gold)}.gh.r{background:var(--red)}
 .ghx{font-size:.74rem;color:var(--mute);margin-top:2px}
+
+/* ===== Tema premium ===== */
+:root{--bg:#070b13;--panel:#0e1422;--line:#1a2338;--text:#e8edf8;--mute:#7886a3;--blue:#4f8fff;--red:#ff5468;--gold:#f0b94a;--ok:#34d399;--inp:#0a101c;--badge:#18223a;--hl:rgba(255,255,255,.045)}
+:root[data-theme="light"]{--bg:#f4f6fb;--panel:#fff;--line:#e0e6f1;--hl:rgba(0,0,0,.02)}
+*{font-family:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{background:radial-gradient(120% 60% at 50% -10%,rgba(79,143,255,.10),transparent 60%),var(--bg);-webkit-font-smoothing:antialiased}
+header b,.card h3,.live b,#login h1,#apply h1,.row input,.mystat b{font-family:"Oswald","Manrope",sans-serif;font-variant-numeric:tabular-nums}
+header{border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);position:sticky;top:0;z-index:20}
+header b{font-size:1.15rem;font-weight:600;letter-spacing:.06em}
+header button{border-radius:999px;font-size:.8rem;font-weight:600}
+.badge{letter-spacing:.06em}
+.card,#ap-status,#rec-new{border:1px solid var(--line);border-radius:18px;padding:16px;background:linear-gradient(180deg,var(--hl),transparent 45%),var(--panel)}
+.card h3{font-size:1.05rem;font-weight:500;letter-spacing:.03em}
+input,select{border-radius:12px;padding:11px 13px;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 22%,transparent)}
+button{border-radius:12px;font-weight:700;transition:transform .12s,filter .15s}
+button:not(:disabled):active{transform:scale(.97)}
+main button:not(.on):not([class*=bad]):not(:disabled):hover{filter:brightness(1.08)}
+.row input{font-size:1.4rem;font-weight:500}
+.live{border-top:1px solid var(--line)}
+.live b{font-size:1.9rem;font-weight:500}
+main{padding:16px 16px 24px;scroll-behavior:smooth}
+nav{margin:6px 10px calc(8px + env(safe-area-inset-bottom));padding:5px;gap:2px;border:1px solid var(--line);border-radius:22px;background:color-mix(in srgb,var(--panel) 88%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.35);overflow:hidden}
+nav button{flex:1 1 0;min-width:0;font-size:0;gap:2px;padding:9px 0;border-radius:17px;box-shadow:none!important;transition:flex .25s,background .2s,color .2s;position:relative}
+nav button .ic{display:grid;place-items:center;font-size:0}
+nav button.on{flex:2.1 1 0;font-size:.64rem;font-weight:700;background:color-mix(in srgb,var(--gold) 14%,transparent);color:var(--gold)}
+nav .dot{position:absolute;top:6px;right:calc(50% - 20px);margin:0;width:7px;height:7px;box-shadow:0 0 0 2px var(--panel)}
+nav button.on .dot{right:8px}
+nav button>span:not(.ic){position:static}
+.dot{background:var(--red)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 <script>try{if(localStorage.getItem('cats_theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
 </head>
@@ -896,14 +927,14 @@ main.full{padding:0;max-width:none}
     </div>
   </main>
   <nav>
-    <button data-tab="calc" class="on"><span class="ic">🧮</span>Calculadora</button>
-    <button data-tab="atk"><span class="ic">⚔️</span>Ataques</button>
-    <button data-tab="str"><span class="ic">🎯</span><span>Estratégia<span id="str-dot" class="dot hidden"></span></span></button>
-    <button data-tab="cars"><span class="ic">🚗</span>Carros</button>
-    <button data-tab="chat"><span class="ic">💬</span><span>Chat<span id="chat-dot" class="dot hidden"></span></span></button>
-    <button data-tab="mem" class="only-staff"><span class="ic">👥</span><span>Membros<span id="rec-dot" class="dot hidden"></span></span></button>
-    <button data-tab="game"><span class="ic">🎮</span>Treino</button>
-    <button data-tab="cfg"><span class="ic">⚙️</span>Configuração</button>
+    <button data-tab="calc" class="on"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 13h.01M12 13h.01M16 13h.01M8 17h.01M12 17h.01M16 17h.01"/></svg></span>Calculadora</button>
+    <button data-tab="atk"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="m13 19 6-6M16 16l4 4M19 21l2-2"/></svg></span>Ataques</button>
+    <button data-tab="str"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span><span>Estratégia<span id="str-dot" class="dot hidden"></span></span></button>
+    <button data-tab="cars"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16v-3l2-5h14l2 5v3zM7 16v2M17 16v2M5 12h14"/></svg></span>Carros</button>
+    <button data-tab="chat"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.5A8 8 0 1 1 21 12z"/></svg></span><span>Chat<span id="chat-dot" class="dot hidden"></span></span></button>
+    <button data-tab="mem" class="only-staff"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.2c2.9.2 5 2.4 5 5.3"/></svg></span><span>Membros<span id="rec-dot" class="dot hidden"></span></span></button>
+    <button data-tab="game"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 8 4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg></span>Treino</button>
+    <button data-tab="cfg"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span>Configuração</button>
   </nav>
 </div>
 
@@ -2790,7 +2821,7 @@ function v2Ghost(code){
   const word = d => d === null ? 'sem registro' : d < 1 ? 'hoje' : d < 2 ? 'ontem' : 'há ' + Math.floor(d) + ' dias';
   return { cls: ['g', 'y', 'r'][Math.max(sev(dO), sev(dA))], txt: 'entrou: ' + (on ? 'agora' : word(dO)) + ' · atacou: ' + word(dA) };
 }
-const ghostDot = code => { const g = v2Ghost(code); return `<span class="gh ${g.cls}" title="${g.txt}"></span>`; };
+const ghostDot = () => '';
 const ghostLine = code => `<div class="ghx">${v2Ghost(code).txt}</div>`;
 let v2Last = 0;
 function v2Mark(){
@@ -2804,25 +2835,6 @@ function v2MarkAtk(name){
   if (code) db.ref('seen/' + code + '/atk').set(firebase.database.ServerValue.TIMESTAMP).catch(() => {});
 }
 
-/* ---------------------------------------------------------------------
-   9) Deslizar o dedo para trocar de aba (Calculadora <-> Ataques <-> Chat)
-   --------------------------------------------------------------------- */
-(function(){
-  const order = ['calc', 'atk', 'chat'], main = $('main'); let sx = 0, sy = 0, st = 0, ok = false;
-  main.addEventListener('touchstart', e => {
-    ok = e.touches.length === 1 && order.includes(curTab) && !e.target.closest('input,textarea,select,.clock,.btabs,#emo,.stabs,[contenteditable]');
-    sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
-  }, { passive: true });
-  main.addEventListener('touchend', e => {
-    if (!ok) return; ok = false;
-    const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
-    if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.8 || Date.now() - st > 700) return;
-    if (String(window.getSelection && window.getSelection()).length) return;
-    const n = order.indexOf(curTab) + (dx < 0 ? 1 : -1);
-    if (n < 0 || n >= order.length) return;
-    document.querySelector('nav button[data-tab="' + order[n] + '"]').click();
-  }, { passive: true });
-})();
 
 /* ---------------------------------------------------------------------
    Liga tudo depois do login (chamado no fim do startSync)

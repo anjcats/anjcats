@@ -599,6 +599,14 @@ button{background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 86%,#fff)
 #mus-l button{background:var(--inp);box-shadow:none;color:var(--text);text-align:left;font-weight:600;padding:11px 13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #mus-l button.on{outline:2px solid var(--gold)}
 #mus-f iframe{width:100%;border:0;border-radius:14px;display:block}
+
+/* ===== Menções e alertas ===== */
+.at{color:var(--lb);font-weight:700}
+.msg.mention{box-shadow:inset 3px 0 0 var(--gold);background:color-mix(in srgb,var(--gold) 9%,transparent)}
+#at-sug{display:flex;gap:6px;overflow-x:auto;padding:6px 2px}
+#at-sug button{flex:none;padding:7px 12px;font-size:.85rem;background:var(--inp);box-shadow:none;color:var(--text);border-radius:999px}
+#toast{position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top));z-index:60;max-width:520px;margin:0 auto;padding:13px 16px;border-radius:16px;font-weight:700;background:linear-gradient(180deg,#f7cd6a,var(--gold));color:#2a1d00;box-shadow:0 12px 30px rgba(0,0,0,.45);transition:opacity .25s,transform .25s}
+#toast:not(.on){opacity:0;transform:translateY(-14px);pointer-events:none}
 </style>
 <script>try{if(localStorage.getItem('cats_theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
 </head>
@@ -800,7 +808,7 @@ button{background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 86%,#fff)
       <div id="chat-wrap" style="flex:1;min-height:0;height:auto">
         <div id="msgs"></div>
         <div id="typing" aria-live="polite"></div>
-        <div id="emo" class="hidden"></div><form id="chat-form"><button type="button" id="emo-btn" aria-label="Emotes">😊</button><input id="chat-in" placeholder="Mensagem" autocomplete="off" maxlength="500"><button>Enviar</button></form>
+        <div id="emo" class="hidden"></div><div id="at-sug" class="hidden"></div><form id="chat-form"><button type="button" id="emo-btn" aria-label="Emotes">😊</button><input id="chat-in" placeholder="Mensagem" autocomplete="off" maxlength="500"><button>Enviar</button></form>
       </div>
       <div id="adm-wrap" class="hidden" style="flex:1;min-height:0;height:auto">
         <div class="admnote">🛡️ Chat privado: só líderes e moderadores veem estas mensagens.</div>
@@ -913,6 +921,15 @@ button{background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 86%,#fff)
           <button data-theme-opt="light" aria-pressed="false"><span class="sw"></span>⚪ Branco</button>
         </div>
         <div class="help" style="margin:0">A escolha fica salva neste aparelho.</div>
+      </div>
+      <div class="card">
+        <h3>Alertas</h3>
+        <label class="chk"><input type="checkbox" id="al-end"> Avisar quando o round estiver acabando</label>
+        <div class="row"><label for="al-min">Avisar quando faltarem</label><select id="al-min"><option value="10">10 min</option><option value="5">5 min</option><option value="3">3 min</option><option value="1">1 min</option></select></div>
+        <label class="chk"><input type="checkbox" id="al-flip"> Avisar quando a virada estiver perto</label>
+        <label class="chk"><input type="checkbox" id="al-at"> Avisar quando me marcarem com @</label>
+        <button type="button" id="al-notif">Ativar notificações do aparelho</button>
+        <div class="help" id="al-msg" style="margin:0">Os avisos usam vibração, som e uma faixa no topo. Funcionam com o app aberto ou em segundo plano. Com o app fechado, o celular não recebe nada.</div>
       </div>
       <div class="card only-staff">
         <h3>Tags dos membros</h3>
@@ -1512,8 +1529,8 @@ function addMsg(m, box, key){
   const el = document.createElement('div'); el.className = 'msg' + (mine ? ' me' : '') + (big ? ' big' : '');
   const t = new Date(m.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
   const s = document.createElement('small'); s.innerHTML = nameTag(m) + ' · ' + t;
-  const tx = document.createElement('div'); tx.className = 'mt'; tx.textContent = m.text;
-  el.appendChild(s); el.appendChild(tx);
+  const tx = document.createElement('div'); tx.className = 'mt'; tx.innerHTML = atHtml(m.text);
+  el.appendChild(s); el.appendChild(tx); atCheck(m, el, !!key, mine);
   if (key) {
     const rx = document.createElement('div'); rx.className = 'rx'; const pk = document.createElement('div'); pk.className = 'pick hidden';
     RX.forEach(([k, e]) => { const b = document.createElement('button'); b.textContent = e; b.onclick = () => { pk.classList.add('hidden'); toggleRx(key, k); }; pk.appendChild(b); });
@@ -2952,6 +2969,66 @@ const PLAYLIST_URL = '';   // opcional: cole aqui o link da playlist do clã (Yo
   g('mus-in').onkeydown = e => { if (e.key === 'Enter') play(); };
   g('mus-stop').onclick = () => { A.pause(); A.removeAttribute('src'); A.load(); M.textContent = ''; F.innerHTML = ''; B.classList.remove('on'); };
   g('mus-in').value = get() || PLAYLIST_URL;
+})();
+
+/* ---------- Menções (@nome), alertas e avisos ---------- */
+const AT_T0 = Date.now() - 3000, atNames = new Set();
+const atNorm = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '_');
+const atHtml = t => esc(t).replace(/@[\p{L}\p{N}_.-]+/gu, x => '<span class="at">' + x + '</span>');
+const alGet = (k, d) => { try { const v = localStorage.getItem('cats_al_' + k); return v === null ? d : v; } catch (e) { return d; } };
+const alSet = (k, v) => { try { localStorage.setItem('cats_al_' + k, v); } catch (e) {} };
+function toast(msg){
+  let t = document.getElementById('toast'); if (!t) { t = document.createElement('div'); t.id = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 5000);
+}
+let alCtx = null;
+function beep(){ try { alCtx = alCtx || new (window.AudioContext || window.webkitAudioContext)(); [0, .22].forEach(d => { const o = alCtx.createOscillator(), g = alCtx.createGain(); o.frequency.value = 880; o.connect(g); g.connect(alCtx.destination); g.gain.setValueAtTime(.18, alCtx.currentTime + d); g.gain.exponentialRampToValueAtTime(.001, alCtx.currentTime + d + .18); o.start(alCtx.currentTime + d); o.stop(alCtx.currentTime + d + .2); }); } catch (e) {} }
+function alerta(msg){
+  toast(msg); beep(); try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {}
+  try { if (document.hidden && 'Notification' in window && Notification.permission === 'granted') new Notification('Calculadora C.A.T.S', { body: msg }); } catch (e) {}
+}
+function atCheck(m, el, live, mine){
+  if (m && m.user) atNames.add(String(m.user));
+  if (!me || mine || !m || !m.text) return;
+  const toks = (String(m.text).match(/@[\p{L}\p{N}_.-]+/gu) || []).map(x => atNorm(x.slice(1)));
+  const my = atNorm(me.name);
+  if (!toks.some(x => x === my || x === 'todos' || x === atNorm(String(me.name).split(' ')[0]))) return;
+  el.classList.add('mention');
+  if (live && (+m.ts || Date.now()) >= AT_T0 && alGet('at', '1') === '1') alerta('💬 ' + m.user + ' marcou você no chat');
+}
+/* sugestões ao digitar @ */
+(function(){
+  const inp = document.getElementById('chat-in'), box = document.getElementById('at-sug'); if (!inp || !box) return;
+  inp.addEventListener('input', () => {
+    const v = inp.value, m = v.slice(0, inp.selectionStart || v.length).match(/@([\p{L}\p{N}_.-]*)$/u);
+    if (!m) { box.classList.add('hidden'); return; }
+    const all = new Set(atNames); try { Object.values(usersData || {}).forEach(u => u && u.name && all.add(String(u.name))); } catch (e) {}
+    const q = atNorm(m[1]), list = ['todos'].concat([...all]).filter(n => atNorm(n).startsWith(q) && atNorm(n) !== atNorm(me && me.name)).slice(0, 8);
+    box.innerHTML = ''; list.forEach(n => { const b = document.createElement('button'); b.type = 'button'; b.textContent = '@' + n;
+      b.onclick = () => { inp.value = v.slice(0, v.length - m[0].length) + '@' + atNorm(n) + ' '; box.classList.add('hidden'); inp.focus(); }; box.appendChild(b); });
+    box.classList.toggle('hidden', !list.length);
+  });
+})();
+/* alerta de fim de round e de virada */
+(function(){
+  const g = id => document.getElementById(id), fired = {};
+  const bind = (id, k, d) => { const e = g(id); if (!e) return; if (e.type === 'checkbox') { e.checked = alGet(k, d) === '1'; e.onchange = () => alSet(k, e.checked ? '1' : '0'); } else { e.value = alGet(k, d); e.onchange = () => alSet(k, e.value); } };
+  bind('al-end', 'end', '1'); bind('al-min', 'min', '5'); bind('al-flip', 'flip', '1'); bind('al-at', 'at', '1');
+  const nb = g('al-notif');
+  if (nb) nb.onclick = () => {
+    if (!('Notification' in window)) { g('al-msg').textContent = 'Este aparelho não permite notificações pelo app. Os avisos de vibração e som continuam funcionando.'; return; }
+    Notification.requestPermission().then(r => { g('al-msg').textContent = r === 'granted' ? 'Notificações ativadas neste aparelho.' : 'Notificações bloqueadas. Libere nas configurações do aparelho.'; });
+  };
+  setInterval(() => {
+    try {
+      if (!me || typeof cs === 'undefined' || !cs || !cs.endAt) return;
+      const now = Date.now(), rem = (cs.endAt - now) / 60000, key = String(cs.endAt);
+      if (rem <= 0) return;
+      const lim = +alGet('min', '5');
+      if (alGet('end', '1') === '1' && rem <= lim && !fired['e' + key]) { fired['e' + key] = 1; alerta('⏱️ Faltam ' + Math.ceil(rem) + ' min para o fim do round'); }
+      if (alGet('flip', '1') === '1' && typeof v2MarginInfo === 'function') { const r = v2MarginInfo(now); if (r && r.cls === 'bad' && !fired['f' + key]) { fired['f' + key] = 1; alerta('🔴 Virada por pouco! Confira a Calculadora'); } else if (!r || r.cls !== 'bad') fired['f' + key] = 0; }
+    } catch (e) {}
+  }, 1000);
 })();
 </script>
 </body>

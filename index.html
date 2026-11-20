@@ -554,6 +554,38 @@ nav button.on .dot{right:8px}
 nav button>span:not(.ic){position:static}
 .dot{background:var(--red)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* ===== Design v2 ===== */
+:root{--bg:#090b14;--panel:#10142a;--line:rgba(255,255,255,.08);--mute:#8089a6;--inp:rgba(255,255,255,.045);--tb:#10142a;--tr:#10142a;--deep:#080a14}
+:root[data-theme="light"]{--bg:#f3f5fb;--panel:#fff;--line:rgba(10,20,50,.1);--inp:rgba(10,20,50,.04);--tb:#fff;--tr:#fff;--deep:#eef1f8}
+body{background:radial-gradient(90% 40% at 100% 0%,color-mix(in srgb,var(--red) 11%,transparent),transparent 70%),radial-gradient(90% 45% at 0% 0%,color-mix(in srgb,var(--blue) 14%,transparent),transparent 70%),var(--bg)}
+header{padding:14px 18px;border-bottom:0}
+header b{display:flex;align-items:center;gap:10px;font-size:1.2rem;letter-spacing:.08em}
+header b::before{content:"";width:11px;height:11px;border-radius:3px;background:linear-gradient(135deg,#f7cd6a,var(--gold));transform:rotate(45deg);box-shadow:0 0 14px color-mix(in srgb,var(--gold) 60%,transparent)}
+main{padding:6px 16px 24px}
+input,select{background:var(--inp);border:1px solid transparent;border-radius:14px;padding:13px 14px}
+input:focus,select:focus{background:color-mix(in srgb,var(--blue) 8%,var(--inp))}
+button{background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 86%,#fff),var(--blue));box-shadow:inset 0 1px 0 rgba(255,255,255,.22);border-radius:14px}
+.card,.panel{border:1px solid var(--line);border-radius:22px;padding:18px;background:linear-gradient(180deg,var(--hl),transparent 50%),var(--panel);box-shadow:none}
+.row label{font-weight:600;color:var(--mute);font-size:.88rem}
+.team{position:relative;overflow:hidden;border:1px solid var(--line);border-left:1px solid var(--line);border-radius:22px;padding:18px 18px 16px;gap:12px;margin-bottom:14px}
+.team.b{background:radial-gradient(110% 80% at 0% 0%,color-mix(in srgb,var(--blue) 26%,transparent),transparent 62%),var(--panel);border-color:color-mix(in srgb,var(--blue) 38%,var(--line))}
+.team.r{background:radial-gradient(110% 80% at 100% 0%,color-mix(in srgb,var(--red) 26%,transparent),transparent 62%),var(--panel);border-color:color-mix(in srgb,var(--red) 38%,var(--line))}
+.team::before{content:"";position:absolute;left:18px;top:0;width:48px;height:4px;border-radius:0 0 6px 6px;background:var(--blue)}
+.team.r::before{background:var(--red)}
+.team input{background:rgba(0,0,0,.26)}
+:root[data-theme="light"] .team input{background:rgba(10,20,50,.05)}
+.team .live{border:0;padding:8px 0 2px}
+.team .live label,.team .need label{font-size:.82rem}
+.team .live b{font-size:3.1rem;line-height:1;font-weight:600;color:var(--lb);text-shadow:0 0 30px color-mix(in srgb,var(--blue) 55%,transparent)}
+.team.r .live b{color:var(--lr);text-shadow:0 0 30px color-mix(in srgb,var(--red) 55%,transparent)}
+.team .need b{font-size:1.45rem;font-weight:500}
+.needmsg{font-size:.85rem;line-height:1.35}
+#login,#apply{max-width:400px;gap:12px}
+#login h1,#apply h1{font-family:"Oswald",sans-serif;font-size:3.1rem;font-weight:600;letter-spacing:.02em;line-height:1.02;background:linear-gradient(180deg,var(--text),var(--mute));-webkit-background-clip:text;background-clip:text;color:transparent}
+#login input,#apply input{padding:15px 16px}
+#login-btn,#ap-send{background:linear-gradient(180deg,#f7cd6a,var(--gold));color:#2a1d00;padding:15px;font-size:1.02rem}
+#apply-btn,#ap-back{background:none;box-shadow:none}
 </style>
 <script>try{if(localStorage.getItem('cats_theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
 </head>
@@ -868,11 +900,6 @@ nav button>span:not(.ic){position:static}
           <button data-theme-opt="light" aria-pressed="false"><span class="sw"></span>⚪ Branco</button>
         </div>
         <div class="help" style="margin:0">A escolha fica salva neste aparelho.</div>
-      </div>
-      <div class="card only-staff">
-        <h3>Patentes dos membros</h3>
-        <div id="rk-list"></div>
-        <div class="help" style="margin:0">A patente aparece ao lado do nome no chat e nas sugestões, em mensagens novas.</div>
       </div>
       <div class="card only-staff">
         <h3>Tags dos membros</h3>
@@ -1388,7 +1415,7 @@ $('str-save').onclick = async () => {
 /* ---------- Chat ---------- */
 /* patentes (da menor para a maior) */
 const RANKS = [['recruta','Recruta'],['soldado','Soldado'],['cabo','Cabo'],['sargento','Sargento'],['subtenente','Subtenente'],['tenente','Tenente'],['capitao','Capitão'],['major','Major'],['coronel','Coronel'],['general','General']];
-const rankTag = r => { const i = RANKS.findIndex(x => x[0] === r); return i < 0 ? '' : `<span class="rk" data-t="${Math.min(3, Math.floor(i / 3))}">${RANKS[i][1]}</span>`; };
+const rankTag = () => ''; const _rankOld = r => { const i = RANKS.findIndex(x => x[0] === r); return i < 0 ? '' : `<span class="rk" data-t="${Math.min(3, Math.floor(i / 3))}">${RANKS[i][1]}</span>`; };
 const devTag = d => d ? '<span class="devtag">DEV</span>' : '';
 let isDev = false;   // vira true se o login for o definido em config/dev no Firebase
 
@@ -1400,7 +1427,6 @@ const colOk = c => /^#[0-9a-f]{6}$/.test(c || '');
 const nameTag = m => roleCrown(m.role) + tagPill(m.tag) + (m.tag === 'dev' ? '' : devTag(m.dev)) + '<span class="nmc"' + (colOk(m.color) ? ` style="color:${m.color}"` : '') + '>' + esc(m.user) + '</span>' + rankTag(m.rank);
 const postMeta = () => {                                // campos de cargo/patente/dev que acompanham cada mensagem
   const o = { role: me.role };
-  if (me.rank) o.rank = me.rank;
   if (me.tag) o.tag = me.tag;
   if (isDev) o.dev = true;
   if (colOk(myColor)) o.color = myColor;
@@ -1610,21 +1636,7 @@ function renderBat(){
 }
 
 /* ---------- Patentes (só líder, em Configuração) ---------- */
-function renderRanks(){
-  if (!isStaff()) return;
-  const box = $('rk-list'); if (box.contains(document.activeElement)) return;     // não fecha o seletor aberto
-  box.innerHTML = '';
-  Object.entries(usersData).sort((a, b) => String(a[1].name).localeCompare(String(b[1].name))).forEach(([code, u]) => {
-    const row = document.createElement('div'); row.className = 'rkrow';
-    row.innerHTML = `<div>${esc(u.name)} ${roleBadge(u.role)}</div>`;
-    const sel = document.createElement('select'); sel.setAttribute('aria-label', 'Patente de ' + u.name);
-    sel.innerHTML = '<option value="">— sem patente —</option>' + RANKS.map(r => `<option value="${r[0]}">${r[1]}</option>`).join('');
-    sel.value = u.rank || '';
-    sel.onchange = () => { const v = sel.value; (v ? db.ref('users/' + code + '/rank').set(v) : db.ref('users/' + code + '/rank').remove()).catch(console.error); };
-    row.appendChild(sel); box.appendChild(row);
-  });
-  if (!box.children.length) box.textContent = 'Nenhum acesso cadastrado.';
-}
+function renderRanks(){}
 
 function renderTags(){
   if (!isStaff()) return;

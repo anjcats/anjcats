@@ -560,8 +560,8 @@ nav button>span:not(.ic){position:static}
 :root[data-theme="light"]{--bg:#f3f5fb;--panel:#fff;--line:rgba(10,20,50,.1);--inp:rgba(10,20,50,.04);--tb:#fff;--tr:#fff;--deep:#eef1f8}
 body{background:radial-gradient(90% 40% at 100% 0%,color-mix(in srgb,var(--red) 11%,transparent),transparent 70%),radial-gradient(90% 45% at 0% 0%,color-mix(in srgb,var(--blue) 14%,transparent),transparent 70%),var(--bg)}
 header{padding:14px 18px;border-bottom:0}
-header b{display:flex;align-items:center;gap:10px;font-size:1.2rem;letter-spacing:.08em}
-header b::before{content:"";width:11px;height:11px;border-radius:3px;background:linear-gradient(135deg,#f7cd6a,var(--gold));transform:rotate(45deg);box-shadow:0 0 14px color-mix(in srgb,var(--gold) 60%,transparent)}
+header>b{display:flex;align-items:center;gap:10px;font-size:1.15rem;letter-spacing:.06em;white-space:nowrap}
+header>b::before{content:"";width:11px;height:11px;border-radius:3px;background:linear-gradient(135deg,#f7cd6a,var(--gold));transform:rotate(45deg);box-shadow:0 0 14px color-mix(in srgb,var(--gold) 60%,transparent)}
 main{padding:6px 16px 24px}
 input,select{background:var(--inp);border:1px solid transparent;border-radius:14px;padding:13px 14px}
 input:focus,select:focus{background:color-mix(in srgb,var(--blue) 8%,var(--inp))}
@@ -616,6 +616,14 @@ button{background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 86%,#fff)
 #str-mem .gimpm{margin-top:14px}
 #str-mem .gpad,#str-mem .gimpm label{color:var(--mute)}
 .gimpm #sm-copy{background:#3f6bd0}.gimpm #sm-ok{background:#1f9d5a}.gimpm #sm-no{background:#56628c}
+
+/* cabeçalho: não corta o botão Sair em tela estreita */
+header{flex-wrap:wrap;row-gap:8px;padding:12px 16px}
+header .who{margin-left:auto;min-width:0;flex-wrap:nowrap}
+header #me{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px}
+header .mystat b{font-size:1rem;letter-spacing:0}
+#mus-b{transition:opacity .2s,transform .2s}
+#mus-b.away{opacity:0;transform:translateX(30px);pointer-events:none}
 </style>
 <script>try{if(localStorage.getItem('cats_theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
 </head>
@@ -3042,6 +3050,7 @@ const PLAYLIST_URL = '';   // opcional: cole aqui o link da playlist do clã (Yo
   g('mus-in').onkeydown = e => { if (e.key === 'Enter') play(); };
   g('mus-stop').onclick = () => { A.pause(); A.removeAttribute('src'); A.load(); M.textContent = ''; F.innerHTML = ''; B.classList.remove('on'); };
   g('mus-in').value = get() || PLAYLIST_URL;
+  let st; document.addEventListener('scroll', () => { if (P.classList.contains('open')) return; B.classList.add('away'); clearTimeout(st); st = setTimeout(() => B.classList.remove('away'), 900); }, true);
 })();
 
 /* ---------- Menções (@nome), alertas e avisos ---------- */

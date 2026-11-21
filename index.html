@@ -504,8 +504,8 @@ main.full{padding:0;max-width:none}
 .mrg .l{color:var(--mute)}
 .mrg .l b{color:var(--text)}
 .mrg .bc{color:var(--blue)}.mrg .rc{color:var(--red)}
-#tab-str .stabs{grid-template-columns:repeat(4,1fr)}
-#tab-str .stabs button{font-size:.72rem;padding:9px 1px}
+#tab-str .stabs{grid-template-columns:repeat(5,1fr)}
+#tab-str .stabs button{font-size:.64rem;padding:9px 1px;white-space:nowrap}
 .pchips{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:10px}
 .pchips button{background:var(--panel);border:1px solid var(--line);color:var(--mute);padding:7px 0;font-size:.8rem;display:grid;gap:1px;justify-items:center;min-height:38px}
 .pchips button small{font-size:.65rem;opacity:.85;min-height:.8em}
@@ -607,6 +607,15 @@ button{background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 86%,#fff)
 #at-sug button{flex:none;padding:7px 12px;font-size:.85rem;background:var(--inp);box-shadow:none;color:var(--text);border-radius:999px}
 #toast{position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top));z-index:60;max-width:520px;margin:0 auto;padding:13px 16px;border-radius:16px;font-weight:700;background:linear-gradient(180deg,#f7cd6a,var(--gold));color:#2a1d00;box-shadow:0 12px 30px rgba(0,0,0,.45);transition:opacity .25s,transform .25s}
 #toast:not(.on){opacity:0;transform:translateY(-14px);pointer-events:none}
+
+/* Estratégia > Membros */
+.sm-head{display:flex;justify-content:space-between;align-items:baseline;margin:4px 2px 10px}
+.sm-head b{font-family:"Oswald",sans-serif;font-size:1.15rem;font-weight:500;letter-spacing:.06em}
+.sm-head span{color:var(--mute);font-weight:700}
+.sm-list{border-radius:18px;overflow:hidden}
+#str-mem .gimpm{margin-top:14px}
+#str-mem .gpad,#str-mem .gimpm label{color:var(--mute)}
+.gimpm #sm-copy{background:#3f6bd0}.gimpm #sm-ok{background:#1f9d5a}.gimpm #sm-no{background:#56628c}
 </style>
 <script>try{if(localStorage.getItem('cats_theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
 </head>
@@ -728,10 +737,27 @@ button{background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 86%,#fff)
     <!-- Estratégia -->
     <div id="tab-str" class="hidden">
       <div class="stabs">
+        <button data-stab="mem">👥 Membros</button>
         <button data-stab="main" class="on">🎯 Estratégia</button>
         <button data-stab="ideas">💡 Sugestões</button>
         <button data-stab="bat">⚔️ Batalhas</button>
         <button data-stab="prints">📸 Prints</button>
+      </div>
+
+      <div id="str-mem" class="hidden">
+        <div class="sm-head"><b>MEMBROS</b><span id="sm-cnt">0/25</span></div>
+        <div class="gml sm-list" id="sm-list"></div>
+        <div class="gimpm only-staff" id="sm-tools">
+          <div class="gpad">Toque em um nome para trocar ou liberar a vaga (vale também para Ataques e Treino).</div>
+          <div class="gmrow"><button type="button" id="sm-imp">📷 Enviar print da lista</button><button type="button" id="sm-copy">📋 Copiar nomes</button></div>
+          <input type="file" id="sm-imp-f" accept="image/*" multiple class="hidden">
+          <div class="gpad" id="sm-imp-msg" role="status">Envie um ou mais prints da lista “Minha gangue” do jogo (se for grande, um print de cada parte rolando a tela). O app lê membro por membro e coloca na mesma ordem do print.</div>
+          <div id="sm-rev" class="hidden" style="display:grid;gap:8px">
+            <textarea id="sm-ta" rows="10" spellcheck="false" autocapitalize="characters"></textarea>
+            <label><input type="checkbox" id="sm-clr"> Liberar as vagas que não estão nesta lista</label>
+            <div class="gmrow"><button type="button" id="sm-ok">✔ Aplicar nos slots</button><button type="button" id="sm-no">Cancelar</button></div>
+          </div>
+        </div>
       </div>
 
       <div id="str-main">
@@ -1601,7 +1627,8 @@ let curStr = 'main';
 function showStr(k){
   curStr = k;
   document.querySelectorAll('[data-stab]').forEach(b => b.classList.toggle('on', b.dataset.stab === k));
-  ['main', 'ideas', 'bat', 'prints'].forEach(x => $('str-' + x).classList.toggle('hidden', x !== k));
+  ['mem', 'main', 'ideas', 'bat', 'prints'].forEach(x => $('str-' + x).classList.toggle('hidden', x !== k));
+  if (k === 'mem') smList();
   if (k === 'main') markStrSeen();
   if (k === 'prints') tcEnter(); else tcStop();
 }
@@ -2406,6 +2433,33 @@ function gpGang(){
     box.appendChild(d);
   });
 }
+function smList(){
+  if (!me || !$('str-mem') || $('str-mem').classList.contains('hidden') || $('tab-str').classList.contains('hidden')) return;
+  const slots = [];
+  for (let i = 0; i < 25; i++) slots.push(atkData[i] || atkData[String(i)] || null);
+  const staff = isLeader() || isMod();
+  const full = slots.filter(x => x && x.name).length;
+  $('sm-cnt').textContent = full + '/25';
+  const box = $('sm-list'); box.innerHTML = '';
+  slots.forEach((x, i) => {
+    const nm = x && x.name ? x.name : '';
+    const u = staff && nm ? Object.values(usersData).find(v => v && sameName(v.name, nm)) : null;
+    const lead = u && u.role === 'leader';
+    const d = document.createElement('div');
+    d.className = 'gr' + (!nm ? ' empty' : '') + (lead ? ' cap' : '') + (nm && me.name && sameName(nm, me.name) ? ' me' : '') + (x && x.done ? ' done' : '');
+    const tag = lead ? '<i class="l">LÍDER</i>' : u && u.role === 'mod' ? '<i class="l">MOD</i>' : x && x.done ? '<i>ATACOU</i>' : '';
+    d.innerHTML = `<span class="gi">${i + 1}</span><span class="gn">${nm ? esc(nm) : 'Vaga livre'}${tag}</span>${x && x.cars ? `<span class="gcar">${+x.cars}</span>` : ''}${staff ? '<span class="gc">›</span>' : ''}`;
+    if (staff) { d.style.cursor = 'pointer'; d.onclick = () => {
+      const v = prompt('Nome do membro no slot ' + (i + 1) + ' (deixe vazio para liberar):', nm);
+      if (v === null) return;
+      const n = v.trim().slice(0, 24);
+      const r = db.ref('attacks/' + i);
+      (n ? r.update({ name: n }) : r.remove()).catch(() => alert('Não foi possível salvar.'));
+    }; }
+    box.appendChild(d);
+  });
+}
+setInterval(smList, 1500);
 function gpAgo(ts){
   const s = Math.max(0, (Date.now() - (+ts || Date.now())) / 1000);
   return s < 60 ? 'agora' : s < 3600 ? 'há ' + Math.floor(s / 60) + 'm' : s < 86400 ? 'há ' + Math.floor(s / 3600) + 'h' : 'há ' + Math.floor(s / 86400) + 'd';
@@ -2482,9 +2536,9 @@ async function gmReadPrint(file, wk){
   let off = 1, bv = 0; vote.forEach((c, o) => { if (c > bv) { bv = c; off = o; } });
   return rows.map(v => ({ n: v.idx + off, name: v.name })).filter(v => v.n >= 1 && v.n <= 25);
 }
-async function gmImport(files){
-  const msg = (t, ok) => { const e = $('gm-imp-msg'); e.textContent = t; e.style.color = ok === false ? '#ff9c94' : ok ? '#8be0a9' : ''; };
-  const btn = $('gm-imp'); btn.disabled = true; let wk = null;
+async function gmImport(files, p){
+  const msg = (t, ok) => { const e = $(p + '-imp-msg'); e.textContent = t; e.style.color = ok === false ? '#ff9c94' : ok ? '#8be0a9' : ''; };
+  const btn = $(p + '-imp'); btn.disabled = true; let wk = null;
   try {
     msg('Carregando o leitor de texto (na primeira vez demora um pouco)…');
     await gLoadTess(); wk = await Tesseract.createWorker('eng');
@@ -2494,38 +2548,41 @@ async function gmImport(files){
       (await gmReadPrint(files[i], wk)).forEach(x => { if (!got.has(x.n)) got.set(x.n, x.name); });
     }
     if (!got.size) throw new Error('empty');
-    $('gm-ta').value = [...got.entries()].sort((a, b) => a[0] - b[0]).map(([n, t]) => n + ' ' + t).join('\n');
-    $('gm-rev').classList.remove('hidden');
+    $(p + '-ta').value = [...got.entries()].sort((a, b) => a[0] - b[0]).map(([n, t]) => n + ' ' + t).join('\n');
+    $(p + '-rev').classList.remove('hidden');
     msg('Li ' + got.size + ' nome(s). Confira abaixo (o leitor pode errar uma letra ou um número da vaga), corrija se precisar e toque em “Aplicar nos slots”.', true);
   } catch (e) {
     msg(e && e.message === 'ocr-load' ? 'Não consegui baixar o leitor de texto. Confira a internet e tente de novo.' : e && e.message === 'nopanel' ? 'Não achei a lista de membros nesse print. Use um print da aba “Minha gangue”.' : 'Não consegui ler nomes nesse print.', false);
   } finally { if (wk) { try { await wk.terminate(); } catch (_) {} } btn.disabled = false; }
 }
-$('gm-imp').onclick = () => $('gm-imp-f').click();
-$('gm-imp-f').onchange = e => { const fs = [...e.target.files]; e.target.value = ''; if (fs.length) gmImport(fs); };
-$('gm-no').onclick = () => $('gm-rev').classList.add('hidden');
-$('gm-ok').onclick = () => {
+function gmWire(p){
+$(p + '-imp').onclick = () => $(p + '-imp-f').click();
+$(p + '-imp-f').onchange = e => { const fs = [...e.target.files]; e.target.value = ''; if (fs.length) gmImport(fs, p); };
+$(p + '-no').onclick = () => $(p + '-rev').classList.add('hidden');
+$(p + '-ok').onclick = () => {
   if (!db || !me) return;
   const map = new Map();
-  $('gm-ta').value.split('\n').forEach(l => { const m = /^\s*(\d{1,2})[.):]?\s+(.+?)\s*$/.exec(l); if (m && +m[1] >= 1 && +m[1] <= 25) map.set(+m[1] - 1, m[2].trim().slice(0, 24)); });
-  const el = $('gm-imp-msg');
+  $(p + '-ta').value.split('\n').forEach(l => { const m = /^\s*(\d{1,2})[.):]?\s+(.+?)\s*$/.exec(l); if (m && +m[1] >= 1 && +m[1] <= 25) map.set(+m[1] - 1, m[2].trim().slice(0, 24)); });
+  const el = $(p + '-imp-msg');
   if (!map.size) { el.textContent = 'Nenhuma linha válida. Use o formato: 1 NOME (número da vaga, espaço e o nome).'; el.style.color = '#ff9c94'; return; }
-  const clr = $('gm-clr').checked;
+  const clr = $(p + '-clr').checked;
   if (!confirm('Colocar ' + map.size + ' nome(s) nos slots' + (clr ? ' e liberar as outras vagas' : '') + '?')) return;
   const up = {};
   map.forEach((nm, i) => { up[i + '/name'] = nm; });
   if (clr) for (let i = 0; i < 25; i++) if (!map.has(i)) up[String(i)] = null;
   db.ref('attacks').update(up).then(() => {
-    $('gm-rev').classList.add('hidden'); el.textContent = 'Pronto: ' + map.size + ' nome(s) colocados nos slots ✓'; el.style.color = '#8be0a9'; gpGang();
+    $(p + '-rev').classList.add('hidden'); el.textContent = 'Pronto: ' + map.size + ' nome(s) colocados nos slots ✓'; el.style.color = '#8be0a9'; gpGang(); smList();
   }).catch(() => { el.textContent = 'Não foi possível salvar. Confira a conexão e as permissões.'; el.style.color = '#ff9c94'; });
 };
-$('gm-copy').onclick = () => {
+$(p + '-copy').onclick = () => {
   const t = []; for (let i = 0; i < 25; i++) { const x = atkData[i] || atkData[String(i)]; if (x && x.name) t.push((i + 1) + ' ' + x.name); }
-  const el = $('gm-imp-msg'), done = ok => { el.textContent = ok ? 'Lista com ' + t.length + ' nome(s) copiada ✓' : 'Não consegui copiar.'; el.style.color = ok ? '#8be0a9' : '#ff9c94'; };
+  const el = $(p + '-imp-msg'), done = ok => { el.textContent = ok ? 'Lista com ' + t.length + ' nome(s) copiada ✓' : 'Não consegui copiar.'; el.style.color = ok ? '#8be0a9' : '#ff9c94'; };
   if (!t.length) { el.textContent = 'Não há nomes nos slots ainda.'; el.style.color = '#ff9c94'; return; }
   const fb = () => { const a = document.createElement('textarea'); a.value = t.join('\n'); a.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(a); a.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (_) {} a.remove(); done(ok); };
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t.join('\n')).then(() => done(true), fb); else fb();
 };
+}
+gmWire('gm'); gmWire('sm');
 
 /* ---------- Início: tenta entrar sozinho com o último acesso ---------- */
 /* =====================================================================

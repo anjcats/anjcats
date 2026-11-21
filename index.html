@@ -1164,6 +1164,7 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
 
 /* ---------- Calculadora (líder edita, todos veem ao vivo) ---------- */
 let cs = null;                       // {bp,bs,rp,rs,tot,endAt,ts}
+const arT = ms => new Date(ms).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' });
 let notifOn = false, target = null, fired = false, schedTimer = null, wTimer = null;
 const LN = () => window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications;
 const CALC_IDS = ['bp','bs','rp','rs','tot','ex','th','tn'];
@@ -1285,7 +1286,7 @@ function tick(){
   if (cs && cs.endAt) {
     const rem = Math.max(0, Math.round((cs.endAt - Date.now()) / 1000));
     $('cd').textContent = pad2(Math.floor(rem / 3600)) + ':' + pad2(Math.floor(rem % 3600 / 60)) + ':' + pad2(rem % 60);
-    $('cd-end').textContent = rem > 0 ? 'Termina às ' + new Date(cs.endAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'Tempo esgotado';
+    $('cd-end').textContent = rem > 0 ? 'Termina às ' + new Date(cs.endAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + ' · Argentina ' + arT(cs.endAt) : 'Tempo esgotado';
   } else { $('cd').textContent = '--:--:--'; $('cd-end').textContent = ''; }
   v2Margin();
 }
@@ -2760,7 +2761,7 @@ function warText(){
   L.push(live ? '🚨 *GUERRA EM ANDAMENTO*' : '📋 *RESUMO DA GUERRA*');
   if (cs && cs.ts) {
     L.push('📊 Placar: 🔵 ' + v2K(liveVal('b', now)) + ' x 🔴 ' + v2K(liveVal('r', now)) + (+cs.tot > 0 ? ' (meta ' + v2K(cs.tot) + ')' : ''));
-    if (cs.endAt) L.push(cs.endAt > now ? '⏳ Faltam: ' + v2Dur((cs.endAt - now) / 1000) + ' (termina às ' + v2T(cs.endAt) + ')' : '⏳ Tempo esgotado');
+    if (cs.endAt) L.push(cs.endAt > now ? '⏳ Faltam: ' + v2Dur((cs.endAt - now) / 1000) + ' (termina às ' + v2T(cs.endAt) + ' · 🇦🇷 Argentina ' + arT(cs.endAt) + ')' : '⏳ Tempo esgotado');
     const r = compute(cs); if (r && r.who && r.who !== 'Aguardando' && live) L.push('📈 No ritmo atual: ' + (r.who === 'Azul' ? '🔵 ' : r.who === 'Vermelho' ? '🔴 ' : '') + r.who);
   }
   const pk = Object.keys(prioData).map(Number).sort();

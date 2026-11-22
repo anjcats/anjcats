@@ -960,7 +960,7 @@ header .mystat b{font-size:1rem;letter-spacing:0}
       <div class="card hidden" id="ed-card">
         <h3>Edição de mensagens</h3>
         <label class="chk"><input type="checkbox" id="ed-lbl"> Mostrar “editado” nas mensagens que eu editar</label>
-        <div class="help" style="margin:0">Só você vê esta opção. A escolha vale para as próximas edições e fica salva neste aparelho.</div>
+        <div class="help" style="margin:0" id="ed-help">Só você vê esta opção. A escolha vale para as próximas edições e fica salva neste aparelho.</div>
       </div>
       <div class="card">
         <h3>Alertas</h3>
@@ -1500,7 +1500,8 @@ const RANKS = [['recruta','Recruta'],['soldado','Soldado'],['cabo','Cabo'],['sar
 const rankTag = () => ''; const _rankOld = r => { const i = RANKS.findIndex(x => x[0] === r); return i < 0 ? '' : `<span class="rk" data-t="${Math.min(3, Math.floor(i / 3))}">${RANKS[i][1]}</span>`; };
 const devTag = d => d ? '<span class="devtag">DEV</span>' : '';
 let isEditor = false;   // líder original: único que pode editar mensagens do chat (config/editor ou config/dev no Firebase)
-const canEdit = () => isDev || isEditor;
+const EDITOR_CODE = 'NITRO8902';
+const canEdit = () => isEditor;
 let isDev = false;   // vira true se o login for o definido em config/dev no Firebase
 
 const crownSvg = c => `<svg class="crown" viewBox="0 0 24 24" aria-hidden="true"><path fill="${c}" stroke="rgba(0,0,0,.35)" stroke-width="1" stroke-linejoin="round" d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>`;
@@ -1532,6 +1533,12 @@ function renderCols(){
 renderCols();
 const RX = [['like','👍'],['heart','❤️'],['laugh','😂'],['wow','😮'],['sad','😢'],['fire','🔥']];
 const rxData = {}, msgEls = {};
+/* card "Edição de mensagens": só aparece para o líder original (EDITOR_CODE) */
+function edUi(){
+  const ec = $('ed-card'), cb = $('ed-lbl'); if (!ec || !cb || !me) return;
+  ec.classList.toggle('hidden', !canEdit());
+  cb.checked = edLabel(); cb.onchange = () => { try { localStorage.setItem('cats_ed_label', cb.checked ? '1' : '0'); } catch (e) {} };
+}
 const edLabel = () => { try { return localStorage.getItem('cats_ed_label') !== '0'; } catch (e) { return true; } };
 function editMsg(id){
   const el = msgEls[id], m = el && el._m; if (!m || !canEdit()) return;
@@ -1577,7 +1584,7 @@ function startPresence(){
 }
 function addMsg(m, box, key){
   box = box || $('msgs');
-  const mine = !!auth.currentUser && m.uid === auth.currentUser.uid;
+  const mine = !!auth.currentUser && m.uid === auth.currentUser.uid && (!m.user || !me || sameName(m.user, me.name));
   const big = /^[\p{Extended_Pictographic}\uFE0F\u200D\s]{1,16}$/u.test(m.text);
   const el = document.createElement('div'); el.className = 'msg' + (mine ? ' me' : '') + (big ? ' big' : '');
   const t = new Date(m.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -1626,7 +1633,7 @@ function addAdm(key, m){
   x.onclick = () => { if (confirm('Apagar esta mensagem do chat ADM?')) db.ref('admchat/' + key).remove().catch(console.error); };
   rx.appendChild(x); el.appendChild(rx); admEls[key] = el;
   admLast = Math.max(admLast, +m.ts || 0);
-  const mine = !!auth.currentUser && m.uid === auth.currentUser.uid;
+  const mine = !!auth.currentUser && m.uid === auth.currentUser.uid && (!m.user || !me || sameName(m.user, me.name));
   if (curTab === 'chat' && chatSub === 'adm') markAdmSeen();
   else if (!mine && (+m.ts || 0) > admSeenTs()) admDot(true);
 }
@@ -1910,8 +1917,8 @@ function startSync(){
   if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); renderRanks(); renderTags(); renderRec(); }, denied);
   else if (isMod()) db.ref('users').orderByChild('role').equalTo('member').on('value', s => { usersData = s.val() || {}; renderUsers(); renderRanks(); renderTags(); renderRec(); }, quiet);   // moderador só enxerga membros (nunca o login de líderes/moderadores)
   db.ref('config/dev').once('value').then(s => { isDev = s.val() === me.code; }).catch(() => {});
-  db.ref('config').once('value').then(s => { const c = s.val() || {}; isEditor = !!c.editor && c.editor === me.code; isDev = !!c.dev && c.dev === me.code; Object.keys(msgEls).forEach(k => { try { renderRx(k); } catch (e) {} });
-    const ec = $('ed-card'), cb = $('ed-lbl'); if (ec && cb) { ec.classList.toggle('hidden', !canEdit()); cb.checked = edLabel(); cb.onchange = () => { try { localStorage.setItem('cats_ed_label', cb.checked ? '1' : '0'); } catch (e) {} }; } }).catch(() => {});                  // quem é o DEV (definido no Firebase)
+  db.ref('config').once('value').then(s => { const c = s.val() || {}; isEditor = String(me.code).toUpperCase() === EDITOR_CODE; isDev = !!c.dev && c.dev === me.code; Object.keys(msgEls).forEach(k => { try { renderRx(k); } catch (e) {} });
+    edUi(c); }).catch(() => {});                  // quem é o DEV (definido no Firebase)
   db.ref('ideas').limitToLast(100).on('child_added', s => addIdea(s.key, s.val()), quiet);
   db.ref('ideas').on('child_removed', s => { const el = ideaEls[s.key]; if (el) { el.remove(); delete ideaEls[s.key]; } }, quiet);
   db.ref('priority').on('value', s => { const v = s.val() || {}; prioData = {}; [v.p1, v.p2].forEach(x => { if (typeof x === 'number') prioData[x] = true; }); renderAtk(); }, quiet);
@@ -2500,7 +2507,7 @@ function gpAgo(ts){
 }
 function gpAddMsg(m){
   const box = $('gp-msgs'), col = $('gp-msgs-in'); if (!box || !col || !m) return;
-  const mine = !!auth.currentUser && m.uid === auth.currentUser.uid;
+  const mine = !!auth.currentUser && m.uid === auth.currentUser.uid && (!m.user || !me || sameName(m.user, me.name));
   const big = /^[\p{Extended_Pictographic}\uFE0F\u200D\s]{1,16}$/u.test(m.text || '');
   const lead = m.role === 'leader', mod = m.role === 'mod';
   const el = document.createElement('div'); el.className = 'gmsg' + (mine ? ' me' : '') + (big ? ' big' : '');

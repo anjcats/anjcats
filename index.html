@@ -624,6 +624,7 @@ header #me{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:1
 header .mystat b{font-size:1rem;letter-spacing:0}
 #mus-b{transition:opacity .2s,transform .2s}
 #mus-b.away{opacity:0;transform:translateX(30px);pointer-events:none}
+.msg small i.ed{font-style:normal;opacity:.65;font-size:.9em}
 </style>
 <script>try{if(localStorage.getItem('cats_theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
 </head>
@@ -955,6 +956,11 @@ header .mystat b{font-size:1rem;letter-spacing:0}
           <button data-theme-opt="light" aria-pressed="false"><span class="sw"></span>⚪ Branco</button>
         </div>
         <div class="help" style="margin:0">A escolha fica salva neste aparelho.</div>
+      </div>
+      <div class="card hidden" id="ed-card">
+        <h3>Edição de mensagens</h3>
+        <label class="chk"><input type="checkbox" id="ed-lbl"> Mostrar “editado” nas mensagens que eu editar</label>
+        <div class="help" style="margin:0">Só você vê esta opção. A escolha vale para as próximas edições e fica salva neste aparelho.</div>
       </div>
       <div class="card">
         <h3>Alertas</h3>
@@ -1493,6 +1499,8 @@ $('str-save').onclick = async () => {
 const RANKS = [['recruta','Recruta'],['soldado','Soldado'],['cabo','Cabo'],['sargento','Sargento'],['subtenente','Subtenente'],['tenente','Tenente'],['capitao','Capitão'],['major','Major'],['coronel','Coronel'],['general','General']];
 const rankTag = () => ''; const _rankOld = r => { const i = RANKS.findIndex(x => x[0] === r); return i < 0 ? '' : `<span class="rk" data-t="${Math.min(3, Math.floor(i / 3))}">${RANKS[i][1]}</span>`; };
 const devTag = d => d ? '<span class="devtag">DEV</span>' : '';
+let isEditor = false;   // líder original: único que pode editar mensagens do chat (config/editor ou config/dev no Firebase)
+const canEdit = () => isDev || isEditor;
 let isDev = false;   // vira true se o login for o definido em config/dev no Firebase
 
 const crownSvg = c => `<svg class="crown" viewBox="0 0 24 24" aria-hidden="true"><path fill="${c}" stroke="rgba(0,0,0,.35)" stroke-width="1" stroke-linejoin="round" d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>`;
@@ -1524,6 +1532,14 @@ function renderCols(){
 renderCols();
 const RX = [['like','👍'],['heart','❤️'],['laugh','😂'],['wow','😮'],['sad','😢'],['fire','🔥']];
 const rxData = {}, msgEls = {};
+const edLabel = () => { try { return localStorage.getItem('cats_ed_label') !== '0'; } catch (e) { return true; } };
+function editMsg(id){
+  const el = msgEls[id], m = el && el._m; if (!m || !canEdit()) return;
+  const v = prompt('Editar a mensagem de ' + m.user + ':', m.text); if (v === null) return;
+  const t = v.trim().slice(0, 500); if (!t || t === m.text) return;
+  const up = { text: t }; if (edLabel()) up.edited = firebase.database.ServerValue.TIMESTAMP;
+  db.ref('chat/' + id).update(up).catch(() => alert('Não foi possível editar. Confira se as regras novas foram publicadas no Firebase.'));
+}
 function toggleRx(id, k){
   const on = rxData[id] && rxData[id][k] && rxData[id][k][me.code], r = db.ref('reactions/' + id + '/' + k + '/' + me.code);
   (on ? r.remove() : r.set(true)).catch(console.error);
@@ -1537,6 +1553,7 @@ function renderRx(id){
   });
   const add = document.createElement('button'); add.className = 'add'; add.textContent = '☺ +'; add.setAttribute('aria-label', 'Reagir');
   add.onclick = () => el.querySelector('.pick').classList.toggle('hidden'); box.appendChild(add);
+  if (canEdit()) { const ed = document.createElement('button'); ed.className = 'add'; ed.textContent = '✏️'; ed.setAttribute('aria-label', 'Editar mensagem'); ed.onclick = () => editMsg(id); box.appendChild(ed); }
   if (isStaff()) {
     const x = document.createElement('button'); x.className = 'add'; x.textContent = '🗑'; x.setAttribute('aria-label', 'Apagar mensagem');
     x.onclick = () => { if (!confirm('Apagar esta mensagem para todos?')) return; db.ref('chat/' + id).remove().catch(console.error); db.ref('reactions/' + id).remove().catch(() => {}); };
@@ -1564,9 +1581,9 @@ function addMsg(m, box, key){
   const big = /^[\p{Extended_Pictographic}\uFE0F\u200D\s]{1,16}$/u.test(m.text);
   const el = document.createElement('div'); el.className = 'msg' + (mine ? ' me' : '') + (big ? ' big' : '');
   const t = new Date(m.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  const s = document.createElement('small'); s.innerHTML = nameTag(m) + ' · ' + t;
+  const s = document.createElement('small'); s.innerHTML = nameTag(m) + ' · ' + t + (m.edited ? ' · <i class="ed">editado</i>' : '');
   const tx = document.createElement('div'); tx.className = 'mt'; tx.innerHTML = atHtml(m.text);
-  el.appendChild(s); el.appendChild(tx); atCheck(m, el, !!key, mine);
+  el._m = m; el.appendChild(s); el.appendChild(tx); atCheck(m, el, !!key, mine);
   if (key) {
     const rx = document.createElement('div'); rx.className = 'rx'; const pk = document.createElement('div'); pk.className = 'pick hidden';
     RX.forEach(([k, e]) => { const b = document.createElement('button'); b.textContent = e; b.onclick = () => { pk.classList.add('hidden'); toggleRx(key, k); }; pk.appendChild(b); });
@@ -1871,6 +1888,11 @@ function startSync(){
     me.name = v.name; me.rank = v.rank || ''; me.tag = v.tag || ''; $('me').textContent = v.name; renderAtk(); renderMyStat();
   }, denied);
   db.ref('chat').limitToLast(100).on('child_added', s => addMsg(s.val(), null, s.key), denied);
+  db.ref('chat').limitToLast(100).on('child_changed', s => {
+    const el = msgEls[s.key], m = s.val(); if (!el || !m) return; el._m = m;
+    const tx = el.querySelector('.mt'); if (tx) tx.innerHTML = atHtml(m.text);
+    const sm = el.querySelector('small'); if (sm) sm.innerHTML = nameTag(m) + ' · ' + new Date(m.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + (m.edited ? ' · <i class="ed">editado</i>' : '');
+  }, () => {});
   db.ref('chat').limitToLast(100).on('child_removed', s => { const el = msgEls[s.key]; if (el) { el.remove(); delete msgEls[s.key]; } }, () => {});
   if (isStaff()) db.ref('applications').on('value', s => { appsData = s.val() || {}; renderRec(); }, () => {});
   const rxSet = s => { rxData[s.key] = s.val() || {}; renderRx(s.key); };
@@ -1887,7 +1909,9 @@ function startSync(){
   }
   if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); renderRanks(); renderTags(); renderRec(); }, denied);
   else if (isMod()) db.ref('users').orderByChild('role').equalTo('member').on('value', s => { usersData = s.val() || {}; renderUsers(); renderRanks(); renderTags(); renderRec(); }, quiet);   // moderador só enxerga membros (nunca o login de líderes/moderadores)
-  db.ref('config/dev').once('value').then(s => { isDev = s.val() === me.code; }).catch(() => {});                  // quem é o DEV (definido no Firebase)
+  db.ref('config/dev').once('value').then(s => { isDev = s.val() === me.code; }).catch(() => {});
+  db.ref('config').once('value').then(s => { const c = s.val() || {}; isEditor = !!c.editor && c.editor === me.code; isDev = !!c.dev && c.dev === me.code; Object.keys(msgEls).forEach(k => { try { renderRx(k); } catch (e) {} });
+    const ec = $('ed-card'), cb = $('ed-lbl'); if (ec && cb) { ec.classList.toggle('hidden', !canEdit()); cb.checked = edLabel(); cb.onchange = () => { try { localStorage.setItem('cats_ed_label', cb.checked ? '1' : '0'); } catch (e) {} }; } }).catch(() => {});                  // quem é o DEV (definido no Firebase)
   db.ref('ideas').limitToLast(100).on('child_added', s => addIdea(s.key, s.val()), quiet);
   db.ref('ideas').on('child_removed', s => { const el = ideaEls[s.key]; if (el) { el.remove(); delete ideaEls[s.key]; } }, quiet);
   db.ref('priority').on('value', s => { const v = s.val() || {}; prioData = {}; [v.p1, v.p2].forEach(x => { if (typeof x === 'number') prioData[x] = true; }); renderAtk(); }, quiet);

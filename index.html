@@ -1305,7 +1305,21 @@ function tick(){
   if (cs && cs.endAt) {
     const rem = Math.max(0, Math.round((cs.endAt - nowS()) / 1000));
     $('cd').textContent = pad2(Math.floor(rem / 3600)) + ':' + pad2(Math.floor(rem % 3600 / 60)) + ':' + pad2(rem % 60);
-    $('cd-end').textContent = rem > 0 ? 'Termina: Brasil ' + brT(cs.endAt) + ' · Argentina ' + arT(cs.endAt) : 'Tempo esgotado';
+    let endHtml = 'Tempo esgotado';
+    if (rem > 0) {
+      const r = compute(cs), tEnd = r.target ? r.target.getTime() : cs.endAt;
+      const dayTag = ms => { const f = z => new Date(ms).toLocaleDateString('pt-BR', { timeZone: z, day: '2-digit', month: '2-digit' }); const hoje = new Date(nowS()).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit' }); return f('America/Sao_Paulo') === hoje ? '' : ' (' + f('America/Sao_Paulo') + ')'; };
+      const line = ms => 'Brasil ' + brT(ms) + dayTag(ms) + ' · Argentina ' + arT(ms);
+      if (r.target && tEnd < cs.endAt - 30000) {
+        const nm = r.who === 'Azul' ? 'Azul' : r.who === 'Vermelho' ? 'Vermelho' : '';
+        endHtml = '🏁 Termina por pontos' + (nm ? ' (' + nm + ' chega no total)' : '') + ': ' + line(tEnd) + '<br><small>Pelo tempo seria: ' + line(cs.endAt) + '</small>';
+      } else if (!r.target && (r.cls === 'b' || r.cls === 'r')) {
+        endHtml = '🏁 ' + r.who + ' já atingiu o total';
+      } else {
+        endHtml = 'Termina por tempo: ' + line(cs.endAt);
+      }
+    }
+    $('cd-end').innerHTML = endHtml;
   } else { $('cd').textContent = '--:--:--'; $('cd-end').textContent = ''; }
   v2Margin();
 }

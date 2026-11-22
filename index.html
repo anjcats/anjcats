@@ -1117,6 +1117,8 @@ $('login-btn').onclick = async () => {
 };
 ['login-in','login-pw'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') $('login-btn').click(); }));
 $('logout').onclick = async () => {
+  clearInterval(presTimer);
+  try { if (me && me.code) await timeout(db.ref('presence/' + me.code).remove(), 3000); } catch (e) {}
   try { if (auth && auth.currentUser) await timeout(db.ref('sessions/' + auth.currentUser.uid).remove(), 4000); } catch (e) {}
   localStorage.removeItem('cats_login'); location.reload();
 };
@@ -1519,6 +1521,9 @@ const postMeta = () => {                                // campos de cargo/paten
 };
 /* ---- cor do nome, reações, emotes e presença ---- */
 let myColor = '', presData = {};
+let presTimer = null, presSig = '';
+/* online de verdade: precisa ter dado sinal nos últimos 3 min (e, para o líder, a conta ainda precisa existir) */
+const presOn = c => { const p = presData[c]; if (!p) return false; const age = Date.now() + (typeof srvOff === 'number' ? srvOff : 0) - (+p.ts || 0); return age < 180000 && (!isLeader() || !!usersData[c]); };
 const COLORS = ['#ff6b6b','#ff9f43','#ffd43b','#51cf66','#20c997','#4dabf7','#748ffc','#da77f2','#f783ac','#adb5bd'];
 function renderCols(){
   const box = $('col-list'); box.innerHTML = '';
@@ -1571,7 +1576,7 @@ const EMO = ['😀','😂','🤣','😍','😎','🤔','😅','😭','😡','�
 EMO.forEach(e => { const b = document.createElement('button'); b.type = 'button'; b.textContent = e; b.onclick = () => { $('chat-in').value += e; $('chat-in').focus(); }; $('emo').appendChild(b); });
 $('emo-btn').onclick = () => $('emo').classList.toggle('hidden');
 function renderOnline(){
-  const arr = Object.entries(presData).sort((a, b) => String(a[1].name).localeCompare(b[1].name));
+  const arr = Object.entries(presData).filter(([c]) => presOn(c)).sort((a, b) => String(a[1].name).localeCompare(b[1].name));
   $('on-n').textContent = arr.length ? '(' + arr.length + ')' : '';
   $('on-list').innerHTML = arr.length ? arr.map(([c, p]) => `<div><span class="on-dot"></span>${esc(p.name)}${usersData[c] ? ' ' + roleBadge(usersData[c].role) : ''}</div>`).join('') : 'Ninguém online.';
 }
@@ -1580,7 +1585,10 @@ function startPresence(){
   const go = () => ref.onDisconnect().remove().then(() => ref.set({ name: me.name, ts: firebase.database.ServerValue.TIMESTAMP })).catch(() => {});
   db.ref('.info/connected').on('value', s => { if (s.val() === true && !document.hidden) go(); });
   document.addEventListener('visibilitychange', () => { if (document.hidden) ref.remove().catch(() => {}); else go(); });
+  clearInterval(presTimer);
+  presTimer = setInterval(() => { if (me && !document.hidden) ref.update({ name: me.name, ts: firebase.database.ServerValue.TIMESTAMP }).catch(() => {}); }, 60000);
   if (isStaff()) db.ref('presence').on('value', s => { presData = s.val() || {}; renderOnline(); renderUsers(); }, () => {});
+  if (isStaff()) setInterval(() => { const sg = Object.keys(presData).filter(presOn).sort().join(','); renderOnline(); if (sg !== presSig) { presSig = sg; renderUsers(); } }, 30000);
 }
 function addMsg(m, box, key){
   box = box || $('msgs');
@@ -1865,7 +1873,7 @@ function renderUsers(){
     }
     if (editing === code) { buildEditRow(d, code, u); $('m-list').appendChild(d); return; }
     const inList = Object.values(atkData).some(x => x && sameName(x.name, u.name));
-    d.innerHTML = `<div><div class="nm">${ghostDot(code)}${presData[code] ? '<span class="on-dot"></span>' : ''}${esc(u.name)} ${roleBadge(u.role)}${rankTag(u.rank)}${code === me.code ? '<span class="ex">(você)</span>' : ''}</div>
+    d.innerHTML = `<div><div class="nm">${ghostDot(code)}${presOn(code) ? '<span class="on-dot"></span>' : ''}${esc(u.name)} ${roleBadge(u.role)}${rankTag(u.rank)}${code === me.code ? '<span class="ex">(você)</span>' : ''}</div>
       <div class="ex"><code>${esc(code)}</code> · ${u.pass ? '🔒 senha: ' + esc(u.pass) : 'sem senha'}${u.role === 'member' ? (inList ? ' · ✓ na lista de ataque' : ' · ⚠ fora da lista de ataque') : ''}</div>${ghostLine(code)}</div>
       <div class="acts"><button data-a="inv" aria-label="Copiar convite" title="Copiar convite">📋</button><button data-a="ed" aria-label="Editar" title="Editar nome, login e senha">✏️</button>${code === me.code ? '' : '<button data-a="del" aria-label="Remover" title="Remover acesso">🗑</button>'}</div>`;
     d.querySelector('[data-a=inv]').onclick = async e => { if (await copyText(inviteText(code, u.pass))) { e.target.textContent = '✓'; setTimeout(() => e.target.textContent = '📋', 1500); } };
@@ -1914,7 +1922,7 @@ function startSync(){
     db.ref('admchat').limitToLast(100).on('child_added', s => addAdm(s.key, s.val()), quiet);
     db.ref('admchat').limitToLast(100).on('child_removed', s => { const el = admEls[s.key]; if (el) { el.remove(); delete admEls[s.key]; } }, quiet);
   }
-  if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderUsers(); renderRanks(); renderTags(); renderRec(); }, denied);
+  if (isLeader()) db.ref('users').on('value', s => { usersData = s.val() || {}; renderOnline(); renderUsers(); renderRanks(); renderTags(); renderRec(); }, denied);
   else if (isMod()) db.ref('users').orderByChild('role').equalTo('member').on('value', s => { usersData = s.val() || {}; renderUsers(); renderRanks(); renderTags(); renderRec(); }, quiet);   // moderador só enxerga membros (nunca o login de líderes/moderadores)
   db.ref('config/dev').once('value').then(s => { isDev = s.val() === me.code; }).catch(() => {});
   db.ref('config').once('value').then(s => { const c = s.val() || {}; isEditor = String(me.code).toUpperCase() === EDITOR_CODE; isDev = !!c.dev && c.dev === me.code; Object.keys(msgEls).forEach(k => { try { renderRx(k); } catch (e) {} });
@@ -2977,7 +2985,7 @@ $('cl-now').onclick = () => { if (isLeader() && confirm('Apagar agora as mensage
    8) Detector de fantasma (aba Membros)
    --------------------------------------------------------------------- */
 function v2Ghost(code){
-  const s = V2.seen[code] || {}, now = Date.now() + srvOff, on = !!presData[code];
+  const s = V2.seen[code] || {}, now = Date.now() + srvOff, on = presOn(code);
   const lo = on ? now : (+s.ts || 0), la = +s.atk || 0;
   if (!lo && !la) return { cls: '', txt: 'sem registro de acesso ainda' };
   const dO = lo ? (now - lo) / V2DAY : null, dA = la ? (now - la) / V2DAY : null;

@@ -1179,6 +1179,8 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
 });
 
 /* ---------- Calculadora (líder edita, todos veem ao vivo) ---------- */
+/* Hora corrigida pelo servidor: não depende do relógio errado do celular */
+const nowS = () => Date.now() + (typeof srvOff === 'number' ? srvOff : 0);
 let cs = null;                       // {bp,bs,rp,rs,tot,endAt,ts}
 const brT = ms => new Date(ms).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
 const arT = ms => new Date(ms).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' });
@@ -1208,7 +1210,7 @@ function setClock(total){
   $('th').value = pad2(Math.floor(total / 60));
   $('tn').value = pad2(total % 60);
 }
-const fmt = d => d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+const fmt = d => d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }) + ' às ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }) + ' (Brasil) · ' + arT(d.getTime()) + ' (Argentina)';
 function show(cls, who, sub){ $('result').innerHTML = `<div class="who ${cls}">${who}</div><div class="sub">${sub}</div>`; }
 
 /* Ritmo necessário: quantos pontos por minuto o time precisa fazer, a partir de agora, para bater a meta antes do fim */
@@ -1251,10 +1253,10 @@ function renderCalc(){
   schedule();
 }
 function fillInputs(){
-  const now = Date.now();
+  const now = nowS();
   ['bp','rp','tot','ex'].forEach(k => { $(k).value = cs ? (cs[k] || 0) : 0; });
   $('bs').value = Math.floor(liveVal('b', now)); $('rs').value = Math.floor(liveVal('r', now));
-  setClock(cs && cs.endAt ? Math.max(0, Math.ceil((cs.endAt - Date.now()) / 60000)) : 0);
+  setClock(cs && cs.endAt ? Math.max(0, Math.ceil((cs.endAt - nowS()) / 60000)) : 0);
 }
 function applyCalc(v){
   if (isStaff() && calcFocused()) return;          // não atropela quem está digitando
@@ -1264,7 +1266,7 @@ function applyCalc(v){
 /* O líder edita → grava o retrato no servidor (com pequena pausa para não gravar a cada tecla) */
 function leaderEdit(clockEdit, which){
   if (!isStaff()) return;
-  const now = Date.now(), typed = k => +$(k).value || 0;
+  const now = nowS(), typed = k => +$(k).value || 0;
   /* Ao mudar PPM, total ou tempo, os pontos de agora viram o novo ponto de partida (nada se perde).
      Ao digitar os pontos de um time, vale o que foi digitado; o outro time segue de onde estava. */
   const bs = (!cs || which === 'bs') ? typed('bs') : liveVal('b', now);
@@ -1295,13 +1297,13 @@ document.querySelectorAll('.clock .step').forEach(b => b.onclick = () => {
 
 /* Contagem regressiva ao vivo */
 function tick(){
-  const nw = Date.now();
+  const nw = nowS();
   $('lb').textContent = fmtN(liveVal('b', nw)); $('lr').textContent = fmtN(liveVal('r', nw));
   [['b', 'nb', 'mb'], ['r', 'nr', 'mr']].forEach(([t, v, m]) => {
     const r = needInfo(t, nw); $(v).textContent = r.v; $(m).textContent = r.msg; $(m).className = 'needmsg ' + r.cls;
   });
   if (cs && cs.endAt) {
-    const rem = Math.max(0, Math.round((cs.endAt - Date.now()) / 1000));
+    const rem = Math.max(0, Math.round((cs.endAt - nowS()) / 1000));
     $('cd').textContent = pad2(Math.floor(rem / 3600)) + ':' + pad2(Math.floor(rem % 3600 / 60)) + ':' + pad2(rem % 60);
     $('cd-end').textContent = rem > 0 ? 'Termina: Brasil ' + brT(cs.endAt) + ' · Argentina ' + arT(cs.endAt) : 'Tempo esgotado';
   } else { $('cd').textContent = '--:--:--'; $('cd-end').textContent = ''; }
@@ -1328,7 +1330,7 @@ function schedule(){
     const ln = LN(); if (!ln) return;
     try{
       await ln.cancel({ notifications: [{ id: 1 }] });
-      if (notifOn && target && target > new Date())
+      if (notifOn && target && target > new Date(nowS()))
         await ln.schedule({ notifications: [{ id: 1, title: 'Fim da batalha', body: 'O tempo ou a pontuação da luta foi atingido.', schedule: { at: target, allowWhileIdle: true } }] });
     }catch(e){ console.error(e); }
   }, 600);
@@ -1349,7 +1351,7 @@ $('btn-n').onclick = async () => {
 /* Relógio de 1s: contagem + aviso com o app aberto */
 setInterval(() => {
   tick();
-  if (notifOn && target && !fired && new Date() >= target) {
+  if (notifOn && target && !fired && new Date(nowS()) >= target) {
     fired = true; beep();
     if (!LN() && 'Notification' in window && Notification.permission === 'granted') new Notification('Fim da batalha', { body: 'O tempo ou a pontuação da luta foi atingido.' });
   }
@@ -2641,8 +2643,8 @@ gmWire('gm'); gmWire('sm');
    ===================================================================== */
 const V2DAY = 864e5;
 const V2 = { seen: {} };
-const v2T = ms => new Date(ms).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-const v2D = ms => new Date(ms).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+const v2T = ms => new Date(ms).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
+const v2D = ms => new Date(ms).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', timeZone: 'America/Sao_Paulo' });
 function v2Dur(sec){
   sec = Math.max(0, Math.round(sec));
   const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60);
@@ -2723,7 +2725,7 @@ function v2MarginInfo(now){
 let v2MrgHtml = '';
 function v2Margin(){
   const el = $('mrg'); if (!el) return;
-  let r = null; try { r = v2MarginInfo(Date.now()); } catch (e) { console.error(e); }
+  let r = null; try { r = v2MarginInfo(nowS()); } catch (e) { console.error(e); }
   const html = r ? r.html : '';
   if (html !== v2MrgHtml) { v2MrgHtml = html; el.innerHTML = html; }
   el.className = 'mrg ' + (r ? r.cls : 'hidden');
@@ -2771,7 +2773,7 @@ async function calcImport(file){
       const h = Math.floor(o.cap / 2) + 1, v = Math.max(0, +o.p || 0) * Math.max(1, +o.x || 1);
       if (o.a >= h) pa += v; else if (o.b >= h) pb += v;
     });
-    const now = Date.now(), has = nOk > 0, tm = r.hh !== null;
+    const now = nowS(), has = nOk > 0, tm = r.hh !== null;
     const s = {
       bp: has ? pa : (cs ? +cs.bp || 0 : 0), bs: r.scA !== null ? r.scA : Math.floor(liveVal('b', now)),
       rp: has ? pb : (cs ? +cs.rp || 0 : 0), rs: r.scB !== null ? r.scB : Math.floor(liveVal('r', now)),
@@ -2804,7 +2806,7 @@ $('c-imp-f').onchange = e => { const f = e.target.files && e.target.files[0]; e.
    4) Resumo da guerra para o WhatsApp
    --------------------------------------------------------------------- */
 function warText(){
-  const now = Date.now(), L = [];
+  const now = nowS(), L = [];
   const live = !!(cs && cs.ts && cs.endAt && cs.endAt > now);
   L.push(live ? '🚨 *GUERRA EM ANDAMENTO*' : '📋 *RESUMO DA GUERRA*');
   if (cs && cs.ts) {
@@ -3143,7 +3145,7 @@ function atCheck(m, el, live, mine){
   setInterval(() => {
     try {
       if (!me || typeof cs === 'undefined' || !cs || !cs.endAt) return;
-      const now = Date.now(), rem = (cs.endAt - now) / 60000, key = String(cs.endAt);
+      const now = nowS(), rem = (cs.endAt - now) / 60000, key = String(cs.endAt);
       if (rem <= 0) return;
       const lim = +alGet('min', '5');
       if (alGet('end', '1') === '1' && rem <= lim && !fired['e' + key]) { fired['e' + key] = 1; alerta('⏱️ Faltam ' + Math.ceil(rem) + ' min para o fim do round'); }

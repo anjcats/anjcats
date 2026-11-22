@@ -2347,7 +2347,25 @@ async function gReadPrint(file, msg){
     const rec = async (cv, wl, psm) => { if (!cv) return ''; const key = wl + '|' + psm; if (key !== wk._k) { await wk.setParameters({ tessedit_char_whitelist: wl, tessedit_pageseg_mode: String(psm) }); wk._k = key; } const r = await wk.recognize(cv); return (r.data.text || '').trim(); };
     const bx = (x0, y0, x1, y1) => [R(H + x0 * s), R(y0 * s), R(H + x1 * s), R(y1 * s)];
     const ink = (b, mode, sc) => gInk(I, b[0], b[1], b[2], b[3], mode, sc);
-    const num = async (b, tries) => { for (const [mode, sc] of tries) for (const psm of [7, 8, 10]) { const t = (await rec(ink(b, mode, sc), G_DIG, psm)).replace(/\D/g, ''); if (t) return +t; } return null; };
+    /* lê várias vezes (modos/tamanhos/psm diferentes) e escolhe: 1) o valor mais próximo do que a calculadora já esperava (pontos não pulam de 71.934 para 11.934),
+       2) se só der leitura estranha, testa a confusão 7<->1, 3) senão o mais repetido. O leitor do navegador é "leve" e troca 7 por 1. */
+    const num = async (b, tries, expect) => {
+      const votes = new Map(); let first = null, reads = 0;
+      for (const [mode, sc] of tries) for (const psm of [7, 8, 10]) {
+        const t = (await rec(ink(b, mode, sc), G_DIG, psm)).replace(/\D/g, ''); reads++;
+        if (t) { const v = +t; votes.set(v, (votes.get(v) || 0) + 1); if (first === null) first = v; }
+        if (reads === 4 && votes.size === 1 && [...votes.values()][0] >= 3) return first;      // leituras concordam: não precisa mais
+      }
+      if (!votes.size) return null;
+      if (typeof expect === 'number' && isFinite(expect) && expect > 0) {
+        const tol = Math.max(3000, (goal || 0) * 0.03);
+        let best = null; const cand = new Set(votes.keys());
+        votes.forEach((_, v) => { const t = String(v); for (let i = 0; i < t.length; i++) { const c = t[i]; if (c === '1' || c === '7') cand.add(+(t.slice(0, i) + (c === '1' ? '7' : '1') + t.slice(i + 1))); } });
+        cand.forEach(v => { const dist = Math.abs(v - expect), vt = votes.get(v) || 0; const sc = dist - vt * 50; if (best === null || sc < best.sc) best = { v, sc, dist, vt }; });
+        if (best && best.dist <= tol) return best.v;
+      }
+      return [...votes.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0])[0][0];
+    };
     /* recorta só os dígitos do placar, deixando de fora o selo "+PPM" (azul ou vermelho) que fica colado no número */
     const scoreBox = (x0, x1) => {
       const X0 = R(H + x0 * s), X1 = R(H + x1 * s), Y0 = R(212 * s), Y1 = R(282 * s);
@@ -2361,9 +2379,10 @@ async function gReadPrint(file, msg){
     };
     const warn = [];
     msg('Lendo placar e tempo…');
-    let scA = await num(scoreBox(206, 412), [['lum', 3], ['lum', 4], ['dark:150', 3]]);
-    let scB = await num(scoreBox(806, 995), [['lum', 3], ['lum', 4], ['dark:150', 3]]);
     const goal = await num(bx(545, 237, 690, 292), [['lum', 3], ['lum', 4]]);
+    const expB = (cs && cs.ts) ? liveVal('b', nowS()) : null, expR = (cs && cs.ts) ? liveVal('r', nowS()) : null;
+    let scA = await num(scoreBox(206, 412), [['lum', 3], ['lum', 4], ['dark:150', 3]], expB);
+    let scB = await num(scoreBox(806, 995), [['lum', 3], ['lum', 4], ['dark:150', 3]], expR);
     /* o placar nunca passa da meta: se passou, sobrou um dígito de fora do número (ex.: 248196 -> 48196) */
     const fixSc = v => { if (v === null || !goal) return v; let t = String(v); while (+t > goal && t.length > 1) t = t.slice(1); return +t; };
     scA = fixSc(scA); scB = fixSc(scB);

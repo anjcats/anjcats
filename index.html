@@ -2858,8 +2858,23 @@ function warText(){
   L.push(live ? '🚨 *GUERRA EM ANDAMENTO*' : '📋 *RESUMO DA GUERRA*');
   if (cs && cs.ts) {
     L.push('📊 Placar: 🔵 ' + v2K(liveVal('b', now)) + ' x 🔴 ' + v2K(liveVal('r', now)) + (+cs.tot > 0 ? ' (meta ' + v2K(cs.tot) + ')' : ''));
-    if (cs.endAt) L.push(cs.endAt > now ? '⏳ Faltam: ' + v2Dur((cs.endAt - now) / 1000) + ' (termina: 🇧🇷 Brasil ' + brT(cs.endAt) + ' · 🇦🇷 Argentina ' + arT(cs.endAt) + ')' : '⏳ Tempo esgotado');
-    const r = compute(cs); if (r && r.who && r.who !== 'Aguardando' && live) L.push('📈 No ritmo atual: ' + (r.who === 'Azul' ? '🔵 ' : r.who === 'Vermelho' ? '🔴 ' : '') + r.who);
+    const r = compute(cs);
+    const dTag = ms => { const f = new Date(ms).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit' }), h = new Date(now).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit' }); return f === h ? '' : ' (' + f + ')'; };
+    const ln = ms => '🇧🇷 Brasil ' + brT(ms) + dTag(ms) + ' · 🇦🇷 Argentina ' + arT(ms);
+    if (cs.endAt) {
+      if (cs.endAt <= now) L.push('⏳ Tempo esgotado');
+      else {
+        const tEnd = r && r.target ? r.target.getTime() : cs.endAt;
+        if (r && r.target && tEnd < cs.endAt - 30000) {
+          L.push('🏁 ' + (r.who === 'Azul' ? '🔵 Azul' : r.who === 'Vermelho' ? '🔴 Vermelho' : r.who) + ' chega no total e a luta acaba por pontos em ' + v2Dur(Math.max(0, tEnd - now) / 1000));
+          L.push('🕒 Termina: ' + ln(tEnd));
+          L.push('⏳ Pelo tempo seria: ' + ln(cs.endAt) + ' (faltam ' + v2Dur((cs.endAt - now) / 1000) + ')');
+        } else {
+          L.push('⏳ Faltam: ' + v2Dur((cs.endAt - now) / 1000) + ' (termina por tempo: ' + ln(cs.endAt) + ')');
+        }
+      }
+    }
+    if (r && r.who && r.who !== 'Aguardando' && live) L.push('📈 No ritmo atual: ' + (r.who === 'Azul' ? '🔵 ' : r.who === 'Vermelho' ? '🔴 ' : '') + r.who);
   }
   const pk = Object.keys(prioData).map(Number).sort();
   if (pk.length) L.push('🎯 Foco: ' + pk.map(b => 'Prédio ' + (b + 1)).join(' e '));
